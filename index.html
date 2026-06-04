@@ -614,7 +614,70 @@ function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(
 function totalSacola(){ var total=0; for(var i=0;i<sacolaAtual.length;i++) total += sacolaAtual[i].preco * sacolaAtual[i].qty; return total; }
 function descricaoSacola(){ var a=[]; for(var i=0;i<sacolaAtual.length;i++) a.push(sacolaAtual[i].qty + 'x ' + sacolaAtual[i].nome); return a.join('\n'); }
 function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque = Number(p.estoque||0) - sacolaAtual[i].qty; } }
-function abrirVista(){ ge('vista-body').innerHTML='<div class="pix-box"><div class="pix-amount">'+money(totalSacola())+'</div><p style="color:var(--text2)">Finalize o pagamento e confirme a venda.</p></div>'; openM('modal-vista'); }
+function emv(id, value){ value = String(value); return id + String(value.length).padStart(2, '0') + value; }
+function crc16(payload){
+  var crc = 0xFFFF;
+  for(var i=0;i<payload.length;i++){
+    crc ^= payload.charCodeAt(i) << 8;
+    for(var j=0;j<8;j++) crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+function gerarPayloadPix(valor){
+  var chavePix = '97d547d2-1df8-42d9-822c-e3a2dcf46f8b';
+  var nome = 'ANDRE HENRIQUE PAMPLONA';
+  var cidade = 'RIO DE JANEIRO';
+  var txid = 'LOJINHA';
+  var merchant = emv('00','BR.GOV.BCB.PIX') + emv('01', chavePix);
+  var payload = '';
+  payload += emv('00','01');
+  payload += emv('26', merchant);
+  payload += emv('52','0000');
+  payload += emv('53','986');
+  payload += emv('54', Number(valor || 0).toFixed(2));
+  payload += emv('58','BR');
+  payload += emv('59', nome.substring(0,25));
+  payload += emv('60', cidade.substring(0,15));
+  payload += emv('62', emv('05', txid));
+  payload += '6304';
+  return payload + crc16(payload);
+}
+function copiarPix(){
+  var el = ge('pix-copia-cola');
+  if(!el) return;
+  var text = el.value || el.textContent || '';
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ alert('Pix copia e cola copiado.'); });
+  } else {
+    el.select();
+    document.execCommand('copy');
+    alert('Pix copia e cola copiado.');
+  }
+}
+function desenharQrPix(payload){
+  var box = ge('qr-box-pix');
+  if(!box) return;
+  loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', function(){
+    box.innerHTML = '';
+    new QRCode(box, { text: payload, width: 220, height: 220, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  }, function(){
+    box.innerHTML = '<div style="color:#111;font-size:12px;padding:8px">Nao foi possivel carregar o QR Code.</div>';
+  });
+}
+function abrirVista(){
+  var total = totalSacola();
+  var pixPayload = gerarPayloadPix(total);
+  ge('vista-body').innerHTML =
+    '<div class="pix-box">' +
+      '<div class="pix-amount">' + money(total) + '</div>' +
+      '<div style="background:#fff;display:inline-block;padding:14px;border-radius:12px;margin-bottom:12px"><div id="qr-box-pix"></div></div>' +
+      '<p style="color:var(--text2);font-size:12px;margin-bottom:8px">Cliente escaneia o QR Code no app do banco.</p>' +
+      '<textarea class="fi" id="pix-copia-cola" rows="3" readonly style="font-size:11px;margin-bottom:8px">' + escapeHtml(pixPayload) + '</textarea>' +
+      '<button class="btn btn-sm btn-outline" onclick="copiarPix()">Copiar Pix</button>' +
+    '</div>';
+  openM('modal-vista');
+  desenharQrPix(pixPayload);
+}
 function confirmarVista(){ var total=totalSacola(); baixarEstoque(); vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),tipo:'vista',valor:total,qtd:1,data:today(),parcelas:[]}); closeM('modal-vista'); saveBoth('Venda salva'); }
 function abrirPrazo(){ ge('prazo-body').innerHTML='<div class="fg"><label class="fl">Nome Cliente</label><input class="fi" type="text" id="prazo-nome"></div><div class="frow"><div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div><div class="fg"><label class="fl">Setor</label><input class="fi" type="text" id="prazo-setor"></div></div><div class="fg"><label class="fl">Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option></select></div><div id="prazo-parcelas-ui"></div>'; openM('modal-prazo'); atualizarParcelasMultiUI(); }
 function atualizarParcelasMultiUI(){ var n=parseInt(gv('prazo-parc'),10)||1, total=totalSacola(), vp=total/n, html='<div class="sumbox">Total: '+money(total)+' ('+n+'x de '+money(vp)+')</div>'; for(var i=1;i<=n;i++){ var d=new Date(); d.setDate(d.getDate()+30*i); html+='<div class="prow"><div class="pnum">'+i+'</div><div class="pinfo">'+money(vp)+'</div><input type="date" class="pdate" id="pdata-'+i+'" value="'+d.toISOString().split('T')[0]+'"></div>'; } ge('prazo-parcelas-ui').innerHTML=html; }
@@ -675,7 +738,7 @@ function clearScan(){ desligarCameraScanner(); ge('scan-result').innerHTML=''; s
 function scanForField(fid){ scanFieldTarget=fid; closeM('modal-produto'); showSec('scanner',ge('ni-scanner')); }
 function handleBarcode(code){ if(!code) return; lastBarcode=code; if(scanFieldTarget){ var el=ge(scanFieldTarget); if(el) el.value=code; scanFieldTarget=null; showSec('estoque',ge('ni-estoque')); openM('modal-produto'); return; } var p=null; for(var i=0;i<produtos.length;i++) if(produtos[i].barcode===code){ p=produtos[i]; break; } if(p) mostrarProdutoFound(p); else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto nao cadastrado</div><div class="alerta-sub">Codigo: <b>'+escapeHtml(code)+'</b></div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo()">Cadastrar Agora</button></div></div>'; }
 
-window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.abrirNovoProduto=abrirNovoProduto; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.clearFoto=clearFoto; window.editarProduto=editarProduto; window.toggleCategoriaVisivel=toggleCategoriaVisivel; window.iniciarFluxoProd=iniciarFluxoProd; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.adicionarMaisItemNaSacola=adicionarMaisItemNaSacola; window.alterarQtdItemSacola=alterarQtdItemSacola; window.removerItemDaSacola=removerItemDaSacola; window.abrirVendaDetail=abrirVendaDetail; window.compartilharProduto=compartilharProduto; window.clearScan=clearScan; window.scanForField=scanForField; window.handleBarcode=handleBarcode; window.alternarCameraScanner=alternarCameraScanner; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.abrirEditarVenda=abrirEditarVenda; window.salvarEdicaoVenda=salvarEdicaoVenda; window.excluirVendaDinamica=excluirVendaDinamica; window.excluirProdutoDoSistema=excluirProdutoDoSistema;
+window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.abrirNovoProduto=abrirNovoProduto; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.clearFoto=clearFoto; window.editarProduto=editarProduto; window.toggleCategoriaVisivel=toggleCategoriaVisivel; window.iniciarFluxoProd=iniciarFluxoProd; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.adicionarMaisItemNaSacola=adicionarMaisItemNaSacola; window.alterarQtdItemSacola=alterarQtdItemSacola; window.removerItemDaSacola=removerItemDaSacola; window.abrirVendaDetail=abrirVendaDetail; window.compartilharProduto=compartilharProduto; window.clearScan=clearScan; window.scanForField=scanForField; window.handleBarcode=handleBarcode; window.alternarCameraScanner=alternarCameraScanner; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.abrirEditarVenda=abrirEditarVenda; window.salvarEdicaoVenda=salvarEdicaoVenda; window.excluirVendaDinamica=excluirVendaDinamica; window.excluirProdutoDoSistema=excluirProdutoDoSistema; window.copiarPix=copiarPix;
 
 syncDrive();
 })();
