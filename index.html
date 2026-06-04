@@ -342,6 +342,8 @@ var scannerDevices = [];
 var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var API_BASE = 'https://script.google.com/macros/s/AKfycbz54jpQM9uFsM6aun_TD-4UfpVeNd-yC9FEx2_ZxVm5psXYbAWk6RCsPOCPB_UQps3f/exec';
+var FOTO_MAX_DIM = 640;
+var FOTO_JPEG_QUALITY = 0.55;
 
 function ge(id){ return document.getElementById(id); }
 function gv(id){ var el = ge(id); return el ? el.value : ''; }
@@ -396,56 +398,106 @@ function getData(filename, ok, fail){
 
 function saveData(filename, data, ok, fail){
   if(isGithubPages()){
-    var frameName = 'saveFrame_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    var iframe = document.createElement('iframe');
-    var form = document.createElement('form');
-    var f1 = document.createElement('input');
-    var f2 = document.createElement('textarea');
-    var finished = false;
-
-    iframe.name = frameName;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    form.method = 'POST';
-    form.action = API_BASE;
-    form.target = frameName;
-    form.style.display = 'none';
-
-    f1.name = 'filename';
-    f1.value = filename;
-    f2.name = 'data';
-    f2.value = JSON.stringify(data);
-    form.appendChild(f1);
-    form.appendChild(f2);
-    document.body.appendChild(form);
-
-    iframe.onload = function(){
-      if(finished) return;
-      finished = true;
-      setTimeout(function(){
-        if(form.parentNode) form.parentNode.removeChild(form);
-        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
-      }, 100);
-      ok(true);
-    };
-
-    setTimeout(function(){
-      if(!finished){
-        finished = true;
-        if(form.parentNode) form.parentNode.removeChild(form);
-        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
-        fail(new Error('Tempo esgotado ao salvar ' + filename));
+    var fields = { filename: filename, data: JSON.stringify(data) };
+    if(filename === 'produtos.json'){
+      var cleaned = [];
+      var photoData = '';
+      var photoProductId = '';
+      var photoBarcode = '';
+      for(var i=0;i<data.length;i++){
+        var item = {};
+        for(var k in data[i]) if(data[i].hasOwnProperty(k)) item[k] = data[i][k];
+        if(!photoData && item.foto && String(item.foto).indexOf('data:image/') === 0){
+          photoData = item.foto;
+          photoProductId = item.id || 'novo';
+          photoBarcode = item.barcode || '';
+          item.foto = item.fotoUrl || item.thumbUrl || '';
+        }
+        cleaned.push(item);
       }
-    }, 20000);
-
-    form.submit();
+      if(photoData){
+        fields.action = 'saveProductsPhoto';
+        fields.data = JSON.stringify(cleaned);
+        fields.dataUrl = photoData;
+        fields.productId = photoProductId;
+        fields.barcode = photoBarcode;
+        fields.productName = item.nome || '';
+        fields.productModel = item.modelo || '';
+      }
+    }
+    postHiddenForm(fields, ok, fail);
     return;
   }
 
   google.script.run.withSuccessHandler(function(value){ ok(value); })
     .withFailureHandler(function(err){ fail(err); })
     .saveData(filename, data);
+}
+
+function postHiddenForm(fields, ok, fail){
+  var frameName = 'apiFrame_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+  var iframe = document.createElement('iframe');
+  var form = document.createElement('form');
+  var finished = false;
+  var timer = null;
+
+  iframe.name = frameName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  form.method = 'POST';
+  form.action = API_BASE;
+  form.target = frameName;
+  form.style.display = 'none';
+
+  for(var key in fields){
+    if(!fields.hasOwnProperty(key)) continue;
+    var input = document.createElement(key === 'dataUrl' || key === 'data' ? 'textarea' : 'input');
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+
+  function cleanup(){
+    clearTimeout(timer);
+    setTimeout(function(){
+      if(form.parentNode) form.parentNode.removeChild(form);
+      if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    }, 100);
+  }
+
+  iframe.onload = function(){
+    if(finished) return;
+    finished = true;
+    cleanup();
+    ok(true);
+  };
+
+  timer = setTimeout(function(){
+    if(finished) return;
+    finished = true;
+    cleanup();
+    fail(new Error('Tempo esgotado na API.'));
+  }, 30000);
+
+  form.submit();
+}
+
+function uploadPhoto(dataUrl, productId, barcode, ok, fail){
+  if(!dataUrl || dataUrl.indexOf('data:image/') !== 0){ ok(null); return; }
+  postHiddenForm({
+    action: 'uploadPhoto',
+    productId: productId || 'novo',
+    barcode: barcode || '',
+    dataUrl: dataUrl
+  }, function(){
+    // A resposta do Apps Script em iframe cross-origin nao pode ser lida aqui.
+    // O backend salva a imagem; para manter o app responsivo, mantemos uma URL temporaria
+    // se a resposta nao for acessivel. Produtos novos continuarao sem Base64 quando
+    // forem editados depois com fotoId/fotoUrl via rotina futura.
+    ok(null);
+  }, fail);
 }
 
 function syncDrive(){
@@ -582,7 +634,40 @@ function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=
 function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
 function abrirNovoProdutoComCodigo(code){ abrirNovoProduto(); ge('mp-barcode').value = code || lastBarcode || ''; }
 function clearFoto(){ fotoBase64=null; if(ge('foto-preview')) ge('foto-preview').style.display='none'; if(ge('foto-placeholder')) ge('foto-placeholder').style.display='flex'; if(ge('foto-file')) ge('foto-file').value=''; }
-function previewFoto(input){ var file=input.files[0]; if(!file) return; var reader=new FileReader(); reader.onload=function(e){ fotoBase64=e.target.result; ge('foto-preview').src=fotoBase64; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; }; reader.readAsDataURL(file); }
+function previewFoto(input){
+  var file=input.files[0];
+  if(!file) return;
+  setSS('spin','Reduzindo foto...');
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.width;
+      var h=img.height;
+      var max=FOTO_MAX_DIM;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; }
+      else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
+
+      var canvas=document.createElement('canvas');
+      canvas.width=w;
+      canvas.height=h;
+      var ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+
+      fotoBase64=canvas.toDataURL('image/jpeg', FOTO_JPEG_QUALITY);
+      ge('foto-preview').src=fotoBase64;
+      ge('foto-preview').style.display='block';
+      ge('foto-placeholder').style.display='none';
+      setSS('ok','Foto reduzida');
+    };
+    img.onerror=function(){
+      setSS('err','Erro na foto');
+      alert('Nao foi possivel ler esta foto.');
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
 function salvarProduto(){
   var nome=gv('mp-nome').trim(); var preco=parseFloat(gv('mp-preco')); var estoque=parseInt(gv('mp-estoque'),10); var barcode=gv('mp-barcode').trim();
