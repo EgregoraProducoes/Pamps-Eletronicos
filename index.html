@@ -633,10 +633,44 @@ function excluirVendaDinamica(id){}
 function excluirProdutoDoSistema(id){}
 
 function loadScriptOnce(src, cb, err){ var old=document.querySelector('script[src="'+src+'"]'); if(old){ cb(); return; } var s=document.createElement('script'); s.src=src; s.onload=cb; s.onerror=err || function(){}; document.head.appendChild(s); }
-function ligarCameraScannerRealtime(){ ge('scan-result').innerHTML='<div class="alerta warning">Abrindo camera...</div>'; loadScriptOnce('https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js', function(){ if(!window.ZXing || !navigator.mediaDevices){ ge('scan-result').innerHTML='<div class="alerta danger">Scanner indisponivel neste navegador.</div>'; return; } desligarCameraScanner(); zxingCodeReader=new ZXing.BrowserMultiFormatReader(); navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}}).then(function(stream){ stream.getTracks().forEach(function(t){t.stop();}); return zxingCodeReader.listVideoInputDevices(); }).then(function(devices){ scannerDevices=devices||[]; if(!scannerDevices.length){ ge('scan-result').innerHTML='<div class="alerta danger">Nenhuma camera detectada.</div>'; return; } currentDeviceIndex=Math.min(currentDeviceIndex, scannerDevices.length-1); startScannerDecoding(); }).catch(function(e){ console.error(e); ge('scan-result').innerHTML='<div class="alerta danger">Permita acesso a camera ou use o modo manual.</div>'; }); }, function(){ ge('scan-result').innerHTML='<div class="alerta danger">Nao foi possivel carregar o leitor.</div>'; }); }
-function startScannerDecoding(){ if(!zxingCodeReader || !scannerDevices.length) return; zxingCodeReader.decodeFromVideoDevice(scannerDevices[currentDeviceIndex].deviceId,'scanner-video',function(result){ if(result){ var code=result.getText().trim(); desligarCameraScanner(); handleBarcode(code); } }); }
+function cameraErrorMessage(e){
+  var name = e && e.name ? e.name : '';
+  if(name === 'NotAllowedError' || name === 'PermissionDeniedError') return 'Permissao da camera negada. Libere a camera nas configuracoes do navegador.';
+  if(name === 'NotFoundError' || name === 'DevicesNotFoundError') return 'Nenhuma camera foi encontrada neste dispositivo.';
+  if(name === 'NotReadableError' || name === 'TrackStartError') return 'A camera esta em uso por outro app ou nao pode ser aberta agora.';
+  if(name === 'OverconstrainedError' || name === 'ConstraintNotSatisfiedError') return 'Nao consegui abrir a camera traseira. Tente Virar Camera.';
+  return 'Nao foi possivel abrir a camera. Erro: ' + (name || 'desconhecido') + '.';
+}
+function ligarCameraScannerRealtime(){
+  ge('scan-result').innerHTML='<div class="alerta warning">Abrindo camera...</div>';
+  loadScriptOnce('https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js', function(){
+    if(!window.ZXing || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      ge('scan-result').innerHTML='<div class="alerta danger">Scanner indisponivel neste navegador. Abra em Safari/Chrome atualizado por HTTPS.</div>';
+      return;
+    }
+    desligarCameraScanner();
+    zxingCodeReader = new ZXing.BrowserMultiFormatReader();
+    var constraints = { video: { facingMode: currentDeviceIndex === 1 ? 'user' : { ideal: 'environment' } }, audio: false };
+    try {
+      zxingCodeReader.decodeFromConstraints(constraints, 'scanner-video', function(result, err){
+        if(result){
+          var code = result.getText().trim();
+          desligarCameraScanner();
+          handleBarcode(code);
+        }
+      });
+      ge('scan-result').innerHTML='';
+    } catch(e) {
+      console.error(e);
+      ge('scan-result').innerHTML='<div class="alerta danger">' + escapeHtml(cameraErrorMessage(e)) + '</div>';
+    }
+  }, function(){
+    ge('scan-result').innerHTML='<div class="alerta danger">Nao foi possivel carregar o leitor. Verifique a internet.</div>';
+  });
+}
+function startScannerDecoding(){ ligarCameraScannerRealtime(); }
 function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); zxingCodeReader=null; } var video=ge('scanner-video'); if(video && video.srcObject){ video.srcObject.getTracks().forEach(function(t){t.stop();}); video.srcObject=null; } }
-function alternarCameraScanner(){ if(!scannerDevices.length) return; currentDeviceIndex=(currentDeviceIndex+1)%scannerDevices.length; desligarCameraScanner(); ligarCameraScannerRealtime(); }
+function alternarCameraScanner(){ currentDeviceIndex = currentDeviceIndex === 1 ? 0 : 1; desligarCameraScanner(); ligarCameraScannerRealtime(); }
 function clearScan(){ desligarCameraScanner(); ge('scan-result').innerHTML=''; scanFieldTarget=null; lastBarcode=null; showSec('painel',ge('ni-painel')); }
 function scanForField(fid){ scanFieldTarget=fid; closeM('modal-produto'); showSec('scanner',ge('ni-scanner')); }
 function handleBarcode(code){ if(!code) return; lastBarcode=code; if(scanFieldTarget){ var el=ge(scanFieldTarget); if(el) el.value=code; scanFieldTarget=null; showSec('estoque',ge('ni-estoque')); openM('modal-produto'); return; } var p=null; for(var i=0;i<produtos.length;i++) if(produtos[i].barcode===code){ p=produtos[i]; break; } if(p) mostrarProdutoFound(p); else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto nao cadastrado</div><div class="alerta-sub">Codigo: <b>'+escapeHtml(code)+'</b></div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo()">Cadastrar Agora</button></div></div>'; }
