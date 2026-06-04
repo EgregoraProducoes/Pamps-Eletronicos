@@ -160,7 +160,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <body>
 
 <div class="topbar">
-<div class="logo"><div class="logo-chip"></div>Pamp's Eletrnicos</div>
+<div class="logo"><div class="logo-chip"></div>Pamp's Eletrônicos</div>
 <div class="sync-row">
 <div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div>
 </div>
@@ -384,7 +384,7 @@ function getData(filename, ok, fail){
       cleanup();
       fail(new Error('Nao foi possivel acessar a API do Apps Script.'));
     };
-    script.src = API_BASE + '?api=getData&filename=' + encodeURIComponent(filename) + '&callback=' + encodeURIComponent(cbName);
+    script.src = API_BASE + '?api=getData&filename=' + encodeURIComponent(filename) + '&callback=' + encodeURIComponent(cbName) + '&_=' + Date.now();
     document.head.appendChild(script);
     return;
   }
@@ -404,6 +404,8 @@ function saveData(filename, data, ok, fail){
       var photoData = '';
       var photoProductId = '';
       var photoBarcode = '';
+      var photoProductName = '';
+      var photoProductModel = '';
       for(var i=0;i<data.length;i++){
         var item = {};
         for(var k in data[i]) if(data[i].hasOwnProperty(k)) item[k] = data[i][k];
@@ -411,6 +413,8 @@ function saveData(filename, data, ok, fail){
           photoData = item.foto;
           photoProductId = item.id || 'novo';
           photoBarcode = item.barcode || '';
+          photoProductName = item.nome || '';
+          photoProductModel = item.modelo || '';
           item.foto = item.fotoUrl || item.thumbUrl || '';
         }
         cleaned.push(item);
@@ -421,8 +425,8 @@ function saveData(filename, data, ok, fail){
         fields.dataUrl = photoData;
         fields.productId = photoProductId;
         fields.barcode = photoBarcode;
-        fields.productName = item.nome || '';
-        fields.productModel = item.modelo || '';
+        fields.productName = photoProductName;
+        fields.productModel = photoProductModel;
       }
     }
     postHiddenForm(fields, ok, fail);
