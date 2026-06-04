@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pamp's Eletrnicos">
+<title>Pamp's Eletrnicos</title>
+
+<style>
+:root{
+--bg:#0a0f1e;--bg2:#111827;--bg3:#1f2937;--bg4:#374151;
+--card:#111827;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+--text:#f9fafb;--text2:#9ca3af;--text3:#6b7280;
+--green:#10b981;--green2:#059669;--green-bg:rgba(16,185,129,.12);
+--amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+--red:#ef4444;--red-bg:rgba(239,68,68,.12);
+--blue:#3b82f6;--blue-bg:rgba(59,130,246,.12);
+--purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+--accent:#6366f1;--accent2:#4f46e5;
+--r:14px;--r2:10px;--r3:8px;
+--font:'Segoe UI',system-ui,-apple-system,sans-serif;
+--sh:0 4px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+img{display:block}
+button{font-family:var(--font);cursor:pointer}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+.content{padding:14px 14px 88px; width:100%; max-width:100%}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:60;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:800;letter-spacing:-.5px}
+.logo-chip{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.sync-row{display:flex;align-items:center;gap:8px}
+.sync-pill{display:flex;align-items:center;gap:5px;background:var(--bg3);border-radius:20px;padding:5px 10px;font-size:11px;color:var(--text2);border:1px solid var(--border)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.dot.spin{background:var(--amber);animation:pulse 1s infinite}
+.dot.err{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom);z-index:60}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px 7px;gap:3px;border:none;background:none;color:var(--text3);font-size:9px;font-weight:600;letter-spacing:.3px;position:relative;transition:color .15s}
+.ni.active{color:var(--accent)}
+.ni svg{width:21px;height:21px;stroke-width:1.8}
+.ni-badge{position:absolute;top:5px;right:calc(50% - 19px);background:var(--red);color:#fff;font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;min-width:15px;text-align:center}
+.sec{display:none}.sec.active{display:block}
+.shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.stitle{font-size:15px;font-weight:700}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.mcard{background:var(--card);border-radius:var(--r);padding:13px 14px;border:1px solid var(--border)}
+.mlabel{font-size:11px;color:var(--text2);margin-bottom:3px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.mval{font-size:22px;font-weight:800}
+.mval.g{color:var(--green)}.mval.a{color:var(--amber)}.mval.r{color:var(--red)}.mval.p{color:var(--purple)}
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:9px;width:100%}
+.card-body{padding:13px 14px}
+.pcard{display:flex;gap:12px;align-items:flex-start;padding:13px 14px}
+.pcard-img{width:64px;height:64px;border-radius:var(--r3);object-fit:cover;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--text3);overflow:hidden}
+.pcard-img img{width:100%;height:100%;object-fit:cover}
+.pcard-info{flex:1;min-width:0}
+.pcard-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.pcard-price{font-size:14px;font-weight:800;color:var(--green);margin-top:4px}
+.pcard-stock{display:flex;align-items:center;gap:6px;margin-top:5px}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex;animation:fadeIn .15s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.sheet{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:100%;max-height:95dvh;overflow-y:auto;animation:slideUp .22s ease;padding-bottom:env(safe-area-inset-bottom)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet-handle{width:38px;height:4px;background:var(--bg4);border-radius:2px;margin:12px auto 0}
+.sheet-header{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sheet-title{font-size:16px;font-weight:800}
+.sheet-body{padding:16px; width:100%}
+.sheet-footer{padding:12px 16px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+
+.fg{margin-bottom:13px; width:100%}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:15px;padding:11px 13px;display:block}
+.fi:focus{outline:none;border-color:var(--accent)}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
+.bg{background:var(--green-bg);color:var(--green)}
+.br{background:var(--red-bg);color:var(--red)}
+.ba{background:var(--amber-bg);color:var(--amber)}
+.bb{background:var(--blue-bg);color:var(--blue)}
+.bp{background:var(--purple-bg);color:var(--purple)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:active{transform:scale(.96);opacity:.82}
+.btn-primary{background:var(--accent);border-color:var(--accent2);color:#fff}
+.btn-success{background:var(--green2);border-color:var(--green);color:#fff}
+.btn-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.btn-full{width:100%;padding:14px;font-size:15px;border-radius:var(--r);display:flex}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:var(--r3)}
+.btn-xs{padding:4px 8px;font-size:11px;border-radius:6px}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--text2)}
+.btn-outline{background:transparent;border-color:var(--accent);color:var(--accent)}
+
+.foto-area{width:100%;aspect-ratio:4/3;background:var(--bg3);border-radius:var(--r);border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;position:relative}
+.foto-area img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.foto-area-label{font-size:13px;color:var(--text2);font-weight:600;position:relative;z-index:1}
+
+/* VISOR DE SCANNER EM TEMPO REAL AJUSTADO */
+.video-scan-container { width:100%; max-width:480px; margin:0 auto; background:var(--bg2); border-radius:var(--r); border:1px solid var(--border); overflow:hidden; position:relative; display:flex; flex-direction:column; align-items:center; }
+.video-wrapper { position:relative; width:100%; aspect-ratio:4/3; background:#000; display:flex; align-items:center; justify-content:center; }
+#scanner-video { width:100%; height:100%; object-fit:cover; }
+.laser-line { position:absolute; top:50%; left:5%; right:5%; height:2px; background:var(--red); box-shadow:0 0 8px var(--red); animation: scanMotion 2s infinite ease-in-out; z-index:10; }
+@keyframes scanMotion { 0%, 100% { top: 20%; } 50% { top: 80%; } }
+
+.manual-scan{background:var(--bg3);border-radius:var(--r2);padding:12px;margin-top:10px}
+.prod-detail-img{width:100%;max-height:220px;object-fit:cover;border-radius:var(--r);margin-bottom:14px;background:var(--bg3)}
+.prod-detail-placeholder{width:100%;height:140px;border-radius:var(--r);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:14px}
+.prod-detail-name{font-size:19px;font-weight:800;margin-bottom:4px}
+.prod-detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row:last-child{border:none}
+.detail-key{color:var(--text2);font-weight:600}
+.opcoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.opcao-card{background:var(--bg3);border:2px solid var(--border2);border-radius:var(--r);padding:20px 12px;text-align:center;cursor:pointer;transition:all .15s}
+.opcao-card:active{transform:scale(.96)}
+.opcao-card.sel-entrada{border-color:var(--green);background:var(--green-bg)}
+.opcao-card.sel-saida{border-color:var(--red);background:var(--red-bg)}
+.opcao-card.sel-venda{border-color:var(--accent);background:var(--purple-bg)}
+.opcao-card.sel-troca{border-color:var(--amber);background:var(--amber-bg)}
+.opcao-card.sel-vista{border-color:var(--green);background:var(--green-bg)}
+.opcao-card.sel-prazo{border-color:var(--blue);background:var(--blue-bg)}
+.opcao-icon{font-size:32px;margin-bottom:8px}
+.opcao-label{font-size:14px;font-weight:800}
+.opcao-sub{font-size:11px;color:var(--text2);margin-top:3px}
+.prow{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:var(--r3);padding:10px 12px;margin-bottom:6px}
+.pnum{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pinfo{flex:1;font-size:13px;font-weight:600}
+.pdate{font-size:12px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 9px}
+.alerta{background:var(--card);border-radius:var(--r2);border:1px solid var(--border);padding:12px 14px;display:flex;gap:11px;align-items:flex-start;margin-bottom:8px}
+.alerta.danger{border-left:3px solid var(--red);background:rgba(239,68,68,.05)}
+.alerta.warning{border-left:3px solid var(--amber);background:rgba(245,158,11,.05)}
+.alerta.ok{border-left:3px solid var(--green);background:var(--green-bg)}
+.alerta-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.alerta-body{flex:1;min-width:0}
+.alerta-title{font-size:13px;font-weight:700}
+.alerta-sub{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5}
+.pix-box{text-align:center;padding:4px 0 8px}
+.pix-amount{font-size:32px;font-weight:900;color:var(--green);margin-bottom:12px}
+.sumbox{background:var(--bg3);border-radius:var(--r2);padding:12px 14px;margin-bottom:13px;width:100%}
+.sumtotal{display:flex;justify-content:space-between;font-size:17px;font-weight:800;border-top:1px solid var(--border);padding-top:8px;margin-top:4px}
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:12px;color:var(--text2);font-size:13px}
+.spinner{width:28px;height:28px;border:2.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.drive-banner{background:var(--blue-bg);border:1px solid rgba(59,130,246,.25);border-radius:var(--r3);padding:9px 12px;font-size:11px;font-weight:600;color:#60a5fa;display:flex;align-items:center;gap:7px;margin-bottom:13px}
+.tabs{display:flex;gap:3px;background:var(--bg3);border-radius:var(--r3);padding:3px;margin-bottom:13px}
+.tab{flex:1;padding:7px 4px;border:none;background:transparent;color:var(--text3);font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.tab.active{background:var(--bg2);color:var(--text)}
+.bag-item{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);padding:8px 10px;border-radius:var(--r3);margin-bottom:6px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<div class="logo"><div class="logo-chip"></div>Pamp's Eletrnicos</div>
+<div class="sync-row">
+<div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div>
+</div>
+</div>
+
+<div class="content">
+<div class="sec active" id="sec-painel">
+<div id="painel-body"><div class="loader"><div class="spinner"></div>Carregando dados...</div></div>
+</div>
+
+<div class="sec" id="sec-scanner">
+<div class="shead"><span class="stitle">Leitor de Cdigo de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">x Parar</button></div>
+<div class="video-scan-container">
+  <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
+     Posicione o cdigo de barras na linha vermelha
+  </div>
+  <div class="video-wrapper">
+    <video id="scanner-video" autoplay playsinline muted></video>
+    <div class="laser-line"></div>
+  </div>
+  <div style="width:100%; padding:12px; display:flex; gap:8px; background:var(--bg2);">
+    <button class="btn btn-sm btn-outline" style="flex:1" onclick="window.alternarCameraScanner()"> Virar Cmera</button>
+  </div>
+</div>
+<div class="manual-scan">
+<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o cdigo manualmente</div>
+<div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Cdigo de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
+</div>
+<div id="scan-result" style="margin-top:10px"></div>
+</div>
+
+<div class="sec" id="sec-estoque">
+<div id="estoque-body"><div class="loader"><div class="spinner"></div>Carregando...</div></div>
+</div>
+
+<div class="sec" id="sec-vendas">
+<div id="vendas-body"><div class="loader"><div class="spinner"></div>Carregando...</div></div>
+</div>
+
+<div class="sec" id="sec-alertas">
+<div id="alertas-body"><div class="loader"><div class="spinner"></div>Carregando...</div></div>
+</div>
+</div>
+
+<nav class="bnav">
+<button class="ni active" id="ni-painel" onclick="showSec('painel',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Painel</button>
+<button class="ni" id="ni-scanner" onclick="showSec('scanner',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>Scanner</button>
+<button class="ni" id="ni-estoque" onclick="showSec('estoque',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Estoque</button>
+<button class="ni" id="ni-vendas" onclick="showSec('vendas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Vendas</button>
+<button class="ni" id="ni-alertas" onclick="showSec('alertas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Alertas<span class="ni-badge" id="alert-badge" style="display:none">0</span></button>
+</nav>
+
+<div class="overlay" id="modal-venda-direta-seletor"></div>
+
+<div class="overlay" id="modal-prod-found">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prod-found')">x</button></div>
+<div class="sheet-body" id="pf-body"></div>
+<div class="sheet-footer" id="pf-footer"></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-entrada">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title"> Entrada de Estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-entrada')">x</button></div>
+<div class="sheet-body" id="entrada-body"></div>
+<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarEntrada()">OK Confirmar entrada</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-entrada')">Cancelar</button></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-saida-tipo">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title"> Sacola de Sada (Carrinho)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">x</button></div>
+<div class="sheet-body">
+  <div id="sacola-itens-lista" style="margin-bottom:15px"></div>
+  <button class="btn btn-outline btn-full" style="margin-bottom:15px; border:1px dashed var(--accent)" onclick="window.adicionarMaisItemNaSacola()"> Adicionar Outro Produto</button>
+  <div class="opcoes-grid">
+    <div class="opcao-card" id="op-venda" onclick="selSaida('venda')"><div class="opcao-icon"></div><div class="opcao-label">Venda</div><div class="opcao-sub">Faturar sacola</div></div>
+    <div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-icon"></div><div class="opcao-label">Troca</div><div class="opcao-sub">Registrar devoluo</div></div>
+  </div>
+</div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar para Fechamento ></button><button class="btn btn-ghost btn-full" onclick="closeM('modal-saida-tipo')">Cancelar</button></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-forma-pag">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title">Forma de Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-forma-pag')">x</button></div>
+<div class="sheet-body"><div class="opcoes-grid"><div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-icon"></div><div class="opcao-label"> Vista</div><div class="opcao-sub">QR Code Pix</div></div><div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-icon"></div><div class="opcao-label"> Prazo</div><div class="opcao-sub">At 3x no Fiado</div></div></div></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextPag()">Continuar ></button><button class="btn btn-ghost btn-full" onclick="closeM('modal-forma-pag')">Cancelar</button></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-vista"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento  Vista - Pix</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">x</button></div><div class="sheet-body" id="vista-body"></div><div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">OK Finalizar Venda Pix</button></div></div></div>
+<div class="overlay" id="modal-prazo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento  Prazo (Fiado)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">x</button></div><div class="sheet-body" id="prazo-body"></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">OK Registrar no Fiado</button></div></div></div>
+<div class="overlay" id="modal-troca"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">x</button></div><div class="sheet-body" id="troca-body"></div><div class="sheet-footer"><button class="btn btn-amber btn-full" onclick="confirmarTroca()">OK Registrar Devoluo</button></div></div></div>
+
+<div class="overlay" id="modal-produto">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title" id="mp-title">Novo Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-produto')">x</button></div>
+<div class="sheet-body">
+<div class="fg"><label class="fl">Foto do produto</label><div class="foto-area" id="foto-area" onclick="document.getElementById('foto-file').click()"><img id="foto-preview" src="" alt="" style="display:none"><div id="foto-placeholder"><span style="font-size:40px; text-align:center; display:block"></span><span class="foto-area-label">Toque para adicionar imagem</span></div></div><input type="file" id="foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFoto(this)"></div>
+<div class="fg"><label class="fl">Nome do produto</label><input class="fi" type="text" id="mp-nome"></div>
+<div class="frow"><div class="fg"><label class="fl">Marca</label><input class="fi" type="text" id="mp-marca"></div><div class="fg"><label class="fl">Modelo</label><input class="fi" type="text" id="mp-modelo"></div></div>
+<div class="fg"><label class="fl">Descrio</label><textarea class="fi" id="mp-desc" rows="2"></textarea></div>
+<div class="fg"><label class="fl">Categoria</label><select class="fi" id="mp-cat"><option value="CABOS">CABOS</option><option value="HEADPHONES">HEADPHONES</option><option value="CARREGADORES">CARREGADORES</option><option value="ADAPTADORES">ADAPTADORES</option><option value="ACESSRIOS">ACESSRIOS</option></select></div>
+<div class="frow"><div class="fg"><label class="fl">Preo de Custo (R$)</label><input class="fi" type="number" id="mp-custo" step="0.01"></div><div class="fg"><label class="fl">Preo de Venda (R$)</label><input class="fi" type="number" id="mp-preco" step="0.01"></div></div>
+<div class="frow"><div class="fg"><label class="fl">Estoque Inicial</label><input class="fi" type="number" id="mp-estoque" value="1"></div><div class="fg"><label class="fl">Estoque Mnimo</label><input class="fi" type="number" id="mp-min" value="5"></div></div>
+<div class="fg"><label class="fl">Cdigo de barras (EAN)</label><div style="display:flex;gap:8px"><input class="fi" type="text" id="mp-barcode" placeholder="Cdigo numrico" style="flex:1"><button type="button" class="btn btn-primary" onclick="scanForField('mp-barcode')"> Escanear</button></div></div>
+</div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-sistema" onclick="window.salvarProduto()">OK Salvar Produto no Sistema</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-produto')">Cancelar</button></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-venda-detail">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title"> Ficha do Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">x</button></div>
+<div class="sheet-body" id="venda-detail-body"></div>
+<div class="sheet-footer" id="venda-detail-footer"></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-editar-venda">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title"> Editar Venda a Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-editar-venda')">x</button></div>
+<div class="sheet-body" id="editar-venda-body"></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-venda-prazo" onclick="window.salvarEdicaoVenda()"> Salvar Alteraes</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-editar-venda')">Cancelar</button></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-add-item-venda">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title"> Adicionar Item</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-add-item-venda')">x</button></div>
+<div class="sheet-body">
+  <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" id="add-item-select-prod"></select></div>
+  <div class="fg"><label class="fl">Quantidade</label><input class="fi" type="number" id="add-item-qty" value="1"></div>
+</div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">OK Inserir Item</button></div>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+window.onerror = function(message, source, lineno) {
+  var text = 'Erro no app: ' + message + ' (linha ' + lineno + ')';
+  var status = document.getElementById('stxt');
+  var painel = document.getElementById('painel-body');
+  if (status) status.textContent = 'Erro ao iniciar';
+  if (painel) painel.innerHTML = '<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao iniciar</div><div class="alerta-sub">' + escapeHtml(text) + '</div></div></div>';
+  console.error(text);
+};
+
+var produtos = [];
+var vendas = [];
+var currentProdId = null;
+var saidaTipo = null;
+var pagTipo = null;
+var scanFieldTarget = null;
+var lastBarcode = null;
+var fotoBase64 = null;
+var editingProdId = null;
+var filtroEstoque = 'todos';
+var filtroVendas = 'todas';
+var idVendaEmEdicao = null;
+var opcaoProd = null;
+var sacolaAtual = [];
+var zxingCodeReader = null;
+var scannerDevices = [];
+var currentDeviceIndex = 0;
+var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
+var API_BASE = 'https://script.google.com/macros/s/AKfycbz54jpQM9uFsM6aun_TD-4UfpVeNd-yC9FEx2_ZxVm5psXYbAWk6RCsPOCPB_UQps3f/exec';
+
+function ge(id){ return document.getElementById(id); }
+function gv(id){ var el = ge(id); return el ? el.value : ''; }
+function escapeHtml(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function money(v){ return 'R$ ' + Number(v || 0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtD(d){ if(!d) return '-'; var p = String(d).split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : d; }
+function diffDays(ds){ var n = new Date(); n.setHours(0,0,0,0); return Math.round((new Date(ds + 'T00:00:00') - n) / 86400000); }
+function nextId(arr){ var max = 0; for(var i=0;i<arr.length;i++){ if((arr[i].id || 0) > max) max = arr[i].id || 0; } return max + 1; }
+function openM(id){ var el = ge(id); if(el) el.classList.add('open'); }
+function closeM(id){ var el = ge(id); if(el) el.classList.remove('open'); }
+function setSS(state, txt){ var t=ge('stxt'), d=ge('sdot'); if(t) t.textContent=txt; if(d) d.className='dot' + (state==='spin'?' spin':state==='err'?' err':''); }
+function parseJson(raw, fallback){ try { return raw ? JSON.parse(raw) : fallback; } catch(e){ console.error('JSON invalido', e); return fallback; } }
+function hasGoogle(){ return window.google && google.script && google.script.run; }
+function isGithubPages(){ return !hasGoogle(); }
+
+function getData(filename, ok, fail){
+  if(isGithubPages()){
+    var cbName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+    var script = document.createElement('script');
+    var timer = setTimeout(function(){
+      cleanup();
+      fail(new Error('Tempo esgotado ao ler ' + filename));
+    }, 20000);
+
+    function cleanup(){
+      clearTimeout(timer);
+      try { delete window[cbName]; } catch(e) { window[cbName] = null; }
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cbName] = function(data){
+      cleanup();
+      ok(JSON.stringify(data || []));
+    };
+
+    script.onerror = function(){
+      cleanup();
+      fail(new Error('Nao foi possivel acessar a API do Apps Script.'));
+    };
+    script.src = API_BASE + '?api=getData&filename=' + encodeURIComponent(filename) + '&callback=' + encodeURIComponent(cbName);
+    document.head.appendChild(script);
+    return;
+  }
+
+  var done = false;
+  var timer = setTimeout(function(){ if(!done){ done = true; fail(new Error('Tempo esgotado ao ler ' + filename)); } }, 20000);
+  google.script.run.withSuccessHandler(function(value){ if(done) return; done = true; clearTimeout(timer); ok(value); })
+    .withFailureHandler(function(err){ if(done) return; done = true; clearTimeout(timer); fail(err); })
+    .getData(filename);
+}
+
+function saveData(filename, data, ok, fail){
+  if(isGithubPages()){
+    var frameName = 'saveFrame_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+    var iframe = document.createElement('iframe');
+    var form = document.createElement('form');
+    var f1 = document.createElement('input');
+    var f2 = document.createElement('textarea');
+    var finished = false;
+
+    iframe.name = frameName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    form.method = 'POST';
+    form.action = API_BASE;
+    form.target = frameName;
+    form.style.display = 'none';
+
+    f1.name = 'filename';
+    f1.value = filename;
+    f2.name = 'data';
+    f2.value = JSON.stringify(data);
+    form.appendChild(f1);
+    form.appendChild(f2);
+    document.body.appendChild(form);
+
+    iframe.onload = function(){
+      if(finished) return;
+      finished = true;
+      setTimeout(function(){
+        if(form.parentNode) form.parentNode.removeChild(form);
+        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
+      }, 100);
+      ok(true);
+    };
+
+    setTimeout(function(){
+      if(!finished){
+        finished = true;
+        if(form.parentNode) form.parentNode.removeChild(form);
+        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        fail(new Error('Tempo esgotado ao salvar ' + filename));
+      }
+    }, 20000);
+
+    form.submit();
+    return;
+  }
+
+  google.script.run.withSuccessHandler(function(value){ ok(value); })
+    .withFailureHandler(function(err){ fail(err); })
+    .saveData(filename, data);
+}
+
+function syncDrive(){
+  setSS('spin','Lojinha 2.2...');
+  ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Lendo produtos...</div>';
+  getData('produtos.json', function(prodRaw){
+    setSS('spin','Lendo vendas...');
+    getData('vendas.json', function(vendRaw){
+      var p = parseJson(prodRaw, []);
+      var v = parseJson(vendRaw, []);
+      produtos = Array.isArray(p) ? p : (p.produtos || []);
+      vendas = Array.isArray(v) ? v : (v.vendas || []);
+      renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
+      renderSection('painel');
+      updateAlertBadge();
+      setSS('ok','Conectado');
+    }, showLoadError);
+  }, showLoadError);
+}
+
+function showLoadError(err){
+  var msg = err && err.message ? err.message : String(err || 'Erro desconhecido');
+  setSS('err','Erro ao carregar');
+  ge('painel-body').innerHTML = '<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao carregar dados</div><div class="alerta-sub">' + escapeHtml(msg) + '</div></div></div>';
+}
+
+function refreshLocalViews(){
+  renderPainel(); renderedSections.painel = true;
+  if(renderedSections.estoque) renderEstoque();
+  if(renderedSections.vendas) renderVendas();
+  if(renderedSections.alertas) renderAlertas();
+  updateAlertBadge();
+}
+
+function renderSection(s){
+  if(s === 'painel') renderPainel();
+  if(s === 'estoque') renderEstoque();
+  if(s === 'vendas') renderVendas();
+  if(s === 'alertas') renderAlertas();
+  renderedSections[s] = true;
+}
+
+function showSec(s, btn){
+  var secs = document.querySelectorAll('.sec');
+  for(var i=0;i<secs.length;i++) secs[i].classList.remove('active');
+  var nav = document.querySelectorAll('.ni');
+  for(var j=0;j<nav.length;j++) nav[j].classList.remove('active');
+  var sec = ge('sec-' + s); if(sec) sec.classList.add('active');
+  if(btn) btn.classList.add('active');
+  renderSection(s);
+  if(s === 'scanner') ligarCameraScannerRealtime(); else desligarCameraScanner();
+}
+
+function alertasPrazo(){
+  var c = 0;
+  for(var i=0;i<vendas.length;i++){
+    var v = vendas[i];
+    if(v.tipo !== 'prazo' || !v.parcelas) continue;
+    for(var j=0;j<v.parcelas.length;j++) if(!v.parcelas[j].pago && diffDays(v.parcelas[j].venc) <= 1) c++;
+  }
+  return c;
+}
+function contarAlertasEstoqueBaixo(){ var c=0; for(var i=0;i<produtos.length;i++) if(Number(produtos[i].estoque||0) <= Number(produtos[i].min||0)) c++; return c; }
+function updateAlertBadge(){ var c=alertasPrazo(); var el=ge('alert-badge'); if(!el) return; if(c>0){ el.style.display='flex'; el.textContent=c; } else el.style.display='none'; }
+
+function renderPainel(){
+  var receita = 0, semEstq = 0;
+  for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === 'vista' || vendas[i].tipo === 'prazo') receita += Number(vendas[i].valor || 0);
+  for(var j=0;j<produtos.length;j++) if(Number(produtos[j].estoque || 0) === 0) semEstq++;
+  var recentes = vendas.slice().reverse().slice(0,6);
+  var html = '<div class="drive-banner">Google Drive - Banco de Dados Ativo</div>';
+  html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">' + money(receita) + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Vendas</div><div class="mval">' + vendas.length + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + contarAlertasEstoqueBaixo() + '</div></div></div>';
+  html += '<div class="shead"><span class="stitle">Ultimas Transacoes</span><button class="btn btn-sm" onclick="syncDrive()">Sync</button></div>';
+  if(!recentes.length) html += '<p style="padding:15px; color:var(--text3)">Nenhuma venda recente.</p>';
+  for(var k=0;k<recentes.length;k++){
+    var v = recentes[k];
+    html += '<div class="card"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div><div><b>' + money(v.valor) + '</b></div></div></div></div>';
+  }
+  ge('painel-body').innerHTML = html;
+}
+
+function renderEstoque(){
+  var categorias = {};
+  for(var i=0;i<produtos.length;i++){ var p=produtos[i]; var cat=p.cat||'OUTROS'; if(!categorias[cat]) categorias[cat]=[]; categorias[cat].push(p); }
+  var html = '<div class="shead"><span class="stitle">Inventario por Categoria</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>';
+  html += '<div class="tabs"><button class="tab ' + (filtroEstoque==='todos'?'active':'') + '" onclick="filtroEstoque=\'todos\';renderEstoque()">Todos</button><button class="tab ' + (filtroEstoque==='baixo'?'active':'') + '" onclick="filtroEstoque=\'baixo\';renderEstoque()">Alertas</button></div>';
+  var keys = Object.keys(categorias).sort();
+  for(var c=0;c<keys.length;c++){
+    var catName = keys[c];
+    var lista = [];
+    for(var a=0;a<categorias[catName].length;a++){ var prod = categorias[catName][a]; if(filtroEstoque==='baixo' && !(Number(prod.estoque||0) <= Number(prod.min||0) && Number(prod.estoque||0) > 0)) continue; lista.push(prod); }
+    if(!lista.length) continue;
+    html += '<div class="categoria-bloco" style="margin-bottom:8px; border:1px solid var(--border); border-radius:var(--r3); overflow:hidden;"><div onclick="toggleCategoriaVisivel(\'cat-' + c + '\')" style="background:var(--bg3); padding:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:14px;"><span>' + escapeHtml(catName.toUpperCase()) + ' (' + lista.length + ')</span><span id="seta-cat-' + c + '">v</span></div><div id="cat-' + c + '" style="display:none; padding:6px; background:rgba(0,0,0,0.2);">';
+    for(var n=0;n<lista.length;n++) html += productCard(lista[n]);
+    html += '</div></div>';
+  }
+  ge('estoque-body').innerHTML = html || '<p style="padding:15px; color:var(--text3)">Nenhum item encontrado.</p>';
+}
+
+function productCard(p){
+  var img = p.foto ? '<img src="' + escapeHtml(p.foto) + '">' : 'BOX';
+  var stockClass = Number(p.estoque||0) <= Number(p.min||0) ? 'ba' : 'bg';
+  return '<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(' + p.id + ')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">' + img + '</div><div class="pcard-info"><div class="pcard-name"><b>' + escapeHtml(p.nome) + '</b></div><div class="pcard-sub">' + escapeHtml(p.marca || 'Pamps') + ' - <b style="color:var(--green)">' + money(p.preco) + '</b></div><div style="margin-top:2px"><span class="badge ' + stockClass + '">Qtd: ' + escapeHtml(p.estoque) + ' un.</span></div></div></div><div style="display:flex; gap:6px; padding:0 10px 10px;"><button class="btn btn-sm" style="flex:1; padding:6px;" onclick="event.stopPropagation();editarProduto(' + p.id + ')">Editar</button><button class="btn btn-sm btn-primary" style="flex:1; padding:6px;" onclick="event.stopPropagation();iniciarFluxoProd(' + p.id + ')">Lancar</button></div></div>';
+}
+
+function toggleCategoriaVisivel(id){ var el=ge(id); var seta=ge('seta-' + id); if(!el) return; if(el.style.display === 'none'){ el.style.display='block'; if(seta) seta.innerHTML='^'; } else { el.style.display='none'; if(seta) seta.innerHTML='v'; } }
+
+function renderVendas(){
+  var html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:10px;"><span class="stitle" style="font-size:16px;">Historico de Movimentacoes</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Iniciar Venda</button></div>';
+  if(!vendas.length) html += '<p style="font-size:13px; color:var(--text3); padding:15px;">Nenhuma venda registrada.</p>';
+  var list = vendas.slice().reverse();
+  for(var i=0;i<list.length;i++){
+    var v = list[i];
+    html += '<div class="card" ' + (v.tipo==='prazo' ? 'onclick="abrirEditarVenda(' + v.id + ')" style="cursor:pointer; border-left:4px solid var(--purple);"' : '') + '><div class="card-body" style="padding:10px;"><div style="display:flex; justify-content:space-between; gap:8px"><div style="min-width:0"><b style="font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div><div style="text-align:right"><b>' + money(v.valor) + '</b><br>' + statusBadge(v) + '</div></div></div></div>';
+  }
+  ge('vendas-body').innerHTML = html;
+}
+function statusBadge(v){ if(v.tipo==='vista') return '<span class="badge bg">A Vista</span>'; if(v.tipo==='troca') return '<span class="badge ba">Troca</span>'; return '<span class="badge bp">Prazo</span>'; }
+
+function renderAlertas(){
+  var todos = [];
+  for(var i=0;i<vendas.length;i++){ var v=vendas[i]; if(v.tipo !== 'prazo' || !v.parcelas) continue; for(var j=0;j<v.parcelas.length;j++){ var p=v.parcelas[j]; if(!p.pago) todos.push({v:v,p:p,d:diffDays(p.venc)}); } }
+  todos.sort(function(a,b){ return a.d-b.d; });
+  var html = '<div class="shead"><span class="stitle">Cobrancas e Vencimentos</span></div>';
+  for(var k=0;k<todos.length;k++){ var a=todos[k]; if(a.d>1) continue; html += '<div class="alerta danger"><div class="alerta-body"><b>' + escapeHtml(a.v.cliente || '') + '</b><br><small>' + escapeHtml(String(a.v.produto||'').split('\n')[0]) + ' - Vencida ou no prazo</small></div></div>'; }
+  html += '<p style="color:var(--text2); font-size:13px; padding:10px;">' + todos.length + ' parcelas sob monitoramento.</p>';
+  ge('alertas-body').innerHTML = html;
+}
+
+function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; fotoBase64=p.foto||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
+function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
+function abrirNovoProdutoComCodigo(code){ abrirNovoProduto(); ge('mp-barcode').value = code || lastBarcode || ''; }
+function clearFoto(){ fotoBase64=null; if(ge('foto-preview')) ge('foto-preview').style.display='none'; if(ge('foto-placeholder')) ge('foto-placeholder').style.display='flex'; if(ge('foto-file')) ge('foto-file').value=''; }
+function previewFoto(input){ var file=input.files[0]; if(!file) return; var reader=new FileReader(); reader.onload=function(e){ fotoBase64=e.target.result; ge('foto-preview').src=fotoBase64; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; }; reader.readAsDataURL(file); }
+
+function salvarProduto(){
+  var nome=gv('mp-nome').trim(); var preco=parseFloat(gv('mp-preco')); var estoque=parseInt(gv('mp-estoque'),10); var barcode=gv('mp-barcode').trim();
+  if(!nome || isNaN(preco) || isNaN(estoque)){ alert('Preencha nome, preco e estoque.'); return; }
+  for(var i=0;i<produtos.length;i++){ if(produtos[i].barcode && produtos[i].barcode === barcode && produtos[i].id !== editingProdId){ alert('Ja existe produto com este codigo.'); return; } }
+  var custo=parseFloat(gv('mp-custo'))||0;
+  if(editingProdId){ var p=findProduto(editingProdId); if(p){ p.nome=nome; p.marca=gv('mp-marca'); p.modelo=gv('mp-modelo'); p.desc=gv('mp-desc'); p.cat=gv('mp-cat'); p.custo=custo; p.preco=preco; p.estoque=estoque; p.min=parseInt(gv('mp-min'),10)||5; p.barcode=barcode; p.foto=fotoBase64 || p.foto || ''; } }
+  else { produtos.push({id:nextId(produtos),nome:nome,marca:gv('mp-marca'),modelo:gv('mp-modelo'),desc:gv('mp-desc'),cat:gv('mp-cat'),custo:custo,preco:preco,estoque:estoque,min:parseInt(gv('mp-min'),10)||5,barcode:barcode,foto:fotoBase64||'',histPreco:[{data:today(),custo:custo,preco:preco,qtd:estoque}]}); }
+  saveData('produtos.json', produtos, function(){ closeM('modal-produto'); refreshLocalViews(); setSS('ok','Produto salvo'); }, function(e){ alert('Erro ao salvar: ' + (e.message || e)); });
+}
+
+function findProduto(id){ for(var i=0;i<produtos.length;i++) if(Number(produtos[i].id) === Number(id)) return produtos[i]; return null; }
+function iniciarFluxoProd(id){ currentProdId=id; var p=findProduto(id); if(p) mostrarProdutoFound(p); }
+function mostrarProdutoFound(prod){ currentProdId=prod.id; ge('pf-title').textContent=prod.nome; var html=''; if(prod.foto) html+='<img src="'+escapeHtml(prod.foto)+'" class="prod-detail-img">'; else html+='<div class="prod-detail-placeholder">BOX</div>'; html+='<div class="prod-detail-name">'+escapeHtml(prod.nome)+'</div><div class="prod-detail-meta"><span class="badge bg">'+escapeHtml(prod.cat||'')+'</span>'+(prod.barcode?'<span class="badge bb">'+escapeHtml(prod.barcode)+'</span>':'')+'</div><div class="detail-row"><span class="detail-key">Preco</span><span style="font-weight:800;color:var(--green)">'+money(prod.preco)+'</span></div><div class="detail-row"><span class="detail-key">Estoque</span><span class="badge bg">'+escapeHtml(prod.estoque)+' un.</span></div><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saida</div></div></div>'; ge('pf-body').innerHTML=html; ge('pf-footer').innerHTML='<button class="btn btn-primary btn-full" onclick="continuarFluxoProd()">Continuar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-prod-found\')">Fechar</button>'; openM('modal-prod-found'); }
+function selOpcaoProd(o){ opcaoProd=o; if(ge('op-entrada')) ge('op-entrada').classList.toggle('sel-entrada', o==='entrada'); if(ge('op-saida')) ge('op-saida').classList.toggle('sel-saida', o==='saida'); }
+function continuarFluxoProd(){ closeM('modal-prod-found'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd==='entrada') abrirEntrada(); else { sacolaAtual=[{prodId:p.id,nome:p.nome,qty:1,preco:p.preco}]; abrirSaidaTipo(); } opcaoProd=null; }
+function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div class="sumbox"><b>'+escapeHtml(p.nome)+'</b><br><small>Estoque: '+escapeHtml(p.estoque)+' un.</small></div><div class="frow"><div class="fg"><label class="fl">Qtd Entrada</label><input class="fi" type="number" id="ent-qty" value="1"></div><div class="fg"><label class="fl">Custo (R$)</label><input class="fi" type="number" id="ent-custo" value="'+escapeHtml(p.custo||0)+'"></div></div><div class="fg"><label class="fl">Preco Venda (R$)</label><input class="fi" type="number" id="ent-preco" value="'+escapeHtml(p.preco||0)+'"></div>'; openM('modal-entrada'); }
+function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; p.estoque=Number(p.estoque||0)+(parseInt(gv('ent-qty'),10)||0); p.custo=parseFloat(gv('ent-custo'))||0; p.preco=parseFloat(gv('ent-preco'))||0; closeM('modal-entrada'); saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok','Estoque salvo'); }, function(e){ alert(e.message||e); }); }
+
+function abrirSaidaTipo(){ saidaTipo=null; renderSacolaItens(); openM('modal-saida-tipo'); }
+function renderSacolaItens(){ var total=0, html='<p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:8px;">Produtos na Sacola:</p>'; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+='<div class="bag-item"><div style="flex:1;min-width:0"><b>'+escapeHtml(item.nome)+'</b><br><small>'+money(item.preco)+' cada</small></div><div><button class="btn btn-xs" onclick="alterarQtdItemSacola('+i+',-1)">-</button> <b>'+item.qty+'</b> <button class="btn btn-xs" onclick="alterarQtdItemSacola('+i+',1)">+</button></div><b>'+money(sub)+'</b></div>'; } html+='<div class="sumbox" style="display:flex;justify-content:space-between"><span>Total</span><b>'+money(total)+'</b></div>'; ge('sacola-itens-lista').innerHTML=html; }
+function alterarQtdItemSacola(i,delta){ if(!sacolaAtual[i]) return; sacolaAtual[i].qty+=delta; if(sacolaAtual[i].qty<=0) removerItemDaSacola(i); else renderSacolaItens(); }
+function removerItemDaSacola(i){ sacolaAtual.splice(i,1); if(!sacolaAtual.length) closeM('modal-saida-tipo'); else renderSacolaItens(); }
+function selSaida(t){ saidaTipo=t; if(ge('op-venda')) ge('op-venda').classList.toggle('sel-venda',t==='venda'); if(ge('op-troca')) ge('op-troca').classList.toggle('sel-troca',t==='troca'); }
+function nextSaida(){ closeM('modal-saida-tipo'); if(saidaTipo==='troca') abrirTroca(); else abrirFormaPag(); }
+function abrirFormaPag(){ pagTipo=null; openM('modal-forma-pag'); }
+function selPag(t){ pagTipo=t; if(ge('op-vista')) ge('op-vista').classList.toggle('sel-vista',t==='vista'); if(ge('op-prazo')) ge('op-prazo').classList.toggle('sel-prazo',t==='prazo'); }
+function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(); else abrirVista(); }
+function totalSacola(){ var total=0; for(var i=0;i<sacolaAtual.length;i++) total += sacolaAtual[i].preco * sacolaAtual[i].qty; return total; }
+function descricaoSacola(){ var a=[]; for(var i=0;i<sacolaAtual.length;i++) a.push(sacolaAtual[i].qty + 'x ' + sacolaAtual[i].nome); return a.join('\n'); }
+function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque = Number(p.estoque||0) - sacolaAtual[i].qty; } }
+function abrirVista(){ ge('vista-body').innerHTML='<div class="pix-box"><div class="pix-amount">'+money(totalSacola())+'</div><p style="color:var(--text2)">Finalize o pagamento e confirme a venda.</p></div>'; openM('modal-vista'); }
+function confirmarVista(){ var total=totalSacola(); baixarEstoque(); vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),tipo:'vista',valor:total,qtd:1,data:today(),parcelas:[]}); closeM('modal-vista'); saveBoth('Venda salva'); }
+function abrirPrazo(){ ge('prazo-body').innerHTML='<div class="fg"><label class="fl">Nome Cliente</label><input class="fi" type="text" id="prazo-nome"></div><div class="frow"><div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div><div class="fg"><label class="fl">Setor</label><input class="fi" type="text" id="prazo-setor"></div></div><div class="fg"><label class="fl">Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option></select></div><div id="prazo-parcelas-ui"></div>'; openM('modal-prazo'); atualizarParcelasMultiUI(); }
+function atualizarParcelasMultiUI(){ var n=parseInt(gv('prazo-parc'),10)||1, total=totalSacola(), vp=total/n, html='<div class="sumbox">Total: '+money(total)+' ('+n+'x de '+money(vp)+')</div>'; for(var i=1;i<=n;i++){ var d=new Date(); d.setDate(d.getDate()+30*i); html+='<div class="prow"><div class="pnum">'+i+'</div><div class="pinfo">'+money(vp)+'</div><input type="date" class="pdate" id="pdata-'+i+'" value="'+d.toISOString().split('T')[0]+'"></div>'; } ge('prazo-parcelas-ui').innerHTML=html; }
+function confirmarPrazo(){ var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1, vp=total/n, parcelas=[]; for(var i=1;i<=n;i++) parcelas.push({num:i,valor:vp,venc:gv('pdata-'+i),pago:false}); baixarEstoque(); vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),cliente:gv('prazo-nome'),tipo:'prazo',valor:total,qtd:1,data:today(),parcelas:parcelas,telefone:gv('prazo-tel'),setor:gv('prazo-setor')}); closeM('modal-prazo'); saveBoth('Venda salva'); }
+function abrirTroca(){ ge('troca-body').innerHTML='<div class="fg"><label class="fl">Cliente</label><input class="fi" type="text" id="troca-nome"></div><div class="fg"><label class="fl">Motivo</label><textarea class="fi" id="troca-motivo"></textarea></div><div class="sumbox">Produtos devolvidos:<br><b>'+escapeHtml(descricaoSacola())+'</b></div>'; openM('modal-troca'); }
+function confirmarTroca(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque = Number(p.estoque||0) + sacolaAtual[i].qty; } vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),cliente:gv('troca-nome'),tipo:'troca',valor:0,qtd:1,data:today(),parcelas:[],motivo:gv('troca-motivo')}); closeM('modal-troca'); saveBoth('Troca salva'); }
+function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e.message||e); }); }, function(e){ alert(e.message||e); }); }
+
+function abrirSeletorVendaDireta(){ var modal=ge('modal-venda-direta-seletor'); var html='<div class="sheet" style="max-height:85dvh"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">x</button></div><div class="sheet-body">'; for(var i=0;i<produtos.length;i++){ var p=produtos[i]; html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div style="flex:1"><b>'+escapeHtml(p.nome)+'</b><br><small>'+escapeHtml(p.marca||'')+' - Est: '+escapeHtml(p.estoque)+'</small></div><b>'+money(p.preco)+'</b></div>'; } html+='</div></div>'; modal.innerHTML=html; openM('modal-venda-direta-seletor'); }
+function adicionarMaisItemNaSacola(){ var select=ge('add-item-select-prod'); select.innerHTML=''; for(var i=0;i<produtos.length;i++){ var opt=document.createElement('option'); opt.value=produtos[i].id; opt.textContent=produtos[i].nome + ' (' + money(produtos[i].preco) + ')'; select.appendChild(opt); } ge('add-item-qty').value='1'; ge('btn-confirmar-add-item-dinamico').onclick=function(){ var id=parseInt(select.value,10), qty=parseInt(gv('add-item-qty'),10)||1, p=findProduto(id); if(!p) return; var found=null; for(var j=0;j<sacolaAtual.length;j++) if(sacolaAtual[j].prodId===id) found=sacolaAtual[j]; if(found) found.qty+=qty; else sacolaAtual.push({prodId:p.id,nome:p.nome,qty:qty,preco:p.preco}); closeM('modal-add-item-venda'); renderSacolaItens(); }; openM('modal-add-item-venda'); }
+function abrirVendaDetail(id){ var p=findProduto(id); if(!p) return; ge('venda-detail-body').innerHTML='<h2>'+escapeHtml(p.nome)+'</h2><div style="font-size:26px;font-weight:900;color:var(--green)">'+money(p.preco)+'</div><p style="color:var(--text2)">'+escapeHtml(p.desc||'')+'</p>'; ge('venda-detail-footer').innerHTML='<button class="btn btn-primary btn-full" onclick="compartilharProduto('+p.id+')">Compartilhar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>'; openM('modal-venda-detail'); }
+function compartilharProduto(id){ var p=findProduto(id); if(!p) return; var msg=p.nome+'\nPreco: '+money(p.preco)+'\n'+(p.desc||''); if(navigator.share) navigator.share({title:p.nome,text:msg}).catch(function(){}); else window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }
+function abrirEditarVenda(id){ alert('Edicao detalhada de venda sera reativada depois que a carga estiver estavel.'); }
+function salvarEdicaoVenda(){}
+function excluirVendaDinamica(id){}
+function excluirProdutoDoSistema(id){}
+
+function loadScriptOnce(src, cb, err){ var old=document.querySelector('script[src="'+src+'"]'); if(old){ cb(); return; } var s=document.createElement('script'); s.src=src; s.onload=cb; s.onerror=err || function(){}; document.head.appendChild(s); }
+function ligarCameraScannerRealtime(){ ge('scan-result').innerHTML='<div class="alerta warning">Abrindo camera...</div>'; loadScriptOnce('https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js', function(){ if(!window.ZXing || !navigator.mediaDevices){ ge('scan-result').innerHTML='<div class="alerta danger">Scanner indisponivel neste navegador.</div>'; return; } desligarCameraScanner(); zxingCodeReader=new ZXing.BrowserMultiFormatReader(); navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}}).then(function(stream){ stream.getTracks().forEach(function(t){t.stop();}); return zxingCodeReader.listVideoInputDevices(); }).then(function(devices){ scannerDevices=devices||[]; if(!scannerDevices.length){ ge('scan-result').innerHTML='<div class="alerta danger">Nenhuma camera detectada.</div>'; return; } currentDeviceIndex=Math.min(currentDeviceIndex, scannerDevices.length-1); startScannerDecoding(); }).catch(function(e){ console.error(e); ge('scan-result').innerHTML='<div class="alerta danger">Permita acesso a camera ou use o modo manual.</div>'; }); }, function(){ ge('scan-result').innerHTML='<div class="alerta danger">Nao foi possivel carregar o leitor.</div>'; }); }
+function startScannerDecoding(){ if(!zxingCodeReader || !scannerDevices.length) return; zxingCodeReader.decodeFromVideoDevice(scannerDevices[currentDeviceIndex].deviceId,'scanner-video',function(result){ if(result){ var code=result.getText().trim(); desligarCameraScanner(); handleBarcode(code); } }); }
+function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); zxingCodeReader=null; } var video=ge('scanner-video'); if(video && video.srcObject){ video.srcObject.getTracks().forEach(function(t){t.stop();}); video.srcObject=null; } }
+function alternarCameraScanner(){ if(!scannerDevices.length) return; currentDeviceIndex=(currentDeviceIndex+1)%scannerDevices.length; desligarCameraScanner(); ligarCameraScannerRealtime(); }
+function clearScan(){ desligarCameraScanner(); ge('scan-result').innerHTML=''; scanFieldTarget=null; lastBarcode=null; showSec('painel',ge('ni-painel')); }
+function scanForField(fid){ scanFieldTarget=fid; closeM('modal-produto'); showSec('scanner',ge('ni-scanner')); }
+function handleBarcode(code){ if(!code) return; lastBarcode=code; if(scanFieldTarget){ var el=ge(scanFieldTarget); if(el) el.value=code; scanFieldTarget=null; showSec('estoque',ge('ni-estoque')); openM('modal-produto'); return; } var p=null; for(var i=0;i<produtos.length;i++) if(produtos[i].barcode===code){ p=produtos[i]; break; } if(p) mostrarProdutoFound(p); else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto nao cadastrado</div><div class="alerta-sub">Codigo: <b>'+escapeHtml(code)+'</b></div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo()">Cadastrar Agora</button></div></div>'; }
+
+window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.abrirNovoProduto=abrirNovoProduto; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.clearFoto=clearFoto; window.editarProduto=editarProduto; window.toggleCategoriaVisivel=toggleCategoriaVisivel; window.iniciarFluxoProd=iniciarFluxoProd; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.adicionarMaisItemNaSacola=adicionarMaisItemNaSacola; window.alterarQtdItemSacola=alterarQtdItemSacola; window.removerItemDaSacola=removerItemDaSacola; window.abrirVendaDetail=abrirVendaDetail; window.compartilharProduto=compartilharProduto; window.clearScan=clearScan; window.scanForField=scanForField; window.handleBarcode=handleBarcode; window.alternarCameraScanner=alternarCameraScanner; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.abrirEditarVenda=abrirEditarVenda; window.salvarEdicaoVenda=salvarEdicaoVenda; window.excluirVendaDinamica=excluirVendaDinamica; window.excluirProdutoDoSistema=excluirProdutoDoSistema;
+
+syncDrive();
+})();
+</script>
+</body>
+</html>
+
+
+
+
