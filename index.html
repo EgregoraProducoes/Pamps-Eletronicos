@@ -413,10 +413,11 @@ var FOTO_MAX_DIM = 640;
 var FOTO_JPEG_QUALITY = 0.55;
 var TAXA_CARTAO_CREDITO = 0.03; 
 
-// CONFIGURAÇÃO DO PIX - COLOQUE SUA CHAVE AQUI
-var PIX_CHAVE = "21976943868"; 
-var PIX_NOME = "PAMP'S ELETRONICOS";
-var PIX_CIDADE = "RJ";
+// CONFIGURACAO DO PIX - COLOQUE SUA CHAVE AQUI
+// Para chave de telefone, use o formato internacional: +55 + DDD + numero.
+var PIX_CHAVE = "+5521976943868";
+var PIX_NOME = "PAMPS ELETRONICOS";
+var PIX_CIDADE = "RIO DE JANEIRO";
 
 function ge(id){ return document.getElementById(id); }
 function gv(id){ var el = ge(id); return el ? el.value : ''; }
@@ -712,25 +713,49 @@ function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(
 function totalSacola(){ var t=0; for(var i=0;i<sacolaAtual.length;i++) t += sacolaAtual[i].preco * sacolaAtual[i].qty; return t; }
 function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque -= sacolaAtual[i].qty; } }
 
+function pixPad2(n){ return String(n).padStart(2, '0'); }
+function pixCampo(id, valor){ valor = String(valor || ''); return id + pixPad2(valor.length) + valor; }
+function pixTexto(valor, max){
+  return String(valor || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9 $%*+\-./:]/gi, '')
+    .toUpperCase()
+    .substring(0, max);
+}
+
 function crc16(data) {
-    var crc = 0xFFFF;
-    for (var i = 0; i < data.length; i++) {
-        crc ^= data.charCodeAt(i) << 8;
-        for (var j = 0; j < 8; j++) {
-            if ((crc & 0x8000) !== 0) crc = (crc << 1) ^ 0x1021;
-            else crc <<= 1;
-        }
+  var crc = 0xFFFF;
+  for (var i = 0; i < data.length; i++) {
+    crc ^= (data.charCodeAt(i) & 0xFF) << 8;
+    for (var j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
     }
-    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
 }
 
 function gerarPixCopiaECola(valor){
-  var v = parseFloat(valor).toFixed(2);
-  var payload = "00020101021226";
-  var gui = "0014BR.GOV.BCB.PIX";
-  var chave = "01" + PIX_CHAVE.length.toString().padStart(2, '0') + PIX_CHAVE;
-  var merchantInfo = (gui.length + chave.length).toString().padStart(2, '0') + gui + chave;
-  payload += merchantInfo + "52040000530398654" + v.length.toString().padStart(2, '0') + v + "5802BR59" + PIX_NOME.length.toString().padStart(2, '0') + PIX_NOME + "60" + PIX_CIDADE.length.toString().padStart(2, '0') + PIX_CIDADE + "62070503***6304";
+  var amount = Number(valor || 0);
+  if(!isFinite(amount) || amount <= 0) throw new Error('Valor PIX invalido.');
+
+  var chave = String(PIX_CHAVE || '').trim();
+  var merchantAccount = pixCampo('00', 'BR.GOV.BCB.PIX') + pixCampo('01', chave);
+  var txid = '***';
+  var payload =
+    pixCampo('00', '01') +
+    pixCampo('01', '12') +
+    pixCampo('26', merchantAccount) +
+    pixCampo('52', '0000') +
+    pixCampo('53', '986') +
+    pixCampo('54', amount.toFixed(2)) +
+    pixCampo('58', 'BR') +
+    pixCampo('59', pixTexto(PIX_NOME, 25)) +
+    pixCampo('60', pixTexto(PIX_CIDADE, 15)) +
+    pixCampo('62', pixCampo('05', txid)) +
+    '6304';
+
   return payload + crc16(payload);
 }
 
