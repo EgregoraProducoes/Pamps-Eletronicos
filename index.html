@@ -158,6 +158,16 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .tab{flex:1;padding:7px 4px;border:none;background:transparent;color:var(--text3);font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .15s;letter-spacing:.3px}
 .tab.active{background:var(--bg2);color:var(--text)}
 .bag-item{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);padding:8px 10px;border-radius:var(--r3);margin-bottom:6px;border:1px solid var(--border)}
+.month-card{border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;margin-bottom:8px;background:var(--card)}
+.month-head{background:var(--bg3);padding:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.month-title{font-size:14px;font-weight:800}
+.month-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.month-body{display:none;padding:8px;background:rgba(0,0,0,.18)}
+.side-panel{position:fixed;inset:0;z-index:260;display:none;background:rgba(0,0,0,.72)}
+.side-panel.open{display:block}
+.side-menu{width:min(330px,86vw);height:100%;background:var(--bg2);border-right:1px solid var(--border);padding:16px;overflow-y:auto;box-shadow:var(--sh)}
+.cat-row{display:flex;gap:8px;margin-bottom:8px}
+.cat-row input{flex:1}
 </style>
 </head>
 <body>
@@ -208,6 +218,13 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </div>
 </div>
 
+<div class="side-panel" id="side-meses" onclick="if(event.target===this) fecharMenuMeses()">
+  <div class="side-menu">
+    <div class="shead"><span class="stitle">Arquivo mensal</span><button class="btn btn-sm btn-ghost" onclick="fecharMenuMeses()">x</button></div>
+    <div id="side-meses-body"></div>
+  </div>
+</div>
+
 <nav class="bnav">
 <button class="ni active" id="ni-painel" onclick="showSec('painel',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Painel</button>
 <button class="ni" id="ni-scanner" onclick="showSec('scanner',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>Scanner</button><button class="ni" id="ni-estoque" onclick="showSec('estoque',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Estoque</button>
@@ -221,6 +238,20 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prod-found')">x</button></div>
 <div class="sheet-body" id="pf-body"></div>
 <div class="sheet-footer" id="pf-footer"></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-categorias">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title">Categorias</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-categorias')">x</button></div>
+<div class="sheet-body">
+  <div id="categorias-editor"></div>
+  <button class="btn btn-sm btn-outline btn-full" onclick="adicionarCategoriaLinha()">+ Adicionar categoria</button>
+</div>
+<div class="sheet-footer">
+  <button class="btn btn-primary btn-full" onclick="salvarCategorias()">Salvar categorias</button>
+</div>
 </div>
 </div>
 
@@ -408,6 +439,8 @@ var zxingCodeReader = null;
 var scannerDevices = [];
 var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
+var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
+var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -508,12 +541,24 @@ function syncDrive(){
   ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Lendo produtos...</div>';
   getData('produtos.json', function(prodRaw){
     getData('vendas.json', function(vendRaw){
-      var p = parseJson(prodRaw, []); var v = parseJson(vendRaw, []);
-      produtos = Array.isArray(p) ? p : (p.produtos || []);
-      vendas = Array.isArray(v) ? v : (v.vendas || []);
-      produtos.forEach(function(prod) { if (prod.foto) prod.foto = normalizeDriveUrl(prod.foto); });
-      refreshLocalViews();
-      setSS('ok','Conectado');
+      getData('config.json', function(cfgRaw){
+        var p = parseJson(prodRaw, []); var v = parseJson(vendRaw, []); var cfg = parseJson(cfgRaw, {});
+        produtos = Array.isArray(p) ? p : (p.produtos || []);
+        vendas = Array.isArray(v) ? v : (v.vendas || []);
+        configApp = cfg && typeof cfg === 'object' && !Array.isArray(cfg) ? cfg : {};
+        if(!Array.isArray(configApp.categorias) || !configApp.categorias.length) configApp.categorias = CATEGORIAS_PADRAO.slice();
+        produtos.forEach(function(prod) { if (prod.foto) prod.foto = normalizeDriveUrl(prod.foto); });
+        refreshLocalViews();
+        setSS('ok','Conectado');
+      }, function(){
+        configApp = { categorias: CATEGORIAS_PADRAO.slice() };
+        var p = parseJson(prodRaw, []); var v = parseJson(vendRaw, []);
+        produtos = Array.isArray(p) ? p : (p.produtos || []);
+        vendas = Array.isArray(v) ? v : (v.vendas || []);
+        produtos.forEach(function(prod) { if (prod.foto) prod.foto = normalizeDriveUrl(prod.foto); });
+        refreshLocalViews();
+        setSS('ok','Conectado');
+      });
     }, showLoadError);
   }, showLoadError);
 }
@@ -557,17 +602,97 @@ function updateAlertBadge(){
   var el=ge('alert-badge'); if(el){ if(c>0){ el.style.display='flex'; el.textContent=c; } else el.style.display='none'; }
 }
 
+function mesKey(data){ return String(data || today()).substring(0,7); }
+function mesLabel(key){
+  var nomes=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var p=String(key||'').split('-'), m=parseInt(p[1],10)-1;
+  return (nomes[m] || key) + '/' + (p[0] || '');
+}
+function findProdutoPorNome(nome){
+  nome = String(nome || '').trim().toLowerCase();
+  for(var i=0;i<produtos.length;i++) if(String(produtos[i].nome || '').trim().toLowerCase() === nome) return produtos[i];
+  return null;
+}
+function itensDaVenda(v){
+  if(Array.isArray(v.itens)) return v.itens;
+  var linhas = String(v.produto || '').split('\n'), itens = [];
+  for(var i=0;i<linhas.length;i++){
+    var texto = linhas[i].trim(); if(!texto) continue;
+    var m = texto.match(/^(\d+)\s*x\s*(.+)$/i);
+    var qty = m ? parseInt(m[1],10) : 1;
+    var nome = m ? m[2] : texto;
+    var p = findProdutoPorNome(nome);
+    itens.push({ nome:nome, qty:qty, preco:p ? Number(p.preco || 0) : 0, custo:p ? Number(p.custo || 0) : 0, categoria:p ? (p.cat || 'OUTROS') : 'OUTROS' });
+  }
+  return itens;
+}
+function itensSacolaSnapshot(){
+  var itens = [];
+  for(var i=0;i<sacolaAtual.length;i++){
+    var s=sacolaAtual[i], p=findProduto(s.prodId) || {};
+    itens.push({ prodId:s.prodId, nome:s.nome, qty:Number(s.qty || 0), preco:Number(s.preco || 0), custo:Number(p.custo || 0), categoria:p.cat || 'OUTROS' });
+  }
+  return itens;
+}
+function comprasLista(){ if(!Array.isArray(configApp.compras)) configApp.compras = []; return configApp.compras; }
+function registrarCompraProduto(p, qty, custo){
+  qty = Number(qty || 0); custo = Number(custo || 0);
+  if(!p || qty <= 0) return;
+  comprasLista().push({ id:Date.now(), prodId:p.id, produto:p.nome, categoria:p.cat || 'OUTROS', qty:qty, custo:custo, total:qty*custo, data:today() });
+}
+function resumoPorMes(){
+  var mapa = {};
+  for(var i=0;i<vendas.length;i++){
+    var v=vendas[i], key=mesKey(v.data);
+    if(!mapa[key]) mapa[key]={key:key, ano:key.substring(0,4), receita:0, comprasTotal:0, vendasQtd:0, comprasQtd:0, vendas:[], compras:[]};
+    mapa[key].receita += Number(v.valor || 0);
+    mapa[key].vendasQtd++;
+    mapa[key].vendas.push(v);
+  }
+  var compras = comprasLista();
+  for(var c=0;c<compras.length;c++){
+    var compra = compras[c], ckey=mesKey(compra.data);
+    if(!mapa[ckey]) mapa[ckey]={key:ckey, ano:ckey.substring(0,4), receita:0, comprasTotal:0, vendasQtd:0, comprasQtd:0, vendas:[], compras:[]};
+    mapa[ckey].comprasTotal += Number(compra.total || 0);
+    mapa[ckey].comprasQtd++;
+    mapa[ckey].compras.push(compra);
+  }
+  return Object.keys(mapa).sort().reverse().map(function(k){ mapa[k].saldo = mapa[k].receita - mapa[k].comprasTotal; return mapa[k]; });
+}
+function renderMesCard(m, idPrefix){
+  var id = idPrefix + '-' + m.key.replace('-', '');
+  var html = '<div class="month-card"><div class="month-head" onclick="toggleCategoriaVisivel(\'' + id + '\')"><div><div class="month-title">' + mesLabel(m.key) + '</div><div class="month-sub">' + m.vendasQtd + ' venda(s) - ' + m.comprasQtd + ' compra(s)</div></div><div style="text-align:right"><b>' + money(m.receita) + '</b><br><small style="color:var(--amber)">Compras ' + money(m.comprasTotal) + '</small></div></div>';
+  html += '<div class="month-body" id="' + id + '">';
+  html += '<div class="sumbox"><div style="display:flex;justify-content:space-between"><span>Vendas</span><b>' + money(m.receita) + '</b></div><div style="display:flex;justify-content:space-between"><span>Compras</span><b>' + money(m.comprasTotal) + '</b></div><div class="sumtotal"><span>Saldo</span><b>' + money(m.saldo) + '</b></div></div>';
+  html += '<div class="mlabel">Vendas</div>';
+  for(var i=0;i<m.vendas.length;i++){
+    var v=m.vendas[i];
+    html += '<div class="bag-item" onclick="abrirVendaDetail(' + v.id + ', true)"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small>' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div><b>' + money(v.valor) + '</b></div>';
+  }
+  html += '<div class="mlabel" style="margin-top:10px">Compras</div>';
+  for(var j=0;j<m.compras.length;j++){
+    var c=m.compras[j];
+    html += '<div class="bag-item"><div><b>' + escapeHtml(c.produto || '') + '</b><br><small>' + fmtD(c.data) + ' - ' + Number(c.qty || 0) + ' un. x ' + money(c.custo) + '</small></div><b>' + money(c.total) + '</b></div>';
+  }
+  return html + '</div></div>';
+}
+
 function renderPainel(){
   var receita = 0, semEstq = 0;
   for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === 'vista' || vendas[i].tipo === 'prazo') receita += Number(vendas[i].valor || 0);
   for(var j=0;j<produtos.length;j++) if(Number(produtos[j].estoque || 0) === 0) semEstq++;
   var recentes = vendas.slice().reverse().slice(0,6);
+  var meses = resumoPorMes();
+  var comprasTotal = 0; for(var d=0;d<meses.length;d++) comprasTotal += meses[d].comprasTotal;
   var html = '<div class="drive-banner">Google Drive - Banco de Dados Ativo</div>';
   html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">' + money(receita) + '</div></div>';
-  html += '<div class="mcard"><div class="mlabel">Vendas</div><div class="mval">' + vendas.length + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Compras</div><div class="mval a" style="font-size:18px">' + money(comprasTotal) + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + cAlerts() + '</div></div></div>';
-  html += '<div class="shead"><span class="stitle">Últimas Transações</span><button class="btn btn-sm" onclick="syncDrive()">Sync</button></div>';
+  html += '<div class="shead"><span class="stitle">Meses</span><div style="display:flex;gap:6px"><button class="btn btn-sm" onclick="abrirMenuMeses()">Menu</button><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div></div>';
+  if(!meses.length) html += '<div class="alerta ok"><div class="alerta-body">Nenhuma venda ou compra registrada ainda.</div></div>';
+  for(var m=0;m<meses.length && m<6;m++) html += renderMesCard(meses[m], 'painel-mes');
+  html += '<div class="shead"><span class="stitle">Ultimas Transacoes</span><button class="btn btn-sm" onclick="syncDrive()">Sync</button></div>';
   for(var k=0;k<recentes.length;k++){
     var v = recentes[k];
     html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcão') + '</small></div><div><b>' + money(v.valor) + '</b></div></div></div></div>';
@@ -600,6 +725,46 @@ function toggleCategoriaVisivel(id){
   var el = ge(id); var seta = ge('seta-' + id); if(!el) return; 
   if(el.style.display === 'none' || el.style.display === ''){ el.style.display = 'block'; if(seta) seta.innerHTML = '^'; } 
   else { el.style.display = 'none'; if(seta) seta.innerHTML = 'v'; } 
+}
+
+function abrirMenuMeses(){
+  var meses = resumoPorMes(), porAno = {}, html = '';
+  for(var i=0;i<meses.length;i++){ var a=meses[i].ano; if(!porAno[a]) porAno[a]=[]; porAno[a].push(meses[i]); }
+  var anos = Object.keys(porAno).sort().reverse();
+  for(var y=0;y<anos.length;y++){
+    html += '<div class="month-card"><div class="month-head" onclick="toggleCategoriaVisivel(\'ano-' + anos[y] + '\')"><div class="month-title">' + anos[y] + '</div><span>v</span></div><div class="month-body" id="ano-' + anos[y] + '">';
+    for(var m=0;m<porAno[anos[y]].length;m++) html += renderMesCard(porAno[anos[y]][m], 'menu-mes');
+    html += '</div></div>';
+  }
+  ge('side-meses-body').innerHTML = html || '<div class="alerta ok"><div class="alerta-body">Ainda nao ha meses arquivados.</div></div>';
+  ge('side-meses').classList.add('open');
+}
+function fecharMenuMeses(){ ge('side-meses').classList.remove('open'); }
+function categoriasAtuais(){
+  if(!Array.isArray(configApp.categorias) || !configApp.categorias.length) configApp.categorias = CATEGORIAS_PADRAO.slice();
+  return configApp.categorias;
+}
+function renderCategoriaOptions(sel){
+  var cats = categoriasAtuais(), html = '';
+  for(var i=0;i<cats.length;i++) html += '<option' + (cats[i]===sel ? ' selected' : '') + '>' + escapeHtml(cats[i]) + '</option>';
+  return html;
+}
+function atualizarSelectCategorias(sel){
+  var el = ge('mp-cat'); if(el) el.innerHTML = renderCategoriaOptions(sel || el.value || 'OUTROS');
+}
+function abrirCategorias(){
+  var cats = categoriasAtuais(), html = '';
+  for(var i=0;i<cats.length;i++) html += '<div class="cat-row"><input class="fi cat-input" value="' + escapeHtml(cats[i]) + '"><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">Excluir</button></div>';
+  ge('categorias-editor').innerHTML = html;
+  openM('modal-categorias');
+}
+function adicionarCategoriaLinha(){ ge('categorias-editor').insertAdjacentHTML('beforeend','<div class="cat-row"><input class="fi cat-input" value=""><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">Excluir</button></div>'); }
+function salvarCategorias(){
+  var inputs = document.querySelectorAll('.cat-input'), cats = [];
+  for(var i=0;i<inputs.length;i++){ var v=inputs[i].value.trim().toUpperCase(); if(v && cats.indexOf(v)===-1) cats.push(v); }
+  if(!cats.length) cats = CATEGORIAS_PADRAO.slice();
+  configApp.categorias = cats;
+  saveData('config.json', configApp, function(){ closeM('modal-categorias'); atualizarSelectCategorias(); refreshLocalViews(); setSS('ok','Categorias salvas'); }, function(e){ alert(e.message||e); });
 }
 
 function renderVendas(){
@@ -653,8 +818,8 @@ function excluirVenda(id){ if(!confirm('Deseja excluir esta venda permanentement
 
 function excluirProduto(id){ if(!confirm('Tem certeza que deseja excluir este produto do estoque?')) return; for(var i=0;i<produtos.length;i++){ if(produtos[i].id===id){ produtos.splice(i,1); break; } } saveBoth('Produto excluído'); }
 
-function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
-function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
+function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; atualizarSelectCategorias(p.cat||'CABOS'); ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
+function abrirNovoProduto(){ editingProdId=null; atualizarSelectCategorias('CABOS'); ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
 function abrirNovoProdutoComCodigo(code){ abrirNovoProduto(); ge('mp-barcode').value = code || lastBarcode || ''; }
 function clearFoto(){ fotoBase64=null; ge('foto-preview').style.display='none'; ge('foto-placeholder').style.display='flex'; ge('foto-file').value=''; }
 
@@ -701,7 +866,7 @@ function selOpcaoProd(o){ opcaoProd=o; ge('op-entrada').classList.toggle('sel-en
 function continuarFluxoProd(){ closeM('modal-prod-found'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd==='entrada') abrirEntrada(); else { sacolaAtual=[{prodId:p.id,nome:p.nome,qty:1,preco:p.preco}]; abrirSaidaTipo(); } }
 
 function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div class="sumbox"><b>' + escapeHtml(p.nome) + '</b><br>Estoque: ' + p.estoque + '</div><div class="frow"><div class="fg"><label class="fl">Qtd</label><input class="fi" type="number" id="ent-qty" value="1"></div><div class="fg"><label class="fl">Custo</label><input class="fi" type="number" id="ent-custo" value="' + (p.custo||0) + '"></div></div>'; openM('modal-entrada'); }
-function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; p.estoque+=parseInt(gv('ent-qty'),10); closeM('modal-entrada'); saveBoth('Estoque atualizado'); }
+function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; var qty=parseInt(gv('ent-qty'),10)||0; var custo=parseFloat(gv('ent-custo'))||0; p.estoque+=qty; p.custo=custo; registrarCompraProduto(p, qty, custo); closeM('modal-entrada'); saveBoth('Estoque atualizado'); }
 
 function abrirSaidaTipo(){ renderSacolaItens(); openM('modal-saida-tipo'); }
 function renderSacolaItens(){ var total=0, html='<p style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">SACOLA:</p>'; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+='<div class="bag-item"><div><b>'+escapeHtml(item.nome)+'</b><br>'+item.qty+'x '+money(item.preco)+'</div><b>'+money(sub)+'</b></div>'; } html+='<div class="sumbox" style="display:flex;justify-content:space-between"><span>Total</span><b>'+money(total)+'</b></div>'; ge('sacola-itens-lista').innerHTML=html; }
@@ -770,7 +935,7 @@ function abrirVista(){
 
 function copiarPix(){ var code = ge('pix-code').textContent; navigator.clipboard.writeText(code); alert('Código PIX copiado!'); }
 
-function confirmarVista(){ var total=totalSacola(); baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:total, data:today() }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
+function confirmarVista(){ var total=totalSacola(); var itens=itensSacolaSnapshot(); baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:total, data:today(), itens:itens }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
 
 function abrirPrazo(){ ge('prazo-detalhes-container').style.display='none'; ge('prazo-footer').style.display='none'; openM('modal-prazo'); }
 function selPrazoTipo(t){ prazoTipo=t; ge('prazo-detalhes-container').style.display='block'; ge('prazo-footer').style.display='flex'; ge('op-fiado').classList.toggle('sel-fiado', t==='fiado'); ge('op-cartao').classList.toggle('sel-cartao', t==='cartao'); atualizarParcelasMultiUI(); }
@@ -789,14 +954,14 @@ function confirmarPrazo(){
   var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1, vp=total/n, parcelas=[];
   for(var i=1;i<=n;i++) parcelas.push({num:i,valor:vp,venc:ge('pdata-'+i).value,pago:false});
   baixarEstoque();
-  vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), cliente:gv('prazo-nome'), tipo:'prazo', valor:total, data:today(), parcelas:parcelas, whatsapp:gv('prazo-tel'), setor:gv('prazo-setor') });
+  vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), cliente:gv('prazo-nome'), tipo:'prazo', valor:total, data:today(), parcelas:parcelas, whatsapp:gv('prazo-tel'), setor:gv('prazo-setor'), itens:itensSacolaSnapshot() });
   closeM('modal-prazo'); saveBoth('Venda salva'); sacolaAtual=[];
 }
 
 function abrirTroca(){ ge('troca-body').innerHTML='<div class="fg"><label class="fl">Cliente</label><input class="fi" type="text" id="troca-nome"></div><div class="fg"><label class="fl">Motivo</label><textarea class="fi" id="troca-motivo"></textarea></div>'; openM('modal-troca'); }
 function confirmarTroca(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque += sacolaAtual[i].qty; } vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'troca', valor:0, data:today(), motivo:gv('troca-motivo'), cliente:gv('troca-nome') }); closeM('modal-troca'); saveBoth('Troca salva'); sacolaAtual=[]; }
 
-function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }
+function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ saveData('config.json', configApp, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }
 
 function loadScriptOnce(src, cb){ if(document.querySelector('script[src="'+src+'"]')){ cb(); return; } var s=document.createElement('script'); s.src=src; s.onload=cb; document.head.appendChild(s); }
 function ligarCameraScannerRealtime(){
