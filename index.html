@@ -99,8 +99,8 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .btn-ghost{background:transparent;border-color:transparent;color:var(--text2)}
 .btn-outline{background:transparent;border-color:var(--accent);color:var(--accent)}
 
-.foto-area{width:100%;aspect-ratio:4/3;background:var(--bg3);border-radius:var(--r);border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;position:relative}
-.foto-area img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.foto-area{width:100%;max-width:260px;aspect-ratio:4/3;background:var(--bg3);border-radius:var(--r);border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;position:relative;margin:0 auto}
+.foto-area img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
 .foto-area-label{font-size:13px;color:var(--text2);font-weight:600;position:relative;z-index:1}
 
 .video-scan-container { width:100%; max-width:480px; margin:0 auto; background:var(--bg2); border-radius:var(--r); border:1px solid var(--border); overflow:hidden; position:relative; display:flex; flex-direction:column; align-items:center; }
@@ -110,7 +110,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 @keyframes scanMotion { 0%, 100% { top: 20%; } 50% { top: 80%; } }
 
 .manual-scan{background:var(--bg3);border-radius:var(--r2);padding:12px;margin-top:10px}
-.prod-detail-img{width:100%;max-height:220px;object-fit:cover;border-radius:var(--r);margin-bottom:14px;background:var(--bg3)}
+.prod-detail-img{width:auto;max-width:220px;max-height:160px;object-fit:contain;border-radius:var(--r);margin:0 auto 14px;background:var(--bg3)}
 .prod-detail-placeholder{width:100%;height:140px;border-radius:var(--r);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:14px}
 .prod-detail-name{font-size:19px;font-weight:800;margin-bottom:4px}
 .prod-detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -234,7 +234,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
     <div class="foto-area" onclick="ge('foto-file').click()">
       <img src="" id="foto-preview" style="display:none;">
       <div class="foto-area-label" id="foto-placeholder">+ Adicionar Foto</div>
-      <input type="file" id="foto-file" accept="image/*" style="display:none;" onchange="previewFoto(this)">
+      <input type="file" id="foto-file" accept="image/*" capture="environment" style="display:none;" onchange="previewFoto(this)">
     </div>
     <button class="btn btn-xs btn-red" style="margin-top:8px;" onclick="clearFoto()">Remover Foto</button>
   </div>
@@ -409,8 +409,8 @@ var scannerDevices = [];
 var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
-var FOTO_MAX_DIM = 360;
-var FOTO_JPEG_QUALITY = 0.42;
+var FOTO_MAX_DIM = 160;
+var FOTO_JPEG_QUALITY = 0.28;
 var TAXA_CARTAO_CREDITO = 0.03; 
 
 // CONFIGURACAO DO PIX - COLOQUE SUA CHAVE AQUI
@@ -665,9 +665,10 @@ function previewFoto(input){
       var w=img.width, h=img.height, max=FOTO_MAX_DIM;
       if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
       var canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
-      var ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+      var ctx=canvas.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
       fotoBase64=canvas.toDataURL('image/jpeg', FOTO_JPEG_QUALITY);
       ge('foto-preview').src=fotoBase64; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none';
+      setSS('ok', 'Foto reduzida: ' + w + 'x' + h + ' (' + Math.round(fotoBase64.length * 0.75 / 1024) + ' KB)');
     }; img.src=e.target.result;
   }; reader.readAsDataURL(file);
 }
