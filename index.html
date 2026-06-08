@@ -64,7 +64,6 @@ input,select,textarea{font-family:var(--font)}
 .pcard-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pcard-sub{font-size:11px;color:var(--text2);margin-top:2px}
 .pcard-price{font-size:14px;font-weight:800;color:var(--green);margin-top:4px}
-.pcard-stock{display:flex;align-items:center;gap:6px;margin-top:5px}
 
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex;animation:fadeIn .15s}
@@ -331,12 +330,12 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
       <div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div>
       <div class="fg"><label class="fl">Setor</label><input class="fi" type="text" id="prazo-setor"></div>
     </div>
-    <div class="fg"><label class="fl">Parcelas</label><select class="fi" type="number" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
+    <div class="fg"><label class="fl">Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
     <div id="prazo-parcelas-ui"></div>
     <div id="prazo-taxa-info" class="alerta warning" style="display:none; margin-top:10px;"><div class="alerta-body"></div></div>
   </div>
 </div>
-<div class="sheet-footer" id="prazo-footer"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">Confirmar Venda</button></div>
+<div class="sheet-footer" id="prazo-footer" style="display:none;"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">Confirmar Venda</button></div>
 </div>
 </div>
 
@@ -352,7 +351,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-venda-detail">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">Detalhes do Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Detalhes</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">x</button></div>
 <div class="sheet-body" id="venda-detail-body"></div>
 <div class="sheet-footer" id="venda-detail-footer"></div>
 </div>
@@ -365,7 +364,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="sheet-handle"></div>
 <div class="sheet-header"><span class="sheet-title"> Adicionar Item</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-add-item-venda')">x</button></div>
 <div class="sheet-body">
-  <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" type="number" id="add-item-select-prod"></select></div>
+  <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" id="add-item-select-prod"></select></div>
   <div class="fg"><label class="fl">Quantidade</label><input class="fi" type="number" id="add-item-qty" value="1"></div>
 </div>
 <div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">OK Inserir Item</button></div>
@@ -436,36 +435,15 @@ function getData(filename, ok, fail){
   if(isGithubPages()){
     var cbName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
     var script = document.createElement('script');
-    var timer = setTimeout(function(){
-      cleanup();
-      fail(new Error('Tempo esgotado ao ler ' + filename));
-    }, 20000);
-
-    function cleanup(){
-      clearTimeout(timer);
-      try { delete window[cbName]; } catch(e) { window[cbName] = null; }
-      if(script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[cbName] = function(data){
-      cleanup();
-      ok(JSON.stringify(data || []));
-    };
-
-    script.onerror = function(){
-      cleanup();
-      fail(new Error('Não foi possível acessar a API do Apps Script.'));
-    };
+    var timer = setTimeout(function(){ cleanup(); fail(new Error('Tempo esgotado ao ler ' + filename)); }, 20000);
+    function cleanup(){ clearTimeout(timer); try { delete window[cbName]; } catch(e) { window[cbName] = null; } if(script.parentNode) script.parentNode.removeChild(script); }
+    window[cbName] = function(data){ cleanup(); ok(JSON.stringify(data || [])); };
+    script.onerror = function(){ cleanup(); fail(new Error('Não foi possível acessar a API do Apps Script.')); };
     script.src = API_BASE + '?api=getData&filename=' + encodeURIComponent(filename) + '&callback=' + encodeURIComponent(cbName) + '&_=' + Date.now();
     document.head.appendChild(script);
     return;
   }
-
-  var done = false;
-  var timer = setTimeout(function(){ if(!done){ done = true; fail(new Error('Tempo esgotado ao ler ' + filename)); } }, 20000);
-  google.script.run.withSuccessHandler(function(value){ if(done) return; done = true; clearTimeout(timer); ok(value); })
-    .withFailureHandler(function(err){ if(done) return; done = true; clearTimeout(timer); fail(err); })
-    .getData(filename);
+  google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getData(filename);
 }
 
 function saveData(filename, data, ok, fail){
@@ -474,89 +452,35 @@ function saveData(filename, data, ok, fail){
     if(filename === 'produtos.json'){
       var cleaned = [];
       var photoData = '';
-      var photoProductId = '';
-      var photoBarcode = '';
-      var photoProductName = '';
-      var photoProductModel = '';
       for(var i=0;i<data.length;i++){
-        var item = {};
-        for(var k in data[i]) if(data[i].hasOwnProperty(k)) item[k] = data[i][k];
+        var item = {}; for(var k in data[i]) if(data[i].hasOwnProperty(k)) item[k] = data[i][k];
         if(!photoData && item.foto && String(item.foto).indexOf('data:image/') === 0){
-          photoData = item.foto;
-          photoProductId = item.id || 'novo';
-          photoBarcode = item.barcode || '';
-          photoProductName = item.nome || '';
-          photoProductModel = item.modelo || '';
-          item.foto = item.fotoUrl || item.thumbUrl || '';
+          photoData = item.foto; item.foto = item.fotoUrl || '';
+          fields.action = 'saveProductsPhoto'; fields.dataUrl = photoData; fields.productId = item.id || 'novo';
+          fields.barcode = item.barcode || ''; fields.productName = item.nome || '';
         }
         cleaned.push(item);
       }
-      if(photoData){
-        fields.action = 'saveProductsPhoto';
-        fields.data = JSON.stringify(cleaned);
-        fields.dataUrl = photoData;
-        fields.productId = photoProductId;
-        fields.barcode = photoBarcode;
-        fields.productName = photoProductName;
-        fields.productModel = photoProductModel;
-      }
+      fields.data = JSON.stringify(cleaned);
     }
     postHiddenForm(fields, ok, fail);
     return;
   }
-
-  google.script.run.withSuccessHandler(function(value){ ok(value); })
-    .withFailureHandler(function(err){ fail(err); })
-    .saveData(filename, data);
+  google.script.run.withSuccessHandler(ok).withFailureHandler(fail).saveData(filename, data);
 }
 
 function postHiddenForm(fields, ok, fail){
-  var frameName = 'apiFrame_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+  var frameName = 'apiFrame_' + Date.now();
   var iframe = document.createElement('iframe');
   var form = document.createElement('form');
-  var finished = false;
-  var timer = null;
-
-  iframe.name = frameName;
-  iframe.style.display = 'none';
-  document.body.appendChild(iframe);
-
-  form.method = 'POST';
-  form.action = API_BASE;
-  form.target = frameName;
-  form.style.display = 'none';
-
+  iframe.name = frameName; iframe.style.display = 'none'; document.body.appendChild(iframe);
+  form.method = 'POST'; form.action = API_BASE; form.target = frameName; form.style.display = 'none';
   for(var key in fields){
-    if(!fields.hasOwnProperty(key)) continue;
     var input = document.createElement(key === 'dataUrl' || key === 'data' ? 'textarea' : 'input');
-    input.name = key;
-    input.value = fields[key];
-    form.appendChild(input);
+    input.name = key; input.value = fields[key]; form.appendChild(input);
   }
   document.body.appendChild(form);
-
-  function cleanup(){
-    clearTimeout(timer);
-    setTimeout(function(){
-      if(form.parentNode) form.parentNode.removeChild(form);
-      if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
-    }, 100);
-  }
-
-  iframe.onload = function(){
-    if(finished) return;
-    finished = true;
-    cleanup();
-    ok(true);
-  };
-
-  timer = setTimeout(function(){
-    if(finished) return;
-    finished = true;
-    cleanup();
-    fail(new Error('Tempo esgotado na API.'));
-  }, 30000);
-
+  iframe.onload = function(){ ok(true); };
   form.submit();
 }
 
@@ -564,29 +488,20 @@ function syncDrive(){
   setSS('spin','Lojinha 2.2...');
   ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Lendo produtos...</div>';
   getData('produtos.json', function(prodRaw){
-    setSS('spin','Lendo vendas...');
     getData('vendas.json', function(vendRaw){
-      var p = parseJson(prodRaw, []);
-      var v = parseJson(vendRaw, []);
+      var p = parseJson(prodRaw, []); var v = parseJson(vendRaw, []);
       produtos = Array.isArray(p) ? p : (p.produtos || []);
       vendas = Array.isArray(v) ? v : (v.vendas || []);
-      
-      produtos.forEach(function(prod) {
-        if (prod.foto) prod.foto = normalizeDriveUrl(prod.foto);
-      });
-
-      renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
-      renderSection('painel');
-      updateAlertBadge();
+      produtos.forEach(function(prod) { if (prod.foto) prod.foto = normalizeDriveUrl(prod.foto); });
+      refreshLocalViews();
       setSS('ok','Conectado');
     }, showLoadError);
   }, showLoadError);
 }
 
 function showLoadError(err){
-  var msg = err && err.message ? err.message : String(err || 'Erro desconhecido');
   setSS('err','Erro ao carregar');
-  ge('painel-body').innerHTML = '<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao carregar dados</div><div class="alerta-sub">' + escapeHtml(msg) + '</div></div></div>';
+  ge('painel-body').innerHTML = '<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao carregar</div><div class="alerta-sub">' + escapeHtml(err.message||err) + '</div></div></div>';
 }
 
 function refreshLocalViews(){
@@ -606,27 +521,22 @@ function renderSection(s){
 }
 
 function showSec(s, btn){
-  var secs = document.querySelectorAll('.sec');
-  for(var i=0;i<secs.length;i++) secs[i].classList.remove('active');
-  var nav = document.querySelectorAll('.ni');
-  for(var j=0;j<nav.length;j++) nav[j].classList.remove('active');
+  var secs = document.querySelectorAll('.sec'); for(var i=0;i<secs.length;i++) secs[i].classList.remove('active');
+  var nav = document.querySelectorAll('.ni'); for(var j=0;j<nav.length;j++) nav[j].classList.remove('active');
   var sec = ge('sec-' + s); if(sec) sec.classList.add('active');
   if(btn) btn.classList.add('active');
   renderSection(s);
   if(s === 'scanner') ligarCameraScannerRealtime(); else desligarCameraScanner();
 }
 
-function alertasPrazo(){
+function updateAlertBadge(){
   var c = 0;
   for(var i=0;i<vendas.length;i++){
-    var v = vendas[i];
-    if(v.tipo !== 'prazo' || !v.parcelas) continue;
+    var v = vendas[i]; if(v.tipo !== 'prazo' || !v.parcelas) continue;
     for(var j=0;j<v.parcelas.length;j++) if(!v.parcelas[j].pago && diffDays(v.parcelas[j].venc) <= 1) c++;
   }
-  return c;
+  var el=ge('alert-badge'); if(el){ if(c>0){ el.style.display='flex'; el.textContent=c; } else el.style.display='none'; }
 }
-function contarAlertasEstoqueBaixo(){ var c=0; for(var i=0;i<produtos.length;i++) if(Number(produtos[i].estoque||0) <= Number(produtos[i].min||0)) c++; return c; }
-function updateAlertBadge(){ var c=alertasPrazo(); var el=ge('alert-badge'); if(!el) return; if(c>0){ el.style.display='flex'; el.textContent=c; } else el.style.display='none'; }
 
 function renderPainel(){
   var receita = 0, semEstq = 0;
@@ -637,88 +547,88 @@ function renderPainel(){
   html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">' + money(receita) + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Vendas</div><div class="mval">' + vendas.length + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
-  html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + contarAlertasEstoqueBaixo() + '</div></div></div>';
+  html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + cAlerts() + '</div></div></div>';
   html += '<div class="shead"><span class="stitle">Últimas Transações</span><button class="btn btn-sm" onclick="syncDrive()">Sync</button></div>';
-  if(!recentes.length) html += '<p style="padding:15px; color:var(--text3)">Nenhuma venda recente.</p>';
   for(var k=0;k<recentes.length;k++){
     var v = recentes[k];
-    html += '<div class="card"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcão') + '</small></div><div><b>' + money(v.valor) + '</b></div></div></div></div>';
+    html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcão') + '</small></div><div><b>' + money(v.valor) + '</b></div></div></div></div>';
   }
   ge('painel-body').innerHTML = html;
 }
+function cAlerts(){ var c=0; for(var i=0;i<produtos.length;i++) if(Number(produtos[i].estoque||0) <= Number(produtos[i].min||0)) c++; return c; }
 
 function renderEstoque(){
   var categorias = {};
   for(var i=0;i<produtos.length;i++){ var p=produtos[i]; var cat=p.cat||'OUTROS'; if(!categorias[cat]) categorias[cat]=[]; categorias[cat].push(p); }
   var html = '<div class="shead"><span class="stitle">Inventário por Categoria</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>';
-  html += '<div class="tabs"><button class="tab ' + (filtroEstoque==='todos'?'active':'') + '" onclick="filtroEstoque=\'todos\';renderEstoque()">Todos</button><button class="tab ' + (filtroEstoque==='baixo'?'active':'') + '" onclick="filtroEstoque=\'baixo\';renderEstoque()">Alertas</button></div>';
   var keys = Object.keys(categorias).sort();
   for(var c=0;c<keys.length;c++){
-    var catName = keys[c];
-    var lista = [];
-    for(var a=0;a<categorias[catName].length;a++){ var prod = categorias[catName][a]; if(filtroEstoque==='baixo' && !(Number(prod.estoque||0) <= Number(prod.min||0) && Number(prod.estoque||0) > 0)) continue; lista.push(prod); }
-    if(!lista.length) continue;
+    var catName = keys[c], lista = categorias[catName];
     html += '<div class="categoria-bloco" style="margin-bottom:8px; border:1px solid var(--border); border-radius:var(--r3); overflow:hidden;"><div onclick="toggleCategoriaVisivel(\'cat-' + c + '\')" style="background:var(--bg3); padding:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:14px;"><span>' + escapeHtml(catName.toUpperCase()) + ' (' + lista.length + ')</span><span id="seta-cat-' + c + '">v</span></div><div id="cat-' + c + '" style="display:none; padding:6px; background:rgba(0,0,0,0.2);">';
-    for(var n=0;n<lista.length;n++) html += productCard(lista[n]);
+    for(var n=0;n<lista.length;n++){
+      var p = lista[n], img = p.foto ? '<img src="' + escapeHtml(p.foto) + '">' : 'BOX';
+      html += '<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(' + p.id + ')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">' + img + '</div><div class="pcard-info"><div class="pcard-name"><b>' + escapeHtml(p.nome) + '</b></div><div class="pcard-sub">' + money(p.preco) + '</div><div style="margin-top:2px"><span class="badge ' + (Number(p.estoque)<=Number(p.min)?'ba':'bg') + '">Est: ' + p.estoque + '</span></div></div></div><div style="display:flex; gap:6px; padding:0 10px 10px;"><button class="btn btn-xs" style="flex:1" onclick="event.stopPropagation();editarProduto(' + p.id + ')">Editar</button><button class="btn btn-xs btn-primary" style="flex:1" onclick="event.stopPropagation();iniciarFluxoProd(' + p.id + ')">Lançar</button></div></div>';
+    }
     html += '</div></div>';
   }
-  ge('estoque-body').innerHTML = html || '<p style="padding:15px; color:var(--text3)">Nenhum item encontrado.</p>';
+  ge('estoque-body').innerHTML = html;
 }
 
-function productCard(p){
-  var img = p.foto ? '<img src="' + escapeHtml(p.foto) + '">' : 'BOX';
-  var stockClass = Number(p.estoque||0) <= Number(p.min||0) ? 'ba' : 'bg';
-  return '<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(' + p.id + ')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">' + img + '</div><div class="pcard-info"><div class="pcard-name"><b>' + escapeHtml(p.nome) + '</b></div><div class="pcard-sub">' + escapeHtml(p.marca || 'Pamps') + ' - <b style="color:var(--green)">' + money(p.preco) + '</b></div><div style="margin-top:2px"><span class="badge ' + stockClass + '">Qtd: ' + escapeHtml(p.estoque) + ' un.</span></div></div></div></div>';
-}
-
-function toggleCategoriaVisivel(id){ var el=ge(id); var seta=ge('seta-' + id); if(!el) return; if(el.style.display === 'none'){ el.style.display='block'; if(seta) seta.innerHTML='^'; } else { el.style.display='none'; if(seta) seta.innerHTML='v'; } }
+function toggleCategoriaVisivel(id){ var el=ge(id), seta=ge('seta-' + id); if(!el) return; if(el.style.display === 'none'){ el.style.display='block'; if(seta) seta.innerHTML='^'; } else { el.style.display='none'; if(seta) seta.innerHTML='v'; } }
 
 function renderVendas(){
-  var html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:10px;"><span class="stitle" style="font-size:16px;">Histórico de Movimentações</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Iniciar Venda</button></div>';
-  if(!vendas.length) html += '<p style="font-size:13px; color:var(--text3); padding:15px;">Nenhuma venda registrada.</p>';
+  var html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><span class="stitle">Histórico</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Nova Venda</button></div>';
   var list = vendas.slice().reverse();
   for(var i=0;i<list.length;i++){
     var v = list[i];
-    html += '<div class="card" ' + (v.tipo==='prazo' ? 'onclick="abrirEditarVenda(' + v.id + ')" style="cursor:pointer; border-left:4px solid var(--purple);"' : '') + '><div class="card-body" style="padding:10px;"><div style="display:flex; justify-content:space-between; gap:8px"><div style="min-width:0"><b style="font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcão') + '</small></div><div style="text-align:right"><b>' + money(v.valor) + '</b><br>' + statusBadge(v) + '</div></div></div></div>';
+    html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)" style="cursor:pointer; border-left:4px solid ' + (v.tipo==='prazo'?'var(--purple)':'var(--green)') + '"><div class="card-body" style="padding:10px;"><div style="display:flex; justify-content:space-between; gap:8px"><div style="min-width:0"><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small>' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcão') + '</small></div><div style="text-align:right"><b>' + money(v.valor) + '</b></div></div></div></div>';
   }
   ge('vendas-body').innerHTML = html;
 }
-function statusBadge(v){ if(v.tipo==='vista') return '<span class="badge bg">À Vista</span>'; if(v.tipo==='troca') return '<span class="badge ba">Troca</span>'; return '<span class="badge bp">Prazo</span>'; }
 
 function renderAlertas(){
   var todos = [];
-  for(var i=0;i<vendas.length;i++){ var v=vendas[i]; if(v.tipo !== 'prazo' || !v.parcelas) continue; for(var j=0;j<v.parcelas.length;j++){ var p=v.parcelas[j]; if(!p.pago) todos.push({v:v,p:p,d:diffDays(p.venc)}); } }
+  for(var i=0;i<vendas.length;i++){ var v=vendas[i]; if(v.tipo !== 'prazo' || !v.parcelas) continue; for(var j=0;j<v.parcelas.length;j++) if(!v.parcelas[j].pago) todos.push({v:v,p:v.parcelas[j],d:diffDays(v.parcelas[j].venc)}); }
   todos.sort(function(a,b){ return a.d-b.d; });
-  var html = '<div class="shead"><span class="stitle">Cobranças e Vencimentos</span></div>';
-  for(var k=0;k<todos.length;k++){ var a=todos[k]; if(a.d>1) continue; html += '<div class="alerta danger"><div class="alerta-body"><b>' + escapeHtml(a.v.cliente || '') + '</b><br><small>' + escapeHtml(String(a.v.produto||'').split('\n')[0]) + ' - Vencida ou no prazo</small></div></div>'; }
-  html += '<p style="color:var(--text2); font-size:13px; padding:10px;">' + todos.length + ' parcelas sob monitoramento.</p>';
-  ge('alertas-body').innerHTML = html;
+  var html = '<div class="shead"><span class="stitle">Vencimentos</span></div>';
+  for(var k=0;k<todos.length;k++) if(todos[k].d<=1) html += '<div class="alerta danger" onclick="abrirVendaDetail('+todos[k].v.id+', true)"><div class="alerta-body"><b>' + escapeHtml(todos[k].v.cliente || '') + '</b><br><small>' + money(todos[k].p.valor) + ' vence ' + fmtD(todos[k].p.venc) + '</small></div></div>';
+  ge('alertas-body').innerHTML = html || '<p style="padding:15px; color:var(--text2)">Nenhum alerta crítico.</p>';
 }
 
+function abrirVendaDetail(id, isVenda){
+  if(isVenda){
+    var v = null; for(var i=0;i<vendas.length;i++) if(vendas[i].id===id) v=vendas[i]; if(!v) return;
+    var html = '<h3>Venda #' + v.id + '</h3><div class="sumbox"><b>' + escapeHtml(v.cliente || 'Balcão') + '</b><br>' + fmtD(v.data) + '</div><p style="white-space:pre-wrap; font-size:13px; margin:10px 0;">' + escapeHtml(v.produto) + '</p><div class="mval g">' + money(v.valor) + '</div>';
+    if(v.tipo==='prazo' && v.parcelas){ html += '<hr style="margin:10px 0; border:none; border-top:1px solid var(--border)">'; v.parcelas.forEach(function(p){ html += '<div class="prow"><div class="pnum">'+p.num+'</div><div class="pinfo">'+money(p.valor)+' - '+fmtD(p.venc)+'</div><span class="badge '+(p.pago?'bg':'br')+'">'+(p.pago?'Pago':'Pendente')+'</span></div>'; }); }
+    ge('venda-detail-body').innerHTML = html;
+    ge('venda-detail-footer').innerHTML = '<button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Fechar</button>';
+  } else {
+    var p = findProduto(id); if(!p) return;
+    var html = p.foto ? '<img src="' + escapeHtml(p.foto) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">BOX</div>';
+    html += '<h3>' + escapeHtml(p.nome) + '</h3><div class="mval g">' + money(p.preco) + '</div><p style="color:var(--text2); font-size:13px; margin:10px 0;">' + escapeHtml(p.desc || 'Sem descrição.') + '</p>';
+    ge('venda-detail-body').innerHTML = html;
+    ge('venda-detail-footer').innerHTML = '<button class="btn btn-primary btn-full" onclick="iniciarFluxoProd(' + p.id + '); closeM(\'modal-venda-detail\');">Lançar Saída</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>';
+  }
+  openM('modal-venda-detail');
+}
+
+function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
+function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
+function abrirNovoProdutoComCodigo(code){ abrirNovoProduto(); ge('mp-barcode').value = code || lastBarcode || ''; }
+function clearFoto(){ fotoBase64=null; ge('foto-preview').style.display='none'; ge('foto-placeholder').style.display='flex'; ge('foto-file').value=''; }
+
 function previewFoto(input){
-  var file=input.files[0];
-  if(!file) return;
-  setSS('spin','Reduzindo foto...');
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var img=new Image();
-    img.onload=function(){
+  var file=input.files[0]; if(!file) return;
+  var reader=new FileReader(); reader.onload=function(e){
+    var img=new Image(); img.onload=function(){
       var w=img.width, h=img.height, max=FOTO_MAX_DIM;
-      if(w>h && w>max){ h=Math.round(h*max/w); w=max; }
-      else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
-      var canvas=document.createElement('canvas');
-      canvas.width=w; canvas.height=h;
-      var ctx=canvas.getContext('2d');
-      ctx.drawImage(img,0,0,w,h);
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
+      var canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+      var ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
       fotoBase64=canvas.toDataURL('image/jpeg', FOTO_JPEG_QUALITY);
-      ge('foto-preview').src=fotoBase64;
-      ge('foto-preview').style.display='block';
-      ge('foto-placeholder').style.display='none';
-      setSS('ok','Foto reduzida');
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
+      ge('foto-preview').src=fotoBase64; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none';
+    }; img.src=e.target.result;
+  }; reader.readAsDataURL(file);
 }
 
 function salvarProduto(){
@@ -726,20 +636,20 @@ function salvarProduto(){
   if(!nome || isNaN(preco) || isNaN(estoque)){ alert('Preencha nome, preço e estoque.'); return; }
   if(editingProdId){ 
     var p=findProduto(editingProdId); 
-    if(p){ p.nome=nome; p.marca=gv('mp-marca'); p.modelo=gv('mp-modelo'); p.desc=gv('mp-desc'); p.cat=gv('mp-cat'); p.custo=parseFloat(gv('mp-custo'))||0; p.preco=preco; p.estoque=estoque; p.min=parseInt(gv('mp-min'),10)||5; p.barcode=barcode; p.foto=normalizeDriveUrl(fotoBase64 || p.foto || ''); }
+    if(p){ p.nome=nome; p.marca=gv('mp-marca'); p.modelo=gv('mp-modelo'); p.desc=gv('mp-desc'); p.cat=gv('mp-cat'); p.custo=parseFloat(gv('mp-custo'))||0; p.preco=preco; p.estoque=estoque; p.min=parseInt(gv('mp-min'),10)||5; p.barcode=barcode; p.foto=fotoBase64 || p.foto || ''; }
   } else {
-    produtos.push({ id:nextId(produtos), nome:nome, marca:gv('mp-marca'), modelo:gv('mp-modelo'), desc:gv('mp-desc'), cat:gv('mp-cat'), custo:parseFloat(gv('mp-custo'))||0, preco:preco, estoque:estoque, min:parseInt(gv('mp-min'),10)||5, barcode:barcode, foto:normalizeDriveUrl(fotoBase64||''), histPreco:[{data:today(),custo:parseFloat(gv('mp-custo'))||0,preco:preco,qtd:estoque}] });
+    produtos.push({ id:nextId(produtos), nome:nome, marca:gv('mp-marca'), modelo:gv('mp-modelo'), desc:gv('mp-desc'), cat:gv('mp-cat'), custo:parseFloat(gv('mp-custo'))||0, preco:preco, estoque:estoque, min:parseInt(gv('mp-min'),10)||5, barcode:barcode, foto:fotoBase64||'', histPreco:[{data:today(),custo:parseFloat(gv('mp-custo'))||0,preco:preco,qtd:estoque}] });
   }
-  saveData('produtos.json', produtos, function(){ closeM('modal-produto'); refreshLocalViews(); setSS('ok','Produto salvo'); }, function(e){ alert('Erro ao salvar: ' + (e.message || e)); });
+  saveData('produtos.json', produtos, function(){ closeM('modal-produto'); refreshLocalViews(); }, function(e){ alert(e.message||e); });
 }
 
 function findProduto(id){ for(var i=0;i<produtos.length;i++) if(Number(produtos[i].id) === Number(id)) return produtos[i]; return null; }
-function findProdutosByBarcode(barcode) { return produtos.filter(function(p) { return p.barcode === barcode; }); }
+function iniciarFluxoProd(id){ currentProdId=id; var p=findProduto(id); if(p) mostrarProdutoFound(p); }
 
 function mostrarProdutoFound(prod){ 
   currentProdId=prod.id; ge('pf-title').textContent=prod.nome; 
   var html = prod.foto ? '<img src="' + escapeHtml(prod.foto) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">BOX</div>';
-  html += '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="prod-detail-meta"><span class="badge bg">' + escapeHtml(prod.cat||'') + '</span></div><div class="detail-row"><span class="detail-key">Preço</span><span style="font-weight:800;color:var(--green)">' + money(prod.preco) + '</span></div><div class="detail-row"><span class="detail-key">Estoque</span><span class="badge bg">' + escapeHtml(prod.estoque) + ' un.</span></div><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saída</div></div></div>'; 
+  html += '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span class="detail-key">Preço</span><span style="font-weight:800;color:var(--green)">' + money(prod.preco) + '</span></div><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saída</div></div></div>'; 
   ge('pf-body').innerHTML=html; ge('pf-footer').innerHTML='<button class="btn btn-primary btn-full" onclick="continuarFluxoProd()">Continuar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-prod-found\')">Fechar</button>'; 
   openM('modal-prod-found'); 
 }
@@ -747,12 +657,11 @@ function mostrarProdutoFound(prod){
 function selOpcaoProd(o){ opcaoProd=o; ge('op-entrada').classList.toggle('sel-entrada', o==='entrada'); ge('op-saida').classList.toggle('sel-saida', o==='saida'); }
 function continuarFluxoProd(){ closeM('modal-prod-found'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd==='entrada') abrirEntrada(); else { sacolaAtual=[{prodId:p.id,nome:p.nome,qty:1,preco:p.preco}]; abrirSaidaTipo(); } }
 
-function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div class="sumbox"><b>' + escapeHtml(p.nome) + '</b><br><small>Estoque: ' + escapeHtml(p.estoque) + ' un.</small></div><div class="frow"><div class="fg"><label class="fl">Qtd Entrada</label><input class="fi" type="number" id="ent-qty" value="1"></div><div class="fg"><label class="fl">Custo (R$)</label><input class="fi" type="number" id="ent-custo" value="' + escapeHtml(p.custo||0) + '"></div></div><div class="fg"><label class="fl">Preço Venda (R$)</label><input class="fi" type="number" id="ent-preco" value="' + escapeHtml(p.preco||0) + '"></div>'; openM('modal-entrada'); }
-function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; p.estoque=Number(p.estoque||0)+parseInt(gv('ent-qty'),10); p.custo=parseFloat(gv('ent-custo'))||0; p.preco=parseFloat(gv('ent-preco'))||0; closeM('modal-entrada'); saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok','Estoque salvo'); }, function(e){ alert(e.message||e); }); }
+function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div class="sumbox"><b>' + escapeHtml(p.nome) + '</b><br>Estoque: ' + p.estoque + '</div><div class="frow"><div class="fg"><label class="fl">Qtd</label><input class="fi" type="number" id="ent-qty" value="1"></div><div class="fg"><label class="fl">Custo</label><input class="fi" type="number" id="ent-custo" value="' + (p.custo||0) + '"></div></div>'; openM('modal-entrada'); }
+function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; p.estoque+=parseInt(gv('ent-qty'),10); closeM('modal-entrada'); saveBoth('Estoque atualizado'); }
 
 function abrirSaidaTipo(){ renderSacolaItens(); openM('modal-saida-tipo'); }
-function renderSacolaItens(){ var total=0, html='<p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:8px;">Produtos na Sacola:</p>'; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+='<div class="bag-item"><div style="flex:1;min-width:0"><b>' + escapeHtml(item.nome) + '</b><br><small>' + money(item.preco) + ' cada</small></div><div><button class="btn btn-xs" onclick="alterarQtdItemSacola(' + i + ',-1)">-</button> <b>' + item.qty + '</b> <button class="btn btn-xs" onclick="alterarQtdItemSacola(' + i + ',1)">+</button></div><b>' + money(sub) + '</b></div>'; } html+='<div class="sumbox" style="display:flex;justify-content:space-between"><span>Total</span><b>' + money(total) + '</b></div>'; ge('sacola-itens-lista').innerHTML=html; }
-function alterarQtdItemSacola(i,delta){ if(!sacolaAtual[i]) return; sacolaAtual[i].qty+=delta; if(sacolaAtual[i].qty<=0) sacolaAtual.splice(i,1); if(!sacolaAtual.length) closeM('modal-saida-tipo'); else renderSacolaItens(); }
+function renderSacolaItens(){ var total=0, html='<p style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">SACOLA:</p>'; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+='<div class="bag-item"><div><b>'+escapeHtml(item.nome)+'</b><br>'+item.qty+'x '+money(item.preco)+'</div><b>'+money(sub)+'</b></div>'; } html+='<div class="sumbox" style="display:flex;justify-content:space-between"><span>Total</span><b>'+money(total)+'</b></div>'; ge('sacola-itens-lista').innerHTML=html; }
 function selSaida(t){ saidaTipo=t; ge('op-venda').classList.toggle('sel-venda',t==='venda'); ge('op-troca').classList.toggle('sel-troca',t==='troca'); }
 function nextSaida(){ closeM('modal-saida-tipo'); if(saidaTipo==='troca') abrirTroca(); else openM('modal-forma-pag'); }
 
@@ -760,38 +669,40 @@ function selPag(t){ pagTipo=t; ge('op-vista').classList.toggle('sel-vista',t==='
 function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(); else abrirVista(); }
 
 function totalSacola(){ var t=0; for(var i=0;i<sacolaAtual.length;i++) t += sacolaAtual[i].preco * sacolaAtual[i].qty; return t; }
-function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque = Math.max(0, Number(p.estoque||0) - sacolaAtual[i].qty); } }
+function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque -= sacolaAtual[i].qty; } }
 
-function abrirVista(){ var total=totalSacola(); ge('vista-body').innerHTML = '<div class="pix-box"><div class="pix-amount">' + money(total) + '</div><p style="color:var(--text2);font-size:12px">Receba o pagamento à vista.</p></div>'; openM('modal-vista'); }
+function abrirVista(){ var total=totalSacola(); ge('vista-body').innerHTML = '<div class="pix-box"><div class="pix-amount">' + money(total) + '</div><p style="color:var(--text2);font-size:12px">Confirme o recebimento.</p></div>'; openM('modal-vista'); }
 function confirmarVista(){ var total=totalSacola(); baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:total, data:today() }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
 
 function abrirPrazo(){ ge('prazo-detalhes-container').style.display='none'; ge('prazo-footer').style.display='none'; openM('modal-prazo'); }
-function selPrazoTipo(t){ prazoTipo=t; var total=totalSacola(); if(t==='fiado' && total<100){ /* Regra de 1x se < 100 será no UI */ } ge('prazo-detalhes-container').style.display='block'; ge('prazo-footer').style.display='flex'; ge('op-fiado').classList.toggle('sel-fiado', t==='fiado'); ge('op-cartao').classList.toggle('sel-cartao', t==='cartao'); atualizarParcelasMultiUI(); }
+function selPrazoTipo(t){ prazoTipo=t; ge('prazo-detalhes-container').style.display='block'; ge('prazo-footer').style.display='flex'; ge('op-fiado').classList.toggle('sel-fiado', t==='fiado'); ge('op-cartao').classList.toggle('sel-cartao', t==='cartao'); atualizarParcelasMultiUI(); }
 
 function atualizarParcelasMultiUI(){
-  var total=totalSacola(), nMax=12;
-  if(prazoTipo==='fiado') nMax=(total>=100)?3:1;
-  var sel=ge('prazo-parc'); sel.innerHTML='';
-  for(var i=1;i<=nMax;i++){ var opt=document.createElement('option'); opt.value=i; opt.textContent=i+'x'; sel.appendChild(opt); }
+  var total=totalSacola(), nMax=12; if(prazoTipo==='fiado') nMax=(total>=100)?3:1;
+  var sel=ge('prazo-parc'); sel.innerHTML=''; for(var i=1;i<=nMax;i++){ var opt=document.createElement('option'); opt.value=i; opt.textContent=i+'x'; sel.appendChild(opt); }
   var n=parseInt(sel.value,10)||1, valorFinal=total, taxa=0;
-  if(prazoTipo==='cartao' && n>3){ taxa=total*TAXA_CARTAO_CREDITO; valorFinal=total+taxa; ge('prazo-taxa-info').style.display='block'; ge('prazo-taxa-info').querySelector('.alerta-body').textContent='Taxa de 3% aplicada: '+money(taxa); } else ge('prazo-taxa-info').style.display='none';
+  if(prazoTipo==='cartao' && n>3){ taxa=total*TAXA_CARTAO_CREDITO; valorFinal=total+taxa; ge('prazo-taxa-info').style.display='block'; ge('prazo-taxa-info').querySelector('.alerta-body').textContent='Taxa de 3% inclusa: '+money(taxa); } else ge('prazo-taxa-info').style.display='none';
   var vp=valorFinal/n, html='<div class="sumbox">Total: <b>'+money(valorFinal)+'</b><br>Parcela: <b>'+money(vp)+'</b></div>';
   for(var i=1;i<=n;i++){ var d=new Date(); d.setMonth(d.getMonth()+i); html+='<div class="fg"><label class="fl">Venc. '+i+'</label><input class="fi" type="date" id="pdata-'+i+'" value="'+d.toISOString().split('T')[0]+'"></div>'; }
   ge('prazo-parcelas-ui').innerHTML=html;
 }
 
 function confirmarPrazo(){
-  var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1;
-  if(prazoTipo==='fiado' && (!gv('prazo-nome').trim() || !gv('prazo-tel').trim())){ alert('Preencha os dados do cliente.'); return; }
+  var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1, vp=total/n, parcelas=[];
+  for(var i=1;i<=n;i++) parcelas.push({num:i,valor:vp,venc:ge('pdata-'+i).value,pago:false});
   baixarEstoque();
-  vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), cliente:gv('prazo-nome'), tipo:'prazo', valor:total, data:today(), parcelas:[] });
+  vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), cliente:gv('prazo-nome'), tipo:'prazo', valor:total, data:today(), parcelas:parcelas, whatsapp:gv('prazo-tel'), setor:gv('prazo-setor') });
   closeM('modal-prazo'); saveBoth('Venda salva'); sacolaAtual=[];
 }
+
+function abrirTroca(){ ge('troca-body').innerHTML='<div class="fg"><label class="fl">Cliente</label><input class="fi" type="text" id="troca-nome"></div><div class="fg"><label class="fl">Motivo</label><textarea class="fi" id="troca-motivo"></textarea></div>'; openM('modal-troca'); }
+function confirmarTroca(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque += sacolaAtual[i].qty; } vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'troca', valor:0, data:today(), motivo:gv('troca-motivo'), cliente:gv('troca-nome') }); closeM('modal-troca'); saveBoth('Troca salva'); sacolaAtual=[]; }
 
 function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }
 
 function loadScriptOnce(src, cb){ if(document.querySelector('script[src="'+src+'"]')){ cb(); return; } var s=document.createElement('script'); s.src=src; s.onload=cb; document.head.appendChild(s); }
 function ligarCameraScannerRealtime(){
+  ge('scan-result').innerHTML='<div class="alerta warning">Abrindo câmera...</div>';
   loadScriptOnce('https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js', function(){
     if(!window.ZXing) return;
     desligarCameraScanner();
@@ -799,16 +710,25 @@ function ligarCameraScannerRealtime(){
     zxingCodeReader.decodeFromConstraints({video:{facingMode:'environment'}}, 'scanner-video', function(result){
       if(result){ var code=result.getText().trim(); desligarCameraScanner(); handleBarcode(code); }
     });
+    ge('scan-result').innerHTML='';
   });
 }
 function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); zxingCodeReader=null; } }
 function handleBarcode(code){
-  var matches = findProdutosByBarcode(code);
+  if(!code) return; lastBarcode=code;
+  var matches = produtos.filter(function(p){ return p.barcode===code; });
   if(matches.length) mostrarProdutoFound(matches[0]);
-  else alert('Produto não encontrado: ' + code);
+  else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+code+'\')">Cadastrar Agora</button></div></div>';
 }
 
-window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.clearScan=function(){ desligarCameraScanner(); showSec('painel'); };
+function abrirSeletorVendaDireta(){
+  var modal=ge('modal-venda-direta-seletor');
+  var html='<div class="sheet" style="max-height:85dvh"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">x</button></div><div class="sheet-body">';
+  produtos.forEach(function(p){ html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div style="flex:1"><b>'+escapeHtml(p.nome)+'</b><br><small>'+money(p.preco)+'</small></div><b>Est: '+p.estoque+'</b></div>'; });
+  modal.innerHTML=html + '</div></div>'; openM('modal-venda-direta-seletor');
+}
+
+window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail; window.editarProduto=editarProduto; window.iniciarFluxoProd=iniciarFluxoProd; window.abrirNovoProduto=abrirNovoProduto; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.alternarCameraScanner=function(){ currentDeviceIndex=currentDeviceIndex===1?0:1; ligarCameraScannerRealtime(); }; window.clearScan=function(){ desligarCameraScanner(); showSec('painel'); }; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta;
 
 syncDrive();
 })();
