@@ -21,7 +21,7 @@
 --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
 --accent:#6366f1;--accent2:#4f46e5;
 --r:14px;--r2:10px;--r3:8px;
---font:'Segoe UI',system-ui,-apple-system,sans-serif;
+--font:\'Segoe UI\',system-ui,-apple-system,sans-serif;
 --sh:0 4px 24px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -81,7 +81,7 @@ input,select,textarea{font-family:var(--font)}
 .fl{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
 .fi{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:15px;padding:11px 13px;display:block}
 .fi:focus{outline:none;border-color:var(--accent)}
-select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+select.fi{appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236b7280\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
 .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
 .bg{background:var(--green-bg);color:var(--green)}
@@ -128,6 +128,8 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .opcao-card.sel-troca{border-color:var(--amber);background:var(--amber-bg)}
 .opcao-card.sel-vista{border-color:var(--green);background:var(--green-bg)}
 .opcao-card.sel-prazo{border-color:var(--blue);background:var(--blue-bg)}
+.opcao-card.sel-fiado{border-color:var(--red);background:var(--red-bg)}
+.opcao-card.sel-cartao{border-color:var(--purple);background:var(--purple-bg)}
 .opcao-icon{font-size:32px;margin-bottom:8px}
 .opcao-label{font-size:14px;font-weight:800}
 .opcao-sub{font-size:11px;color:var(--text2);margin-top:3px}
@@ -160,7 +162,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <body>
 
 <div class="topbar">
-<div class="logo"><div class="logo-chip"></div>Pamp's Eletrônicos</div>
+<div class="logo"><div class="logo-chip"></div>Pamp\'s Eletrônicos</div>
 <div class="sync-row">
 <div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div>
 </div>
@@ -175,19 +177,19 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="shead"><span class="stitle">Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">x Parar</button></div>
 <div class="video-scan-container">
   <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
-     Posicione o código de barras na linha vermelha.
+     Posicione o código de barras na linha vermelha
   </div>
   <div class="video-wrapper">
     <video id="scanner-video" autoplay playsinline muted></video>
     <div class="laser-line"></div>
   </div>
   <div style="width:100%; padding:12px; display:flex; gap:8px; background:var(--bg2);">
-    <button class="btn btn-sm btn-outline" style="flex:1" onclick="window.alternarCameraScanner()">Virar Câmera</button>
+    <button class="btn btn-sm btn-outline" style="flex:1" onclick="window.alternarCameraScanner()"> Virar Câmera</button>
   </div>
 </div>
 <div class="manual-scan">
 <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o código manualmente</div>
-<div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Cdigo de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
+<div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Código de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge(\'manual-bc\').value.trim())">Buscar</button></div>
 </div>
 <div id="scan-result" style="margin-top:10px"></div>
 </div>
@@ -206,120 +208,181 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </div>
 
 <nav class="bnav">
-<button class="ni active" id="ni-painel" onclick="showSec('painel',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Painel</button>
-<button class="ni" id="ni-scanner" onclick="showSec('scanner',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>Scanner</button>
-<button class="ni" id="ni-estoque" onclick="showSec('estoque',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Estoque</button>
-<button class="ni" id="ni-vendas" onclick="showSec('vendas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Vendas</button>
-<button class="ni" id="ni-alertas" onclick="showSec('alertas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Alertas<span class="ni-badge" id="alert-badge" style="display:none">0</span></button>
+<button class="ni active" id="ni-painel" onclick="showSec(\'painel\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Painel</button>
+<button class="ni" id="ni-scanner" onclick="showSec(\'scanner\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>Scanner</button><button class="ni" id="ni-estoque" onclick="showSec(\'estoque\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Estoque</button>
+<button class="ni" id="ni-vendas" onclick="showSec(\'vendas\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Vendas</button>
+<button class="ni" id="ni-alertas" onclick="showSec(\'alertas\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Alertas<span class="ni-badge" id="alert-badge">0</span></button>
 </nav>
-
-<div class="overlay" id="modal-venda-direta-seletor"></div>
 
 <div class="overlay" id="modal-prod-found">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prod-found')">x</button></div>
+<div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-prod-found\')">x</button></div>
 <div class="sheet-body" id="pf-body"></div>
 <div class="sheet-footer" id="pf-footer"></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-produto">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title" id="mp-title">Novo Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-produto\')">x</button></div>
+<div class="sheet-body">
+  <div class="fg">
+    <label class="fl">Foto do Produto</label>
+    <div class="foto-area" onclick="ge(\'foto-file\').click()">
+      <img src="" id="foto-preview" style="display:none;">
+      <div class="foto-area-label" id="foto-placeholder">+ Adicionar Foto</div>
+      <input type="file" id="foto-file" accept="image/*" style="display:none;" onchange="previewFoto(this)">
+    </div>
+    <button class="btn btn-xs btn-red" style="margin-top:8px;" onclick="clearFoto()">Remover Foto</button>
+  </div>
+  <div class="fg"><label class="fl">Nome</label><input class="fi" type="text" id="mp-nome"></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Marca</label><input class="fi" type="text" id="mp-marca"></div>
+    <div class="fg"><label class="fl">Modelo</label><input class="fi" type="text" id="mp-modelo"></div>
+  </div>
+  <div class="fg"><label class="fl">Descrição</label><textarea class="fi" id="mp-desc"></textarea></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Categoria</label>
+      <select class="fi" id="mp-cat">
+        <option>CABOS</option>
+        <option>CARREGADORES</option>
+        <option>FONES</option>
+        <option>CAPAS</option>
+        <option>PELICULAS</option>
+        <option>VARIADOS</option>
+        <option>OUTROS</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Código de Barras</label><input class="fi" type="text" id="mp-barcode"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Custo (R$)</label><input class="fi" type="number" id="mp-custo"></div>
+    <div class="fg"><label class="fl">Preço Venda (R$)</label><input class="fi" type="number" id="mp-preco"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Estoque</label><input class="fi" type="number" id="mp-estoque"></div>
+    <div class="fg"><label class="fl">Estoque Mínimo</label><input class="fi" type="number" id="mp-min"></div>
+  </div>
+</div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="salvarProduto()">Salvar Produto</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-entrada">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">Entrada de estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-entrada')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Entrada de Estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-entrada\')">x</button></div>
 <div class="sheet-body" id="entrada-body"></div>
-<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarEntrada()">OK, confirme entrada</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-entrada')">Cancelar</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarEntrada()">Confirmar Entrada</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-saida-tipo">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">Sacola de Saída (Carrinho)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Tipo de Saída</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-saida-tipo\')">x</button></div>
 <div class="sheet-body">
-  <div id="sacola-itens-lista" style="margin-bottom:15px"></div>
-  <button class="btn btn-outline btn-full" style="margin-bottom:15px; border:1px dashed var(--accent)" onclick="window.adicionarMaisItemNaSacola()"> Adicionar outro produto à sacola</button>
+  <div id="sacola-itens-lista"></div>
   <div class="opcoes-grid">
-    <div class="opcao-card" id="op-venda" onclick="selSaida('venda')"><div class="opcao-icon"></div><div class="opcao-label">Venda</div><div class="opcao-sub">Faturar sacola</div></div>
-    <div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-icon"></div><div class="opcao-label">Troca</div><div class="opcao-sub">Registrar devolução</div></div>
+    <div class="opcao-card" id="op-venda" onclick="selSaida(\'venda\')"><div class="opcao-label">Venda</div></div>
+    <div class="opcao-card" id="op-troca" onclick="selSaida(\'troca\')"><div class="opcao-label">Troca</div></div>
   </div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar para fechamento ></button><button class="btn btn-ghost btn-full" onclick="closeM('modal-saida-tipo')">Cancelar</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar</button><button class="btn btn-ghost btn-full" onclick="adicionarMaisItemNaSacola()">+ Adicionar Item</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-forma-pag">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">Forma de Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-forma-pag')">x</button></div>
-<div class="sheet-body"><div class="opcoes-grid"><div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-icon"></div><div class="opcao-label"> Vista</div><div class="opcao-sub">QR Code Pix</div></div><div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-icon"></div><div class="opcao-label"> Prazo</div><div class="opcao-sub">At 3x no Fiado</div></div></div></div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextPag()">Continuar ></button><button class="btn btn-ghost btn-full" onclick="closeM('modal-forma-pag')">Cancelar</button></div>
+<div class="sheet-header"><span class="sheet-title">Forma de Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-forma-pag\')">x</button></div>
+<div class="sheet-body">
+  <div class="opcoes-grid">
+    <div class="opcao-card" id="op-vista" onclick="selPag(\'vista\')"><div class="opcao-label">À Vista</div></div>
+    <div class="opcao-card" id="op-prazo" onclick="selPag(\'prazo\')"><div class="opcao-label">À Prazo</div></div>
+  </div>
+</div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextPag()">Continuar</button></div>
 </div>
 </div>
 
-<div class="overlay" id="modal-vista"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento à vista - Pix</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">x</button></div><div class="sheet-body" id="vista-body"></div><div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">OK, finalize venda com Pix</button></div></div></div>
-<div class="overlay" id="modal-prazo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento à prazo (Fiado)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">x</button></div><div class="sheet-body" id="prazo-body"></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">OK, registrar venda à prazo</button></div></div></div>
-<div class="overlay" id="modal-troca"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">x</button></div><div class="sheet-body" id="troca-body"></div><div class="sheet-footer"><button class="btn btn-amber btn-full" onclick="confirmarTroca()">OK, registrar devolução</button></div></div></div>
-
-<div class="overlay" id="modal-produto">
+<div class="overlay" id="modal-vista">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title" id="mp-title">Novo Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-produto')">x</button></div>
-<div class="sheet-body">
-<div class="fg"><label class="fl">Foto do produto</label><div class="foto-area" id="foto-area" onclick="document.getElementById('foto-file').click()"><img id="foto-preview" src="" alt="" style="display:none"><div id="foto-placeholder"><span style="font-size:40px; text-align:center; display:block"></span><span class="foto-area-label">Toque para adicionar imagem</span></div></div><input type="file" id="foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFoto(this)"></div>
-<div class="fg"><label class="fl">Nome do produto</label><input class="fi" type="text" id="mp-nome"></div>
-<div class="frow"><div class="fg"><label class="fl">Marca</label><input class="fi" type="text" id="mp-marca"></div><div class="fg"><label class="fl">Modelo</label><input class="fi" type="text" id="mp-modelo"></div></div>
-<div class="fg"><label class="fl">Descrio</label><textarea class="fi" id="mp-desc" rows="2"></textarea></div>
-<div class="fg"><label class="fl">Categoria</label><select class="fi" id="mp-cat"><option value="CABOS">CABOS</option><option value="HEADPHONES">HEADPHONES</option><option value="CARREGADORES">CARREGADORES</option><option value="ADAPTADORES">ADAPTADORES</option><option value="ACESSÓRIOS">ACESSÓRIOS</option><option value="ELETROS">ELETROS</option></select></div>
-<div class="frow"><div class="fg"><label class="fl">Preo de Custo (R$)</label><input class="fi" type="number" id="mp-custo" step="0.01"></div><div class="fg"><label class="fl">Preço de venda (R$)</label><input class="fi" type="number" id="mp-preco" step="0.01"></div></div>
-<div class="frow"><div class="fg"><label class="fl">Estoque Inicial</label><input class="fi" type="number" id="mp-estoque" value="1"></div><div class="fg"><label class="fl">Estoque mínimo</label><input class="fi" type="number" id="mp-min" value="5"></div></div>
-<div class="fg"><label class="fl">Cdigo de barras (EAN)</label><div style="display:flex;gap:8px"><input class="fi" type="text" id="mp-barcode" placeholder="Cdigo numrico" style="flex:1"><button type="button" class="btn btn-primary" onclick="scanForField('mp-barcode')">Escanear</button></div></div>
+<div class="sheet-header"><span class="sheet-title">Pagamento à Vista</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-vista\')">x</button></div>
+<div class="sheet-body" id="vista-body"></div>
+<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">Confirmar Venda</button></div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-sistema" onclick="window.salvarProduto()">OK, salvar produto no sistema</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-produto')">Cancelar</button></div>
+</div>
+
+<div class="overlay" id="modal-prazo">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">Pagamento à Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-prazo\')">x</button></div>
+<div class="sheet-body" id="prazo-body">
+  <div class="opcoes-grid">
+    <div class="opcao-card" id="op-fiado" onclick="selPrazoTipo(\'fiado\')"><div class="opcao-label">Fiado</div><div class="opcao-sub">Até 3x, acima de R$100</div></div>
+    <div class="opcao-card" id="op-cartao" onclick="selPrazoTipo(\'cartao\')"><div class="opcao-label">Cartão de Crédito</div><div class="opcao-sub">Com taxas após 3x</div></div>
+  </div>
+  <div id="prazo-detalhes-container" style="display:none;">
+    <div class="fg" id="fg-prazo-nome"><label class="fl">Nome Cliente</label><input class="fi" type="text" id="prazo-nome"></div>
+    <div class="frow" id="frow-prazo-contato">
+      <div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div>
+      <div class="fg"><label class="fl">Setor</label><input class="fi" type="text" id="prazo-setor"></div>
+    </div>
+    <div class="fg"><label class="fl">Parcelas</label><select class="fi" type="number" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
+    <div id="prazo-parcelas-ui"></div>
+    <div id="prazo-taxa-info" class="alerta warning" style="display:none; margin-top:10px;"><div class="alerta-body"></div></div>
+  </div>
+</div>
+<div class="sheet-footer" id="prazo-footer"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">Confirmar Venda</button></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-troca">
+<div class="sheet">
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span class="sheet-title">Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-troca\')">x</button></div>
+<div class="sheet-body" id="troca-body"></div>
+<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarTroca()">Confirmar Troca</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-venda-detail">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title"> Ficha do Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Detalhes do Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-detail\')">x</button></div>
 <div class="sheet-body" id="venda-detail-body"></div>
 <div class="sheet-footer" id="venda-detail-footer"></div>
 </div>
 </div>
 
-<div class="overlay" id="modal-editar-venda">
-<div class="sheet">
-<div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title"> Editar Venda a Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-editar-venda')">x</button></div>
-<div class="sheet-body" id="editar-venda-body"></div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-venda-prazo" onclick="window.salvarEdicaoVenda()"> Salvar Alterações</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-editar-venda')">Cancelar</button></div>
-</div>
-</div>
+<div class="overlay" id="modal-venda-direta-seletor"></div>
 
 <div class="overlay" id="modal-add-item-venda">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title"> Adicionar Item</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-add-item-venda')">x</button></div>
+<div class="sheet-header"><span class="sheet-title"> Adicionar Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-add-item-venda\')">x</button></div>
 <div class="sheet-body">
-  <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" id="add-item-select-prod"></select></div>
+  <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" type="number" id="add-item-select-prod"></select></div>
   <div class="fg"><label class="fl">Quantidade</label><input class="fi" type="number" id="add-item-qty" value="1"></div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">OK IInserir Item</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">OK Inserir Item</button></div>
 </div>
 </div>
 
 <script>
 (function(){
-'use strict';
+\'use strict\';
 
 window.onerror = function(message, source, lineno) {
-  var text = 'Erro no app: ' + message + ' (linha ' + lineno + ')';
-  var status = document.getElementById('stxt');
-  var painel = document.getElementById('painel-body');
-  if (status) status.textContent = 'Erro ao iniciar';
-  if (painel) painel.innerHTML = '<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao iniciar</div><div class="alerta-sub">' + escapeHtml(text) + '</div></div></div>';
+  var text = \'Erro no app: \' + message + \' (linha \' + lineno + \')\';
+  var status = document.getElementById(\'stxt\');
+  var painel = document.getElementById(\'painel-body\');
+  if (status) status.textContent = \'Erro ao iniciar\';
+  if (painel) painel.innerHTML = \'<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao iniciar</div><div class="alerta-sub">\' + escapeHtml(text) + \'</div></div></div>\';
   console.error(text);
 };
 
@@ -328,12 +391,13 @@ var vendas = [];
 var currentProdId = null;
 var saidaTipo = null;
 var pagTipo = null;
+var prazoTipo = null; // \'fiado\' ou \'cartao\'
 var scanFieldTarget = null;
 var lastBarcode = null;
 var fotoBase64 = null;
 var editingProdId = null;
-var filtroEstoque = 'todos';
-var filtroVendas = 'todas';
+var filtroEstoque = \'todos\';
+var filtroVendas = \'todas\';
 var idVendaEmEdicao = null;
 var opcaoProd = null;
 var sacolaAtual = [];
@@ -341,32 +405,48 @@ var zxingCodeReader = null;
 var scannerDevices = [];
 var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
-    var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
+    var API_BASE = \'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp2XXyo_RptgPxy8V/exec\'; // API_BASE atualizada
 var FOTO_MAX_DIM = 640;
 var FOTO_JPEG_QUALITY = 0.55;
+var TAXA_CARTAO_CREDITO = 0.03; // 3% de taxa para cartão de crédito
 
 function ge(id){ return document.getElementById(id); }
-function gv(id){ var el = ge(id); return el ? el.value : ''; }
-function escapeHtml(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function money(v){ return 'R$ ' + Number(v || 0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function today(){ return new Date().toISOString().split('T')[0]; }
-function fmtD(d){ if(!d) return '-'; var p = String(d).split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : d; }
-function diffDays(ds){ var n = new Date(); n.setHours(0,0,0,0); return Math.round((new Date(ds + 'T00:00:00') - n) / 86400000); }
+function gv(id){ var el = ge(id); return el ? el.value : \'\'; }
+function escapeHtml(v){ return String(v == null ? \'\' : v).replace(/[&<>"\']/g, function(c){ return {\'&\':\'&amp;\',\'<\':\'&lt;\',\'>\':\'&gt;\',\'"\':\'&quot;\',"\'\':\'&#39;\'}[c]; }); }
+function money(v){ return \'R$ \' + Number(v || 0).toLocaleString(\'pt-BR\',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function today(){ return new Date().toISOString().split(\'T\')[0]; }
+function fmtD(d){ if(!d) return \'-\\\'; var p = String(d).split(\'-\\'); return p.length === 3 ? p[2] + \'/\' + p[1] + \'/\' + p[0] : d; }
+function diffDays(ds){ var n = new Date(); n.setHours(0,0,0,0); return Math.round((new Date(ds + \'T00:00:00\') - n) / 86400000); }
 function nextId(arr){ var max = 0; for(var i=0;i<arr.length;i++){ if((arr[i].id || 0) > max) max = arr[i].id || 0; } return max + 1; }
-function openM(id){ var el = ge(id); if(el) el.classList.add('open'); }
-function closeM(id){ var el = ge(id); if(el) el.classList.remove('open'); }
-function setSS(state, txt){ var t=ge('stxt'), d=ge('sdot'); if(t) t.textContent=txt; if(d) d.className='dot' + (state==='spin'?' spin':state==='err'?' err':''); }
-function parseJson(raw, fallback){ try { return raw ? JSON.parse(raw) : fallback; } catch(e){ console.error('JSON invalido', e); return fallback; } }
+function openM(id){ var el = ge(id); if(el) el.classList.add(\'open\'); }
+function closeM(id){ var el = ge(id); if(el) el.classList.remove(\'open\'); }
+function setSS(state, txt){ var t=ge(\'stxt\'), d=ge(\'sdot\'); if(t) t.textContent=txt; if(d) d.className=\'dot\' + (state===\'spin\'?\' spin\':state===\'err\'?\' err\':\'\'); }
+function parseJson(raw, fallback){ try { return raw ? JSON.parse(raw) : fallback; } catch(e){ console.error(\'JSON inválido\', e); return fallback; } }
 function hasGoogle(){ return window.google && google.script && google.script.run; }
 function isGithubPages(){ return !hasGoogle(); }
 
+// Função para normalizar URLs do Google Drive
+function normalizeDriveUrl(url) {
+  if (!url || typeof url !== \'string\') return \'\';
+  // Verifica se já é um link direto de imagem
+  if (url.includes(\'drive.google.com/uc?export=view\')) {
+    return url;
+  }
+  // Converte links de visualização para links diretos
+  var match = url.match(/drive\\.google\\.com\\/file\\/d\\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return \'https://drive.google.com/uc?export=view&id=\' + match[1];
+  }
+  return url; // Retorna a URL original se não for do Drive ou já estiver normalizada
+}
+
 function getData(filename, ok, fail){
   if(isGithubPages()){
-    var cbName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    var script = document.createElement('script');
+    var cbName = \'jsonp_\' + Date.now() + \'_\' + Math.floor(Math.random() * 100000);
+    var script = document.createElement(\'script\');
     var timer = setTimeout(function(){
       cleanup();
-      fail(new Error('Tempo esgotado ao ler ' + filename));
+      fail(new Error(\'Tempo esgotado ao ler \' + filename));
     }, 20000);
 
     function cleanup(){
@@ -382,15 +462,15 @@ function getData(filename, ok, fail){
 
     script.onerror = function(){
       cleanup();
-      fail(new Error('Nao foi possivel acessar a API do Apps Script.'));
+      fail(new Error(\'Não foi possível acessar a API do Apps Script.\'));
     };
-    script.src = API_BASE + '?api=getData&filename=' + encodeURIComponent(filename) + '&callback=' + encodeURIComponent(cbName) + '&_=' + Date.now();
+    script.src = API_BASE + \'?api=getData&filename=\' + encodeURIComponent(filename) + \'&callback=\' + encodeURIComponent(cbName) + \'&_=\' + Date.now();
     document.head.appendChild(script);
     return;
   }
 
   var done = false;
-  var timer = setTimeout(function(){ if(!done){ done = true; fail(new Error('Tempo esgotado ao ler ' + filename)); } }, 20000);
+  var timer = setTimeout(function(){ if(!done){ done = true; fail(new Error(\'Tempo esgotado ao ler \' + filename)); } }, 20000);
   google.script.run.withSuccessHandler(function(value){ if(done) return; done = true; clearTimeout(timer); ok(value); })
     .withFailureHandler(function(err){ if(done) return; done = true; clearTimeout(timer); fail(err); })
     .getData(filename);
@@ -399,28 +479,28 @@ function getData(filename, ok, fail){
 function saveData(filename, data, ok, fail){
   if(isGithubPages()){
     var fields = { filename: filename, data: JSON.stringify(data) };
-    if(filename === 'produtos.json'){
+    if(filename === \'produtos.json\'){
       var cleaned = [];
-      var photoData = '';
-      var photoProductId = '';
-      var photoBarcode = '';
-      var photoProductName = '';
-      var photoProductModel = '';
+      var photoData = \'\';
+      var photoProductId = \'\';
+      var photoBarcode = \'\';
+      var photoProductName = \'\';
+      var photoProductModel = \'\';
       for(var i=0;i<data.length;i++){
         var item = {};
         for(var k in data[i]) if(data[i].hasOwnProperty(k)) item[k] = data[i][k];
-        if(!photoData && item.foto && String(item.foto).indexOf('data:image/') === 0){
+        if(!photoData && item.foto && String(item.foto).indexOf(\'data:image/\') === 0){
           photoData = item.foto;
-          photoProductId = item.id || 'novo';
-          photoBarcode = item.barcode || '';
-          photoProductName = item.nome || '';
-          photoProductModel = item.modelo || '';
-          item.foto = item.fotoUrl || item.thumbUrl || '';
+          photoProductId = item.id || \'novo\';
+          photoBarcode = item.barcode || \'\';
+          photoProductName = item.nome || \'\';
+          photoProductModel = item.modelo || \'\';
+          item.foto = item.fotoUrl || item.thumbUrl || \'\';
         }
         cleaned.push(item);
       }
       if(photoData){
-        fields.action = 'saveProductsPhoto';
+        fields.action = \'saveProductsPhoto\';
         fields.data = JSON.stringify(cleaned);
         fields.dataUrl = photoData;
         fields.productId = photoProductId;
@@ -439,24 +519,24 @@ function saveData(filename, data, ok, fail){
 }
 
 function postHiddenForm(fields, ok, fail){
-  var frameName = 'apiFrame_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-  var iframe = document.createElement('iframe');
-  var form = document.createElement('form');
+  var frameName = \'apiFrame_\' + Date.now() + \'_\' + Math.floor(Math.random() * 100000);
+  var iframe = document.createElement(\'iframe\');
+  var form = document.createElement(\'form\');
   var finished = false;
   var timer = null;
 
   iframe.name = frameName;
-  iframe.style.display = 'none';
+  iframe.style.display = \'none\';
   document.body.appendChild(iframe);
 
-  form.method = 'POST';
+  form.method = \'POST\';
   form.action = API_BASE;
   form.target = frameName;
-  form.style.display = 'none';
+  form.style.display = \'none\';
 
   for(var key in fields){
     if(!fields.hasOwnProperty(key)) continue;
-    var input = document.createElement(key === 'dataUrl' || key === 'data' ? 'textarea' : 'input');
+    var input = document.createElement(key === \'dataUrl\' || key === \'data\' ? \'textarea\' : \'input\');
     input.name = key;
     input.value = fields[key];
     form.appendChild(input);
@@ -482,18 +562,18 @@ function postHiddenForm(fields, ok, fail){
     if(finished) return;
     finished = true;
     cleanup();
-    fail(new Error('Tempo esgotado na API.'));
+    fail(new Error(\'Tempo esgotado na API.\'));
   }, 30000);
 
   form.submit();
 }
 
 function uploadPhoto(dataUrl, productId, barcode, ok, fail){
-  if(!dataUrl || dataUrl.indexOf('data:image/') !== 0){ ok(null); return; }
+  if(!dataUrl || dataUrl.indexOf(\'data:image/\') !== 0){ ok(null); return; }
   postHiddenForm({
-    action: 'uploadPhoto',
-    productId: productId || 'novo',
-    barcode: barcode || '',
+    action: \'uploadPhoto\',
+    productId: productId || \'novo\',
+    barcode: barcode || \'\',
     dataUrl: dataUrl
   }, function(){
     // A resposta do Apps Script em iframe cross-origin nao pode ser lida aqui.
@@ -505,27 +585,35 @@ function uploadPhoto(dataUrl, productId, barcode, ok, fail){
 }
 
 function syncDrive(){
-  setSS('spin','Lojinha 2.2...');
-  ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Lendo produtos...</div>';
-  getData('produtos.json', function(prodRaw){
-    setSS('spin','Lendo vendas...');
-    getData('vendas.json', function(vendRaw){
+  setSS(\'spin\',\'Lojinha 2.2...\');
+  ge(\'painel-body\').innerHTML = \'<div class="loader"><div class="spinner"></div>Lendo produtos...</div>\';
+  getData(\'produtos.json\', function(prodRaw){
+    setSS(\'spin\',\'Lendo vendas...\');
+    getData(\'vendas.json\', function(vendRaw){
       var p = parseJson(prodRaw, []);
       var v = parseJson(vendRaw, []);
       produtos = Array.isArray(p) ? p : (p.produtos || []);
       vendas = Array.isArray(v) ? v : (v.vendas || []);
+      
+      // Normaliza as URLs das fotos ao carregar os produtos
+      produtos.forEach(function(prod) {
+        if (prod.foto) {
+          prod.foto = normalizeDriveUrl(prod.foto);
+        }
+      });
+
       renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
-      renderSection('painel');
+      renderSection(\'painel\');
       updateAlertBadge();
-      setSS('ok','Conectado');
+      setSS(\'ok\',\'Conectado\');
     }, showLoadError);
   }, showLoadError);
 }
 
 function showLoadError(err){
-  var msg = err && err.message ? err.message : String(err || 'Erro desconhecido');
-  setSS('err','Erro ao carregar');
-  ge('painel-body').innerHTML = '<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao carregar dados</div><div class="alerta-sub">' + escapeHtml(msg) + '</div></div></div>';
+  var msg = err && err.message ? err.message : String(err || \'Erro desconhecido\');
+  setSS(\'err\',\'Erro ao carregar\');
+  ge(\'painel-body\').innerHTML = \'<div class="alerta danger"><div class="alerta-body"><div class="alerta-title">Erro ao carregar dados</div><div class="alerta-sub">\' + escapeHtml(msg) + \'</div></div></div>\';
 }
 
 function refreshLocalViews(){
@@ -537,111 +625,111 @@ function refreshLocalViews(){
 }
 
 function renderSection(s){
-  if(s === 'painel') renderPainel();
-  if(s === 'estoque') renderEstoque();
-  if(s === 'vendas') renderVendas();
-  if(s === 'alertas') renderAlertas();
+  if(s === \'painel\') renderPainel();
+  if(s === \'estoque\') renderEstoque();
+  if(s === \'vendas\') renderVendas();
+  if(s === \'alertas\') renderAlertas();
   renderedSections[s] = true;
 }
 
 function showSec(s, btn){
-  var secs = document.querySelectorAll('.sec');
-  for(var i=0;i<secs.length;i++) secs[i].classList.remove('active');
-  var nav = document.querySelectorAll('.ni');
-  for(var j=0;j<nav.length;j++) nav[j].classList.remove('active');
-  var sec = ge('sec-' + s); if(sec) sec.classList.add('active');
-  if(btn) btn.classList.add('active');
+  var secs = document.querySelectorAll(\'.sec\');
+  for(var i=0;i<secs.length;i++) secs[i].classList.remove(\'active\');
+  var nav = document.querySelectorAll(\'.ni\');
+  for(var j=0;j<nav.length;j++) nav[j].classList.remove(\'active\');
+  var sec = ge(\'sec-\' + s); if(sec) sec.classList.add(\'active\');
+  if(btn) btn.classList.add(\'active\');
   renderSection(s);
-  if(s === 'scanner') ligarCameraScannerRealtime(); else desligarCameraScanner();
+  if(s === \'scanner\') ligarCameraScannerRealtime(); else desligarCameraScanner();
 }
 
 function alertasPrazo(){
   var c = 0;
   for(var i=0;i<vendas.length;i++){
     var v = vendas[i];
-    if(v.tipo !== 'prazo' || !v.parcelas) continue;
+    if(v.tipo !== \'prazo\' || !v.parcelas) continue;
     for(var j=0;j<v.parcelas.length;j++) if(!v.parcelas[j].pago && diffDays(v.parcelas[j].venc) <= 1) c++;
   }
   return c;
 }
 function contarAlertasEstoqueBaixo(){ var c=0; for(var i=0;i<produtos.length;i++) if(Number(produtos[i].estoque||0) <= Number(produtos[i].min||0)) c++; return c; }
-function updateAlertBadge(){ var c=alertasPrazo(); var el=ge('alert-badge'); if(!el) return; if(c>0){ el.style.display='flex'; el.textContent=c; } else el.style.display='none'; }
+function updateAlertBadge(){ var c=alertasPrazo(); var el=ge(\'alert-badge\'); if(!el) return; if(c>0){ el.style.display=\'flex\'; el.textContent=c; } else el.style.display=\'none\'; }
 
 function renderPainel(){
   var receita = 0, semEstq = 0;
-  for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === 'vista' || vendas[i].tipo === 'prazo') receita += Number(vendas[i].valor || 0);
+  for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === \'vista\' || vendas[i].tipo === \'prazo\') receita += Number(vendas[i].valor || 0);
   for(var j=0;j<produtos.length;j++) if(Number(produtos[j].estoque || 0) === 0) semEstq++;
   var recentes = vendas.slice().reverse().slice(0,6);
-  var html = '<div class="drive-banner">Google Drive - Banco de Dados Ativo</div>';
-  html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">' + money(receita) + '</div></div>';
-  html += '<div class="mcard"><div class="mlabel">Vendas</div><div class="mval">' + vendas.length + '</div></div>';
-  html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
-  html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + contarAlertasEstoqueBaixo() + '</div></div></div>';
-  html += '<div class="shead"><span class="stitle">Ultimas Transacoes</span><button class="btn btn-sm" onclick="syncDrive()">Sync</button></div>';
-  if(!recentes.length) html += '<p style="padding:15px; color:var(--text3)">Nenhuma venda recente.</p>';
+  var html = \'<div class="drive-banner">Google Drive - Banco de Dados Ativo</div>\';
+  html += \'<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">\' + money(receita) + \'</div></div>\';
+  html += \'<div class="mcard"><div class="mlabel">Vendas</div><div class="mval">\' + vendas.length + \'</div></div>\';
+  html += \'<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">\' + semEstq + \'</div></div>\';
+  html += \'<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">\' + contarAlertasEstoqueBaixo() + \'</div></div></div>\';
+  html += \'<div class="shead"><span class="stitle">Últimas Transações</span><button class="btn btn-sm" onclick="syncDrive()">Sync</button></div>\';
+  if(!recentes.length) html += \'<p style="padding:15px; color:var(--text3)">Nenhuma venda recente.</p>\';
   for(var k=0;k<recentes.length;k++){
     var v = recentes[k];
-    html += '<div class="card"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div><div><b>' + money(v.valor) + '</b></div></div></div></div>';
+    html += \'<div class="card"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>\' + escapeHtml(String(v.produto||\'\').split(\'\\n\')[0]) + \'</b><br><small style="color:var(--text2)">\' + fmtD(v.data) + \' - \' + escapeHtml(v.cliente || \'Balcão\') + \'</small></div><div><b>\' + money(v.valor) + \'</b></div></div></div></div>\';
   }
-  ge('painel-body').innerHTML = html;
+  ge(\'painel-body\').innerHTML = html;
 }
 
 function renderEstoque(){
   var categorias = {};
-  for(var i=0;i<produtos.length;i++){ var p=produtos[i]; var cat=p.cat||'OUTROS'; if(!categorias[cat]) categorias[cat]=[]; categorias[cat].push(p); }
-  var html = '<div class="shead"><span class="stitle">Inventario por Categoria</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>';
-  html += '<div class="tabs"><button class="tab ' + (filtroEstoque==='todos'?'active':'') + '" onclick="filtroEstoque=\'todos\';renderEstoque()">Todos</button><button class="tab ' + (filtroEstoque==='baixo'?'active':'') + '" onclick="filtroEstoque=\'baixo\';renderEstoque()">Alertas</button></div>';
+  for(var i=0;i<produtos.length;i++){ var p=produtos[i]; var cat=p.cat||\'OUTROS\'; if(!categorias[cat]) categorias[cat]=[]; categorias[cat].push(p); }
+  var html = \'<div class="shead"><span class="stitle">Inventário por Categoria</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>\';
+  html += \'<div class="tabs"><button class="tab \' + (filtroEstoque===\'todos\'?\'active\':\'\') + \'" onclick="filtroEstoque=\'todos\';renderEstoque()">Todos</button><button class="tab \' + (filtroEstoque===\'baixo\'?\'active\':\'\') + \'" onclick="filtroEstoque=\'baixo\';renderEstoque()">Alertas</button></div>\';
   var keys = Object.keys(categorias).sort();
   for(var c=0;c<keys.length;c++){
     var catName = keys[c];
     var lista = [];
-    for(var a=0;a<categorias[catName].length;a++){ var prod = categorias[catName][a]; if(filtroEstoque==='baixo' && !(Number(prod.estoque||0) <= Number(prod.min||0) && Number(prod.estoque||0) > 0)) continue; lista.push(prod); }
+    for(var a=0;a<categorias[catName].length;a++){ var prod = categorias[catName][a]; if(filtroEstoque===\'baixo\' && !(Number(prod.estoque||0) <= Number(prod.min||0) && Number(prod.estoque||0) > 0)) continue; lista.push(prod); }
     if(!lista.length) continue;
-    html += '<div class="categoria-bloco" style="margin-bottom:8px; border:1px solid var(--border); border-radius:var(--r3); overflow:hidden;"><div onclick="toggleCategoriaVisivel(\'cat-' + c + '\')" style="background:var(--bg3); padding:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:14px;"><span>' + escapeHtml(catName.toUpperCase()) + ' (' + lista.length + ')</span><span id="seta-cat-' + c + '">v</span></div><div id="cat-' + c + '" style="display:none; padding:6px; background:rgba(0,0,0,0.2);">';
+    html += \'<div class="categoria-bloco" style="margin-bottom:8px; border:1px solid var(--border); border-radius:var(--r3); overflow:hidden;"><div onclick="toggleCategoriaVisivel(\'cat-\' + c + \'\')" style="background:var(--bg3); padding:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:14px;"><span>\' + escapeHtml(catName.toUpperCase()) + \' (\' + lista.length + \')</span><span id="seta-cat-\' + c + '\'">v</span></div><div id="cat-\' + c + '\'" style="display:none; padding:6px; background:rgba(0,0,0,0.2);">\\n\';
     for(var n=0;n<lista.length;n++) html += productCard(lista[n]);
-    html += '</div></div>';
+    html += \'</div></div>\';
   }
-  ge('estoque-body').innerHTML = html || '<p style="padding:15px; color:var(--text3)">Nenhum item encontrado.</p>';
+  ge(\'estoque-body\').innerHTML = html || \'<p style="padding:15px; color:var(--text3)">Nenhum item encontrado.</p>\';
 }
 
 function productCard(p){
-  var img = p.foto ? '<img src="' + escapeHtml(p.foto) + '">' : 'BOX';
-  var stockClass = Number(p.estoque||0) <= Number(p.min||0) ? 'ba' : 'bg';
-  return '<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(' + p.id + ')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">' + img + '</div><div class="pcard-info"><div class="pcard-name"><b>' + escapeHtml(p.nome) + '</b></div><div class="pcard-sub">' + escapeHtml(p.marca || 'Pamps') + ' - <b style="color:var(--green)">' + money(p.preco) + '</b></div><div style="margin-top:2px"><span class="badge ' + stockClass + '">Qtd: ' + escapeHtml(p.estoque) + ' un.</span></div></div></div><div style="display:flex; gap:6px; padding:0 10px 10px;"><button class="btn btn-sm" style="flex:1; padding:6px;" onclick="event.stopPropagation();editarProduto(' + p.id + ')">Editar</button><button class="btn btn-sm btn-primary" style="flex:1; padding:6px;" onclick="event.stopPropagation();iniciarFluxoProd(' + p.id + ')">Lancar</button></div></div>';
+  var img = p.foto ? \'<img src="\' + escapeHtml(p.foto) + \'">\' : \'BOX\';
+  var stockClass = Number(p.estoque||0) <= Number(p.min||0) ? \'ba\' : \'bg\';
+  return \'<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(\' + p.id + \')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">\' + img + \'</div><div class="pcard-info"><div class="pcard-name"><b>\' + escapeHtml(p.nome) + \'</b></div><div class="pcard-sub">\' + escapeHtml(p.marca || \'Pamps\') + \' - <b style="color:var(--green)">\' + money(p.preco) + \'</b></div><div style="margin-top:2px"><span class="badge \' + stockClass + '\'">Qtd: \' + escapeHtml(p.estoque) + \' un.</span></div></div></div></div>\';
 }
 
-function toggleCategoriaVisivel(id){ var el=ge(id); var seta=ge('seta-' + id); if(!el) return; if(el.style.display === 'none'){ el.style.display='block'; if(seta) seta.innerHTML='^'; } else { el.style.display='none'; if(seta) seta.innerHTML='v'; } }
+function toggleCategoriaVisivel(id){ var el=ge(id); var seta=ge(\'seta-\' + id); if(!el) return; if(el.style.display === \'none\'){ el.style.display=\'block\'; if(seta) seta.innerHTML=\'^\'; } else { el.style.display=\'none\'; if(seta) seta.innerHTML=\'v\'; } }
 
 function renderVendas(){
-  var html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:10px;"><span class="stitle" style="font-size:16px;">Historico de Movimentacoes</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Iniciar Venda</button></div>';
-  if(!vendas.length) html += '<p style="font-size:13px; color:var(--text3); padding:15px;">Nenhuma venda registrada.</p>';
+  var html = \'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:10px;"><span class="stitle" style="font-size:16px;">Histórico de Movimentações</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Iniciar Venda</button></div>\';
+  if(!vendas.length) html += \'<p style="font-size:13px; color:var(--text3); padding:15px;">Nenhuma venda registrada.</p>\';
   var list = vendas.slice().reverse();
   for(var i=0;i<list.length;i++){
     var v = list[i];
-    html += '<div class="card" ' + (v.tipo==='prazo' ? 'onclick="abrirEditarVenda(' + v.id + ')" style="cursor:pointer; border-left:4px solid var(--purple);"' : '') + '><div class="card-body" style="padding:10px;"><div style="display:flex; justify-content:space-between; gap:8px"><div style="min-width:0"><b style="font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div><div style="text-align:right"><b>' + money(v.valor) + '</b><br>' + statusBadge(v) + '</div></div></div></div>';
+    html += \'<div class="card" \' + (v.tipo===\'prazo\' ? \'onclick="abrirEditarVenda(\' + v.id + \')" style="cursor:pointer; border-left:4px solid var(--purple);"\' : \'\') + \'><div class="card-body" style="padding:10px;"><div style="display:flex; justify-content:space-between; gap:8px"><div style="min-width:0"><b style="font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">\' + escapeHtml(String(v.produto||\'\').split(\'\\n\')[0]) + \'</b><small style="color:var(--text2)">\' + fmtD(v.data) + \' - \' + escapeHtml(v.cliente || \'Balcão\') + \'</small></div><div style="text-align:right"><b>\' + money(v.valor) + \'</b><br>\' + statusBadge(v) + \'</div></div></div></div>\';
   }
-  ge('vendas-body').innerHTML = html;
+  ge(\'vendas-body\').innerHTML = html;
 }
-function statusBadge(v){ if(v.tipo==='vista') return '<span class="badge bg">A Vista</span>'; if(v.tipo==='troca') return '<span class="badge ba">Troca</span>'; return '<span class="badge bp">Prazo</span>'; }
+function statusBadge(v){ if(v.tipo===\'vista\') return \'<span class="badge bg">À Vista</span>\'; if(v.tipo===\'troca\') return \'<span class="badge ba">Troca</span>\'; return \'<span class="badge bp">Prazo</span>\'; }
 
 function renderAlertas(){
   var todos = [];
-  for(var i=0;i<vendas.length;i++){ var v=vendas[i]; if(v.tipo !== 'prazo' || !v.parcelas) continue; for(var j=0;j<v.parcelas.length;j++){ var p=v.parcelas[j]; if(!p.pago) todos.push({v:v,p:p,d:diffDays(p.venc)}); } }
+  for(var i=0;i<vendas.length;i++){ var v=vendas[i]; if(v.tipo !== \'prazo\' || !v.parcelas) continue; for(var j=0;j<v.parcelas.length;j++){ var p=v.parcelas[j]; if(!p.pago) todos.push({v:v,p:p,d:diffDays(p.venc)}); } }
   todos.sort(function(a,b){ return a.d-b.d; });
-  var html = '<div class="shead"><span class="stitle">Cobrancas e Vencimentos</span></div>';
-  for(var k=0;k<todos.length;k++){ var a=todos[k]; if(a.d>1) continue; html += '<div class="alerta danger"><div class="alerta-body"><b>' + escapeHtml(a.v.cliente || '') + '</b><br><small>' + escapeHtml(String(a.v.produto||'').split('\n')[0]) + ' - Vencida ou no prazo</small></div></div>'; }
-  html += '<p style="color:var(--text2); font-size:13px; padding:10px;">' + todos.length + ' parcelas sob monitoramento.</p>';
-  ge('alertas-body').innerHTML = html;
+  var html = \'<div class="shead"><span class="stitle">Cobranças e Vencimentos</span></div>\';
+  for(var k=0;k<todos.length;k++){ var a=todos[k]; if(a.d>1) continue; html += \'<div class="alerta danger"><div class="alerta-body"><b>\' + escapeHtml(a.v.cliente || \'\') + \'</b><br><small>\' + escapeHtml(String(a.v.produto||\'\').split(\'\\n\')[0]) + \' - Vencida ou no prazo</small></div></div>\'; }
+  html += \'<p style="color:var(--text2); font-size:13px; padding:10px;">\' + todos.length + \' parcelas sob monitoramento.</p>\';
+  ge(\'alertas-body\').innerHTML = html;
 }
 
-function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; fotoBase64=p.foto||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
-function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
-function abrirNovoProdutoComCodigo(code){ abrirNovoProduto(); ge('mp-barcode').value = code || lastBarcode || ''; }
-function clearFoto(){ fotoBase64=null; if(ge('foto-preview')) ge('foto-preview').style.display='none'; if(ge('foto-placeholder')) ge('foto-placeholder').style.display='flex'; if(ge('foto-file')) ge('foto-file').value=''; }
+function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge(\'mp-title\').textContent=\'Editar Produto\'; ge(\'mp-nome\').value=p.nome||\'\'; ge(\'mp-marca\').value=p.marca||\'\'; ge(\'mp-modelo\').value=p.modelo||\'\'; ge(\'mp-desc\').value=p.desc||\'\'; ge(\'mp-cat\').value=p.cat||\'CABOS\'; ge(\'mp-custo\').value=p.custo||\'\'; ge(\'mp-preco\').value=p.preco||\'\'; ge(\'mp-estoque\').value=p.estoque||0; ge(\'mp-min\').value=p.min||5; ge(\'mp-barcode\').value=p.barcode||\'\'; fotoBase64=p.foto||\'\'; if(p.foto){ ge(\'foto-preview\').src=p.foto; ge(\'foto-preview\').style.display=\'block\'; ge(\'foto-placeholder\').style.display=\'none\'; } else clearFoto(); openM(\'modal-produto\'); }
+function abrirNovoProduto(){ editingProdId=null; ge(\'mp-title\').textContent=\'Novo Produto\'; ge(\'mp-nome\').value=\'\'; ge(\'mp-marca\').value=\'\'; ge(\'mp-modelo\').value=\'\'; ge(\'mp-desc\').value=\'\'; ge(\'mp-cat\').value=\'CABOS\'; ge(\'mp-custo\').value=\'\'; ge(\'mp-preco\').value=\'\'; ge(\'mp-estoque\').value=\'1\'; ge(\'mp-min\').value=\'5\'; ge(\'mp-barcode\').value=\'\'; clearFoto(); openM(\'modal-produto\'); }
+function abrirNovoProdutoComCodigo(code){ abrirNovoProduto(); ge(\'mp-barcode\').value = code || lastBarcode || \'\'; }
+function clearFoto(){ fotoBase64=null; if(ge(\'foto-preview\')) ge(\'foto-preview\').style.display=\'none\'; if(ge(\'foto-placeholder\')) ge(\'foto-placeholder\').style.display=\'flex\'; if(ge(\'foto-file\')) ge(\'foto-file\').value=\'\'; }
 function previewFoto(input){
   var file=input.files[0];
   if(!file) return;
-  setSS('spin','Reduzindo foto...');
+  setSS(\'spin\',\'Reduzindo foto...\');
   var reader=new FileReader();
   reader.onload=function(e){
     var img=new Image();
@@ -652,21 +740,21 @@ function previewFoto(input){
       if(w>h && w>max){ h=Math.round(h*max/w); w=max; }
       else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
 
-      var canvas=document.createElement('canvas');
+      var canvas=document.createElement(\'canvas\');
       canvas.width=w;
       canvas.height=h;
-      var ctx=canvas.getContext('2d');
+      var ctx=canvas.getContext(\'2d\');
       ctx.drawImage(img,0,0,w,h);
 
-      fotoBase64=canvas.toDataURL('image/jpeg', FOTO_JPEG_QUALITY);
-      ge('foto-preview').src=fotoBase64;
-      ge('foto-preview').style.display='block';
-      ge('foto-placeholder').style.display='none';
-      setSS('ok','Foto reduzida');
+      fotoBase64=canvas.toDataURL(\'image/jpeg\', FOTO_JPEG_QUALITY);
+      ge(\'foto-preview\').src=fotoBase64;
+      ge(\'foto-preview\').style.display=\'block\';
+      ge(\'foto-placeholder\').style.display=\'none\';
+      setSS(\'ok\',\'Foto reduzida\');
     };
     img.onerror=function(){
-      setSS('err','Erro na foto');
-      alert('Nao foi possivel ler esta foto.');
+      setSS(\'err\',\'Erro na foto\');
+      alert(\'Não foi possível ler esta foto.\');
     };
     img.src=e.target.result;
   };
@@ -674,167 +762,520 @@ function previewFoto(input){
 }
 
 function salvarProduto(){
-  var nome=gv('mp-nome').trim(); var preco=parseFloat(gv('mp-preco')); var estoque=parseInt(gv('mp-estoque'),10); var barcode=gv('mp-barcode').trim();
-  if(!nome || isNaN(preco) || isNaN(estoque)){ alert('Preencha nome, preco e estoque.'); return; }
-  for(var i=0;i<produtos.length;i++){ if(produtos[i].barcode && produtos[i].barcode === barcode && produtos[i].id !== editingProdId){ alert('Ja existe produto com este codigo.'); return; } }
-  var custo=parseFloat(gv('mp-custo'))||0;
-  if(editingProdId){ var p=findProduto(editingProdId); if(p){ p.nome=nome; p.marca=gv('mp-marca'); p.modelo=gv('mp-modelo'); p.desc=gv('mp-desc'); p.cat=gv('mp-cat'); p.custo=custo; p.preco=preco; p.estoque=estoque; p.min=parseInt(gv('mp-min'),10)||5; p.barcode=barcode; p.foto=fotoBase64 || p.foto || ''; } }
-  else { produtos.push({id:nextId(produtos),nome:nome,marca:gv('mp-marca'),modelo:gv('mp-modelo'),desc:gv('mp-desc'),cat:gv('mp-cat'),custo:custo,preco:preco,estoque:estoque,min:parseInt(gv('mp-min'),10)||5,barcode:barcode,foto:fotoBase64||'',histPreco:[{data:today(),custo:custo,preco:preco,qtd:estoque}]}); }
-  saveData('produtos.json', produtos, function(){ closeM('modal-produto'); refreshLocalViews(); setSS('ok','Produto salvo'); }, function(e){ alert('Erro ao salvar: ' + (e.message || e)); });
+  var nome=gv(\'mp-nome\').trim(); var preco=parseFloat(gv(\'mp-preco\')); var estoque=parseInt(gv(\'mp-estoque\'),10); var barcode=gv(\'mp-barcode\').trim();
+  if(!nome || isNaN(preco) || isNaN(estoque)){ alert(\'Preencha nome, preço e estoque.\'); return; }
+  for(var i=0;i<produtos.length;i++){ if(produtos[i].barcode && produtos[i].barcode === barcode && produtos[i].id !== editingProdId){ alert(\'Já existe produto com este código.\'); return; } }
+  var custo=parseFloat(gv(\'mp-custo\'))||0;
+  if(editingProdId){ 
+    var p=findProduto(editingProdId); 
+    if(p){
+      p.nome=nome; p.marca=gv(\'mp-marca\'); p.modelo=gv(\'mp-modelo\'); p.desc=gv(\'mp-desc\'); p.cat=gv(\'mp-cat\'); p.custo=custo; p.preco=preco; 
+      // Validação para não permitir estoque negativo
+      if (estoque < 0) {
+        alert(\'Estoque não pode ser negativo.\');
+        return;
+      }
+      p.estoque=estoque; 
+      p.min=parseInt(gv(\'mp-min\'),10)||5; p.barcode=barcode; 
+      // Normaliza a URL da foto ao salvar
+      p.foto=normalizeDriveUrl(fotoBase64 || p.foto || \'\'); 
+    }
+  }
+  else { 
+    // Validação para não permitir estoque negativo
+    if (estoque < 0) {
+      alert(\'Estoque não pode ser negativo.\');
+      return;
+    }
+    produtos.push({
+      id:nextId(produtos),
+      nome:nome,
+      marca:gv(\'mp-marca\'),
+      modelo:gv(\'mp-modelo\'),
+      desc:gv(\'mp-desc\'),
+      cat:gv(\'mp-cat\'),
+      custo:custo,
+      preco:preco,
+      estoque:estoque,
+      min:parseInt(gv(\'mp-min\'),10)||5,
+      barcode:barcode,
+      // Normaliza a URL da foto ao salvar
+      foto:normalizeDriveUrl(fotoBase64||\'\'),
+      histPreco:[{data:today(),custo:custo,preco:preco,qtd:estoque}]
+    }); 
+  }
+  saveData(\'produtos.json\', produtos, function(){ closeM(\'modal-produto\'); refreshLocalViews(); setSS(\'ok\',\'Produto salvo\'); }, function(e){ alert(\'Erro ao salvar: \' + (e.message || e)); });
 }
 
 function findProduto(id){ for(var i=0;i<produtos.length;i++) if(Number(produtos[i].id) === Number(id)) return produtos[i]; return null; }
-function iniciarFluxoProd(id){ currentProdId=id; var p=findProduto(id); if(p) mostrarProdutoFound(p); }
-function mostrarProdutoFound(prod){ currentProdId=prod.id; ge('pf-title').textContent=prod.nome; var html=''; if(prod.foto) html+='<img src="'+escapeHtml(prod.foto)+'" class="prod-detail-img">'; else html+='<div class="prod-detail-placeholder">BOX</div>'; html+='<div class="prod-detail-name">'+escapeHtml(prod.nome)+'</div><div class="prod-detail-meta"><span class="badge bg">'+escapeHtml(prod.cat||'')+'</span>'+(prod.barcode?'<span class="badge bb">'+escapeHtml(prod.barcode)+'</span>':'')+'</div><div class="detail-row"><span class="detail-key">Preco</span><span style="font-weight:800;color:var(--green)">'+money(prod.preco)+'</span></div><div class="detail-row"><span class="detail-key">Estoque</span><span class="badge bg">'+escapeHtml(prod.estoque)+' un.</span></div><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saida</div></div></div>'; ge('pf-body').innerHTML=html; ge('pf-footer').innerHTML='<button class="btn btn-primary btn-full" onclick="continuarFluxoProd()">Continuar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-prod-found\')">Fechar</button>'; openM('modal-prod-found'); }
-function selOpcaoProd(o){ opcaoProd=o; if(ge('op-entrada')) ge('op-entrada').classList.toggle('sel-entrada', o==='entrada'); if(ge('op-saida')) ge('op-saida').classList.toggle('sel-saida', o==='saida'); }
-function continuarFluxoProd(){ closeM('modal-prod-found'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd==='entrada') abrirEntrada(); else { sacolaAtual=[{prodId:p.id,nome:p.nome,qty:1,preco:p.preco}]; abrirSaidaTipo(); } opcaoProd=null; }
-function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div class="sumbox"><b>'+escapeHtml(p.nome)+'</b><br><small>Estoque: '+escapeHtml(p.estoque)+' un.</small></div><div class="frow"><div class="fg"><label class="fl">Qtd Entrada</label><input class="fi" type="number" id="ent-qty" value="1"></div><div class="fg"><label class="fl">Custo (R$)</label><input class="fi" type="number" id="ent-custo" value="'+escapeHtml(p.custo||0)+'"></div></div><div class="fg"><label class="fl">Preco Venda (R$)</label><input class="fi" type="number" id="ent-preco" value="'+escapeHtml(p.preco||0)+'"></div>'; openM('modal-entrada'); }
-function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; p.estoque=Number(p.estoque||0)+(parseInt(gv('ent-qty'),10)||0); p.custo=parseFloat(gv('ent-custo'))||0; p.preco=parseFloat(gv('ent-preco'))||0; closeM('modal-entrada'); saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok','Estoque salvo'); }, function(e){ alert(e.message||e); }); }
+// Adiciona função para encontrar produto por barcode, retornando todos os matches
+function findProdutosByBarcode(barcode) {
+  return produtos.filter(function(p) { return p.barcode === barcode; });
+}
 
-function abrirSaidaTipo(){ saidaTipo=null; renderSacolaItens(); openM('modal-saida-tipo'); }
-function renderSacolaItens(){ var total=0, html='<p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:8px;">Produtos na Sacola:</p>'; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+='<div class="bag-item"><div style="flex:1;min-width:0"><b>'+escapeHtml(item.nome)+'</b><br><small>'+money(item.preco)+' cada</small></div><div><button class="btn btn-xs" onclick="alterarQtdItemSacola('+i+',-1)">-</button> <b>'+item.qty+'</b> <button class="btn btn-xs" onclick="alterarQtdItemSacola('+i+',1)">+</button></div><b>'+money(sub)+'</b></div>'; } html+='<div class="sumbox" style="display:flex;justify-content:space-between"><span>Total</span><b>'+money(total)+'</b></div>'; ge('sacola-itens-lista').innerHTML=html; }
+function iniciarFluxoProd(id){ currentProdId=id; var p=findProduto(id); if(p) mostrarProdutoFound(p); }
+function mostrarProdutoFound(prod){ 
+  currentProdId=prod.id; 
+  ge(\'pf-title\').textContent=prod.nome; 
+  var html=\'\'; 
+  // Usa a URL normalizada da foto
+  if(prod.foto) html+=\'<img src="\' + escapeHtml(prod.foto) + \'" class="prod-detail-img">\'; 
+  else html+=\'<div class="prod-detail-placeholder">BOX</div>\'; 
+  html+=\'<div class="prod-detail-name">\' + escapeHtml(prod.nome) + \'</div><div class="prod-detail-meta"><span class="badge bg">\' + escapeHtml(prod.cat||\'\') + \'</span>\' + (prod.barcode?\'<span class="badge bb">\' + escapeHtml(prod.barcode) + \'</span>\':\'\') + \'</div><div class="detail-row"><span class="detail-key">Preço</span><span style="font-weight:800;color:var(--green)">\' + money(prod.preco) + \'</span></div><div class="detail-row"><span class="detail-key">Estoque</span><span class="badge bg">\' + escapeHtml(prod.estoque) + \' un.</span></div><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saída</div></div></div>\'; 
+  ge(\'pf-body\').innerHTML=html; 
+  ge(\'pf-footer\').innerHTML=\'<button class="btn btn-primary btn-full" onclick="continuarFluxoProd()">Continuar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-prod-found\')">Fechar</button>\'; 
+  openM(\'modal-prod-found\'); 
+}
+function selOpcaoProd(o){ opcaoProd=o; if(ge(\'op-entrada\')) ge(\'op-entrada\').classList.toggle(\'sel-entrada\', o===\'entrada\'); if(ge(\'op-saida\')) ge(\'op-saida\').classList.toggle(\'sel-saida\', o===\'saida\'); }
+function continuarFluxoProd(){ closeM(\'modal-prod-found\'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd===\'entrada\') abrirEntrada(); else { sacolaAtual=[{prodId:p.id,nome:p.nome,qty:1,preco:p.preco}]; abrirSaidaTipo(); } opcaoProd=null; }
+function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge(\'entrada-body\').innerHTML=\'<div class="sumbox"><b>\' + escapeHtml(p.nome) + \'</b><br><small>Estoque: \' + escapeHtml(p.estoque) + \' un.</small></div><div class="frow"><div class="fg"><label class="fl">Qtd Entrada</label><input class="fi" type="number" id="ent-qty" value="1"></div><div class="fg"><label class="fl">Custo (R$)</label><input class="fi" type="number" id="ent-custo" value="\' + escapeHtml(p.custo||0) + \'"></div></div><div class="fg"><label class="fl">Preço Venda (R$)</label><input class="fi" type="number" id="ent-preco" value="\' + escapeHtml(p.preco||0) + \'"></div>\'; openM(\'modal-entrada\'); }
+function confirmarEntrada(){
+  var p=findProduto(currentProdId); 
+  if(!p) return; 
+  var qtdEntrada = parseInt(gv(\'ent-qty\'),10)||0;
+  if (qtdEntrada <= 0) {
+    alert(\'A quantidade de entrada deve ser maior que zero.\');
+    return;
+  }
+  p.estoque=Number(p.estoque||0)+qtdEntrada; 
+  p.custo=parseFloat(gv(\'ent-custo\'))||0; 
+  p.preco=parseFloat(gv(\'ent-preco\'))||0; 
+  closeM(\'modal-entrada\'); 
+  saveData(\'produtos.json\', produtos, function(){ refreshLocalViews(); setSS(\'ok\',\'Estoque salvo\'); }, function(e){ alert(e.message||e); }); 
+}
+
+function abrirSaidaTipo(){ renderSacolaItens(); openM(\'modal-saida-tipo\'); }
+function renderSacolaItens(){ var total=0, html=\'<p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:8px;">Produtos na Sacola:</p>\'; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+=\'<div class="bag-item"><div style="flex:1;min-width:0"><b>\' + escapeHtml(item.nome) + \'</b><br><small>\' + money(item.preco) + \' cada</small></div><div><button class="btn btn-xs" onclick="alterarQtdItemSacola(\' + i + \',-1)">-</button> <b>\' + item.qty + \'</b> <button class="btn btn-xs" onclick="alterarQtdItemSacola(\' + i + \',1)">+</button></div><b>\' + money(sub) + \'</b></div>\'; } html+=\'<div class="sumbox" style="display:flex;justify-content:space-between"><span>Total</span><b>\' + money(total) + \'</b></div>\'; ge(\'sacola-itens-lista\').innerHTML=html; }
 function alterarQtdItemSacola(i,delta){ if(!sacolaAtual[i]) return; sacolaAtual[i].qty+=delta; if(sacolaAtual[i].qty<=0) removerItemDaSacola(i); else renderSacolaItens(); }
-function removerItemDaSacola(i){ sacolaAtual.splice(i,1); if(!sacolaAtual.length) closeM('modal-saida-tipo'); else renderSacolaItens(); }
-function selSaida(t){ saidaTipo=t; if(ge('op-venda')) ge('op-venda').classList.toggle('sel-venda',t==='venda'); if(ge('op-troca')) ge('op-troca').classList.toggle('sel-troca',t==='troca'); }
-function nextSaida(){ closeM('modal-saida-tipo'); if(saidaTipo==='troca') abrirTroca(); else abrirFormaPag(); }
-function abrirFormaPag(){ pagTipo=null; openM('modal-forma-pag'); }
-function selPag(t){ pagTipo=t; if(ge('op-vista')) ge('op-vista').classList.toggle('sel-vista',t==='vista'); if(ge('op-prazo')) ge('op-prazo').classList.toggle('sel-prazo',t==='prazo'); }
-function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(); else abrirVista(); }
+function removerItemDaSacola(i){ sacolaAtual.splice(i,1); if(!sacolaAtual.length) closeM(\'modal-saida-tipo\'); else renderSacolaItens(); }
+function selSaida(t){ saidaTipo=t; if(ge(\'op-venda\')) ge(\'op-venda\').classList.toggle(\'sel-venda\',t===\'venda\'); if(ge(\'op-troca\')) ge(\'op-troca\').classList.toggle(\'sel-troca\',t===\'troca\'); }
+function nextSaida(){ closeM(\'modal-saida-tipo\'); if(saidaTipo===\'troca\') abrirTroca(); else abrirFormaPag(); }
+function abrirFormaPag(){ pagTipo=null; openM(\'modal-forma-pag\'); }
+function selPag(t){ 
+  pagTipo=t; 
+  if(ge(\'op-vista\')) ge(\'op-vista\').classList.toggle(\'sel-vista\',t===\'vista\'); 
+  if(ge(\'op-prazo\')) ge(\'op-prazo\').classList.toggle(\'sel-prazo\',t===\'prazo\'); 
+}
+function nextPag(){ 
+  closeM(\'modal-forma-pag\'); 
+  if(pagTipo===\'prazo\') abrirPrazo(); 
+  else abrirVista(); 
+}
 function totalSacola(){ var total=0; for(var i=0;i<sacolaAtual.length;i++) total += sacolaAtual[i].preco * sacolaAtual[i].qty; return total; }
-function descricaoSacola(){ var a=[]; for(var i=0;i<sacolaAtual.length;i++) a.push(sacolaAtual[i].qty + 'x ' + sacolaAtual[i].nome); return a.join('\n'); }
-function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque = Number(p.estoque||0) - sacolaAtual[i].qty; } }
-function emv(id, value){ value = String(value); return id + String(value.length).padStart(2, '0') + value; }
+function descricaoSacola(){
+  var desc = [];
+  for(var i=0;i<sacolaAtual.length;i++) {
+    desc.push(sacolaAtual[i].qty + \'x \' + sacolaAtual[i].nome + \' (ID: \' + sacolaAtual[i].prodId + \')\');
+  }
+  return desc.join(\'\\n\');
+}
+function baixarEstoque(){
+  for(var i=0;i<sacolaAtual.length;i++){
+    var p=findProduto(sacolaAtual[i].prodId);
+    if(p) {
+      var novaEstoque = Number(p.estoque||0) - sacolaAtual[i].qty;
+      if (novaEstoque < 0) {
+        // Isso não deveria acontecer se a validação de estoque for feita antes da venda
+        // Mas é um fallback para evitar estoque negativo no banco de dados
+        console.warn(\'Tentativa de baixar estoque para negativo para produto \' + p.nome + \'. Estoque atual: \' + p.estoque + \', quantidade a baixar: \' + sacolaAtual[i].qty);
+        p.estoque = 0; // Define como zero para evitar negativos
+      } else {
+        p.estoque = novaEstoque;
+      }
+    }
+  }
+}
+function emv(id, value){ value = String(value); return id + String(value.length).padStart(2, \'0\') + value; }
 function crc16(payload){
   var crc = 0xFFFF;
   for(var i=0;i<payload.length;i++){
     crc ^= payload.charCodeAt(i) << 8;
     for(var j=0;j<8;j++) crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
   }
-  return crc.toString(16).toUpperCase().padStart(4, '0');
+  return crc.toString(16).toUpperCase().padStart(4, \'0\');
 }
 function gerarPayloadPix(valor){
-  var chavePix = '97d547d2-1df8-42d9-822c-e3a2dcf46f8b';
-  var nome = 'ANDRE HENRIQUE PAMPLONA';
-  var cidade = 'RIO DE JANEIRO';
-  var txid = 'LOJINHA';
-  var merchant = emv('00','BR.GOV.BCB.PIX') + emv('01', chavePix);
-  var payload = '';
-  payload += emv('00','01');
-  payload += emv('26', merchant);
-  payload += emv('52','0000');
-  payload += emv('53','986');
-  payload += emv('54', Number(valor || 0).toFixed(2));
-  payload += emv('58','BR');
-  payload += emv('59', nome.substring(0,25));
-  payload += emv('60', cidade.substring(0,15));
-  payload += emv('62', emv('05', txid));
-  payload += '6304';
+  // Usando os dados do config.json
+  var chavePix = config.pixKey || \'CHAVE_PIX_PADRAO\'; 
+  var nome = config.pixNome || \'NOME_PADRAO\';
+  var cidade = \'RIO DE JANEIRO\'; // Manter fixo ou adicionar ao config.json
+  var txid = \'LOJINHA\';
+  var merchant = emv(\'00\',\'BR.GOV.BCB.PIX\') + emv(\'01\', chavePix);
+  var payload = \'\';
+  payload += emv(\'00\',\'01\');
+  payload += emv(\'26\', merchant);
+  payload += emv(\'52\',\'0000\');
+  payload += emv(\'53\',\'986\');
+  payload += emv(\'54\', Number(valor || 0).toFixed(2));
+  payload += emv(\'58\',\'BR\');
+  payload += emv(\'59\', nome.substring(0,25));
+  payload += emv(\'60\', cidade.substring(0,15));
+  payload += emv(\'62\', emv(\'05\', txid));
+  payload += \'6304\';
   return payload + crc16(payload);
 }
 function copiarPix(){
-  var el = ge('pix-copia-cola');
+  var el = ge(\'pix-copia-cola\');
   if(!el) return;
-  var text = el.value || el.textContent || '';
+  var text = el.value || el.textContent || \'\';
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(function(){ alert('Pix copia e cola copiado.'); });
+    navigator.clipboard.writeText(text).then(function(){ alert(\'Pix copia e cola copiado.\'); });
   } else {
     el.select();
-    document.execCommand('copy');
-    alert('Pix copia e cola copiado.');
+    document.execCommand(\'copy\');
+    alert(\'Pix copia e cola copiado.\');
   }
 }
 function desenharQrPix(payload){
-  var box = ge('qr-box-pix');
+  var box = ge(\'qr-box-pix\');
   if(!box) return;
-  loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', function(){
-    box.innerHTML = '';
-    new QRCode(box, { text: payload, width: 220, height: 220, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  loadScriptOnce(\'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\', function(){
+    box.innerHTML = \'\';
+    new QRCode(box, { text: payload, width: 220, height: 220, colorDark: \'#000000\', colorLight: \'#ffffff\', correctLevel: QRCode.CorrectLevel.M });
   }, function(){
-    box.innerHTML = '<div style="color:#111;font-size:12px;padding:8px">Nao foi possivel carregar o QR Code.</div>';
+    box.innerHTML = \'<div style="color:#111;font-size:12px;padding:8px">Não foi possível carregar o QR Code.</div>\';
   });
 }
 function abrirVista(){
   var total = totalSacola();
   var pixPayload = gerarPayloadPix(total);
-  ge('vista-body').innerHTML =
-    '<div class="pix-box">' +
-      '<div class="pix-amount">' + money(total) + '</div>' +
-      '<div style="background:#fff;display:inline-block;padding:14px;border-radius:12px;margin-bottom:12px"><div id="qr-box-pix"></div></div>' +
-      '<p style="color:var(--text2);font-size:12px;margin-bottom:8px">Cliente escaneia o QR Code no app do banco.</p>' +
-      '<textarea class="fi" id="pix-copia-cola" rows="3" readonly style="font-size:11px;margin-bottom:8px">' + escapeHtml(pixPayload) + '</textarea>' +
-      '<button class="btn btn-sm btn-outline" onclick="copiarPix()">Copiar Pix</button>' +
-    '</div>';
-  openM('modal-vista');
+  ge(\'vista-body\').innerHTML =
+    \' <div class="pix-box">\' +
+      \' <div class="pix-amount">\' + money(total) + \'</div>\' +
+      \' <div style="background:#fff;display:inline-block;padding:14px;border-radius:12px;margin-bottom:12px"><div id="qr-box-pix"></div></div>\' +
+      \' <p style="color:var(--text2);font-size:12px;margin-bottom:8px">Cliente escaneia o QR Code no app do banco.</p>\' +
+      \' <textarea class="fi" id="pix-copia-cola" rows="3" readonly style="font-size:11px;margin-bottom:8px">\' + escapeHtml(pixPayload) + \'</textarea>\' +
+      \' <button class="btn btn-sm btn-outline" onclick="copiarPix()">Copiar Pix</button>\' +
+    \' </div>\';
+  openM(\'modal-vista\');
   desenharQrPix(pixPayload);
 }
-function confirmarVista(){ var total=totalSacola(); baixarEstoque(); vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),tipo:'vista',valor:total,qtd:1,data:today(),parcelas:[]}); closeM('modal-vista'); saveBoth('Venda salva'); }
-function abrirPrazo(){ ge('prazo-body').innerHTML='<div class="fg"><label class="fl">Nome Cliente</label><input class="fi" type="text" id="prazo-nome"></div><div class="frow"><div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div><div class="fg"><label class="fl">Setor</label><input class="fi" type="text" id="prazo-setor"></div></div><div class="fg"><label class="fl">Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option></select></div><div id="prazo-parcelas-ui"></div>'; openM('modal-prazo'); atualizarParcelasMultiUI(); }
-function atualizarParcelasMultiUI(){ var n=parseInt(gv('prazo-parc'),10)||1, total=totalSacola(), vp=total/n, html='<div class="sumbox">Total: '+money(total)+' ('+n+'x de '+money(vp)+')</div>'; for(var i=1;i<=n;i++){ var d=new Date(); d.setDate(d.getDate()+30*i); html+='<div class="prow"><div class="pnum">'+i+'</div><div class="pinfo">'+money(vp)+'</div><input type="date" class="pdate" id="pdata-'+i+'" value="'+d.toISOString().split('T')[0]+'"></div>'; } ge('prazo-parcelas-ui').innerHTML=html; }
-function confirmarPrazo(){ var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1, vp=total/n, parcelas=[]; for(var i=1;i<=n;i++) parcelas.push({num:i,valor:vp,venc:gv('pdata-'+i),pago:false}); baixarEstoque(); vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),cliente:gv('prazo-nome'),tipo:'prazo',valor:total,qtd:1,data:today(),parcelas:parcelas,telefone:gv('prazo-tel'),setor:gv('prazo-setor')}); closeM('modal-prazo'); saveBoth('Venda salva'); }
-function abrirTroca(){ ge('troca-body').innerHTML='<div class="fg"><label class="fl">Cliente</label><input class="fi" type="text" id="troca-nome"></div><div class="fg"><label class="fl">Motivo</label><textarea class="fi" id="troca-motivo"></textarea></div><div class="sumbox">Produtos devolvidos:<br><b>'+escapeHtml(descricaoSacola())+'</b></div>'; openM('modal-troca'); }
-function confirmarTroca(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque = Number(p.estoque||0) + sacolaAtual[i].qty; } vendas.push({id:nextId(vendas),prodId:0,produto:descricaoSacola(),cliente:gv('troca-nome'),tipo:'troca',valor:0,qtd:1,data:today(),parcelas:[],motivo:gv('troca-motivo')}); closeM('modal-troca'); saveBoth('Troca salva'); }
-function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e.message||e); }); }, function(e){ alert(e.message||e); }); }
+function confirmarVista(){
+  var total=totalSacola(); 
+  baixarEstoque(); 
+  vendas.push({
+    id:nextId(vendas),
+    // Armazena os IDs dos produtos na sacola para melhor rastreamento
+    produtosVendidos: sacolaAtual.map(item => ({ prodId: item.prodId, qty: item.qty, preco: item.preco })),
+    produto:descricaoSacola(), // Mantém para compatibilidade, mas o ideal é usar produtosVendidos
+    tipo:\'vista\',
+    valor:total,
+    qtd:sacolaAtual.reduce((sum, item) => sum + item.qty, 0), // Soma das quantidades
+    data:today(),
+    parcelas:[]
+  }); 
+  closeM(\'modal-vista\'); 
+  saveBoth(\'Venda salva\'); 
+  sacolaAtual = []; // Limpa a sacola após a venda
+}
 
-function abrirSeletorVendaDireta(){ var modal=ge('modal-venda-direta-seletor'); var html='<div class="sheet" style="max-height:85dvh"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">x</button></div><div class="sheet-body">'; for(var i=0;i<produtos.length;i++){ var p=produtos[i]; html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div style="flex:1"><b>'+escapeHtml(p.nome)+'</b><br><small>'+escapeHtml(p.marca||'')+' - Est: '+escapeHtml(p.estoque)+'</small></div><b>'+money(p.preco)+'</b></div>'; } html+='</div></div>'; modal.innerHTML=html; openM('modal-venda-direta-seletor'); }
-function adicionarMaisItemNaSacola(){ var select=ge('add-item-select-prod'); select.innerHTML=''; for(var i=0;i<produtos.length;i++){ var opt=document.createElement('option'); opt.value=produtos[i].id; opt.textContent=produtos[i].nome + ' (' + money(produtos[i].preco) + ')'; select.appendChild(opt); } ge('add-item-qty').value='1'; ge('btn-confirmar-add-item-dinamico').onclick=function(){ var id=parseInt(select.value,10), qty=parseInt(gv('add-item-qty'),10)||1, p=findProduto(id); if(!p) return; var found=null; for(var j=0;j<sacolaAtual.length;j++) if(sacolaAtual[j].prodId===id) found=sacolaAtual[j]; if(found) found.qty+=qty; else sacolaAtual.push({prodId:p.id,nome:p.nome,qty:qty,preco:p.preco}); closeM('modal-add-item-venda'); renderSacolaItens(); }; openM('modal-add-item-venda'); }
-function abrirVendaDetail(id){ var p=findProduto(id); if(!p) return; ge('venda-detail-body').innerHTML='<h2>'+escapeHtml(p.nome)+'</h2><div style="font-size:26px;font-weight:900;color:var(--green)">'+money(p.preco)+'</div><p style="color:var(--text2)">'+escapeHtml(p.desc||'')+'</p>'; ge('venda-detail-footer').innerHTML='<button class="btn btn-primary btn-full" onclick="compartilharProduto('+p.id+')">Compartilhar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>'; openM('modal-venda-detail'); }
-function compartilharProduto(id){ var p=findProduto(id); if(!p) return; var msg=p.nome+'\nPreco: '+money(p.preco)+'\n'+(p.desc||''); if(navigator.share) navigator.share({title:p.nome,text:msg}).catch(function(){}); else window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }
-function abrirEditarVenda(id){ alert('Edicao detalhada de venda sera reativada depois que a carga estiver estavel.'); }
+function abrirPrazo(){
+  prazoTipo = null; // Reseta o tipo de prazo ao abrir o modal
+  ge(\'prazo-modal-title\').textContent = \'Pagamento à Prazo\';
+  ge(\'prazo-detalhes-container\').style.display = \'none\';
+  ge(\'prazo-footer\').style.display = \'none\'; // Esconde o botão de confirmar inicialmente
+  // Remove classes de seleção dos botões Fiado/Cartão
+  if(ge(\'op-fiado\')) ge(\'op-fiado\').classList.remove(\'sel-fiado\');
+  if(ge(\'op-cartao\')) ge(\'op-cartao\').classList.remove(\'sel-cartao\');
+  openM(\'modal-prazo\');
+}
+
+function selPrazoTipo(tipo) {
+  prazoTipo = tipo;
+  var total = totalSacola();
+
+  // Atualiza classes de seleção
+  if(ge(\'op-fiado\')) ge(\'op-fiado\').classList.toggle(\'sel-fiado\', tipo === \'fiado\');
+  if(ge(\'op-cartao\')) ge(\'op-cartao\').classList.toggle(\'sel-cartao\', tipo === \'cartao\');
+
+  ge(\'prazo-detalhes-container\').style.display = \'block\';
+  ge(\'prazo-footer\').style.display = \'flex\'; // Mostra o botão de confirmar
+
+  // Lógica específica para Fiado
+  if (prazoTipo === \'fiado\') {
+    ge(\'fg-prazo-nome\').style.display = \'block\';
+    ge(\'frow-prazo-contato\').style.display = \'grid\';
+    ge(\'prazo-taxa-info\').style.display = \'none\';
+    ge(\'prazo-modal-title\').textContent = \'Pagamento Fiado\';
+  } else if (prazoTipo === \'cartao\') {
+    ge(\'fg-prazo-nome\').style.display = \'none\';
+    ge(\'frow-prazo-contato\').style.display = \'none\';
+    ge(\'prazo-modal-title\').textContent = \'Pagamento Cartão de Crédito\';
+  }
+  atualizarParcelasMultiUI();
+}
+
+function atualizarParcelasMultiUI(){
+  var total = totalSacola();
+  var nMax = 12; // Padrão para cartão
+  
+  if (prazoTipo === \'fiado\') {
+    nMax = (total >= 100) ? 3 : 1; // 3x se >= 100, senão apenas 1x
+  }
+  
+  var selectParcelas = ge(\'prazo-parc\');
+  selectParcelas.innerHTML = \'\';
+  for (var i = 1; i <= nMax; i++) {
+    var opt = document.createElement(\'option\');
+    opt.value = i;
+    opt.textContent = i + \'x\';
+    selectParcelas.appendChild(opt);
+  }
+  
+  var n = parseInt(gv(\'prazo-parc\'),10)||1; 
+  var total = totalSacola();
+  var valorFinal = total;
+  var taxaAplicada = 0;
+
+  if (prazoTipo === \'cartao\' && n > 3) {
+    taxaAplicada = total * TAXA_CARTAO_CREDITO;
+    valorFinal = total + taxaAplicada;
+    ge(\'prazo-taxa-info\').style.display = \'block\';
+    ge(\'prazo-taxa-info\').querySelector(\'.alerta-body\').innerHTML = \'Será aplicada uma taxa de \' + (TAXA_CARTAO_CREDITO * 100) + \'% (\' + money(taxaAplicada) + \') para \' + n + \' parcelas no cartão. Total: \' + money(valorFinal);
+  } else {
+    ge(\'prazo-taxa-info\').style.display = \'none\';
+  }
+
+  var vp = valorFinal / n; 
+  var html=\'<div class="sumbox">Total da Venda: <b>\' + money(total) + \'</b><br>\';
+  if (taxaAplicada > 0) {
+    html += \'Taxa de Cartão: <b>\' + money(taxaAplicada) + \'</b><br>\';
+    html += \'Valor Total com Taxa: <b>\' + money(valorFinal) + \'</b><br>\';
+  }
+  html += \'Valor por Parcela: <b>\' + money(vp) + \'</b></div>\';
+
+  for(var i=1;i<=n;i++){
+    var d = new Date();
+    d.setMonth(d.getMonth() + i);
+    var vencimentoPadrao = d.toISOString().split(\'T\')[0];
+    html+=\'<div class="fg"><label class="fl">Vencimento Parcela \' + i + \'</label><input class="fi" type="date" id="pdata-\' + i + \'" value="\' + vencimentoPadrao + \'"></div>\';
+  }
+  ge(\'prazo-parcelas-ui\').innerHTML=html;
+}
+
+function confirmarPrazo(){
+  var total = totalSacola();
+  var n = parseInt(gv(\'prazo-parc\'),10)||1;
+  var valorFinal = total;
+  var taxaAplicada = 0;
+
+  if (prazoTipo === \'cartao\' && n > 3) {
+    taxaAplicada = total * TAXA_CARTAO_CREDITO;
+    valorFinal = total + taxaAplicada;
+  }
+
+  if (prazoTipo === \'fiado\') {
+    if (!gv(\'prazo-nome\').trim() || !gv(\'prazo-tel\').trim() || !gv(\'prazo-setor\').trim()) {
+      alert(\'Para vendas no Fiado, preencha Nome do Cliente, WhatsApp e Setor.\');
+      return;
+    }
+  }
+
+  var vp = valorFinal / n; 
+  var parcelas=[]; 
+  for(var i=1;i<=n;i++) {
+    parcelas.push({num:i,valor:vp,venc:gv(\'pdata-\' + i),pago:false});
+  }
+  baixarEstoque(); 
+  vendas.push({
+    id:nextId(vendas),
+    produtosVendidos: sacolaAtual.map(item => ({ prodId: item.prodId, qty: item.qty, preco: item.preco })),
+    produto:descricaoSacola(), 
+    cliente:gv(\'prazo-nome\'),
+    tipo:\'prazo\',
+    subTipo: prazoTipo, // Adiciona o subtipo de prazo
+    valor:valorFinal, // Salva o valor final com taxa, se aplicável
+    valorOriginal: total, // Salva o valor original da sacola
+    taxa: taxaAplicada, // Salva a taxa aplicada
+    qtd:sacolaAtual.reduce((sum, item) => sum + item.qty, 0), 
+    data:today(),
+    parcelas:parcelas,
+    telefone:gv(\'prazo-tel\'),
+    setor:gv(\'prazo-setor\')
+  }); 
+  closeM(\'modal-prazo\'); 
+  saveBoth(\'Venda salva\'); 
+  sacolaAtual = []; 
+  prazoTipo = null; // Limpa o tipo de prazo
+}
+
+function abrirTroca(){
+  ge(\'troca-body\').innerHTML=\'<div class="fg"><label class="fl">Cliente</label><input class="fi" type="text" id="troca-nome"></div><div class="fg"><label class="fl">Motivo</label><textarea class="fi" id="troca-motivo"></textarea></div><div class="sumbox">Produtos devolvidos:<br><b>\' + escapeHtml(descricaoSacola()) + \'</b></div>\'; 
+  openM(\'modal-troca\'); 
+}
+function confirmarTroca(){
+  for(var i=0;i<sacolaAtual.length;i++){
+    var p=findProduto(sacolaAtual[i].prodId); 
+    if(p) p.estoque = Number(p.estoque||0) + sacolaAtual[i].qty; 
+  }
+  vendas.push({
+    id:nextId(vendas),
+    produtosVendidos: sacolaAtual.map(item => ({ prodId: item.prodId, qty: item.qty, preco: item.preco })),
+    produto:descricaoSacola(), 
+    cliente:gv(\'troca-nome\'),
+    tipo:\'troca\',
+    valor:0,
+    qtd:sacolaAtual.reduce((sum, item) => sum + item.qty, 0), 
+    data:today(),
+    parcelas:[],
+    motivo:gv(\'troca-motivo\')
+  }); 
+  closeM(\'modal-troca\'); 
+  saveBoth(\'Troca salva\'); 
+  sacolaAtual = []; 
+}
+function saveBoth(msg){ 
+  saveData(\'vendas.json\', vendas, function(){
+    saveData(\'produtos.json\', produtos, function(){
+      refreshLocalViews(); 
+      setSS(\'ok\',msg); 
+    }, function(e){ alert(e.message||e); }); 
+  }, function(e){ alert(e.message||e); }); 
+}
+
+function abrirSeletorVendaDireta(){
+  var modal=ge(\'modal-venda-direta-seletor\'); 
+  var html=\'<div class="sheet" style="max-height:85dvh"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">x</button></div><div class="sheet-body">\'; 
+  for(var i=0;i<produtos.length;i++){
+    var p=produtos[i]; 
+    html+=\'<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd(\' + p.id + \')"><div style="flex:1"><b>\' + escapeHtml(p.nome) + \'</b><br><small>\' + escapeHtml(p.marca||\'\') + \' - Est: \' + escapeHtml(p.estoque) + \'</small></div><b>\' + money(p.preco) + \'</b></div>\'; 
+  }
+  html+=\'</div></div>\'; 
+  modal.innerHTML=html; 
+  openM(\'modal-venda-direta-seletor\'); 
+}
+function adicionarMaisItemNaSacola(){
+  var select=ge(\'add-item-select-prod\'); 
+  select.innerHTML=\'\'; 
+  for(var i=0;i<produtos.length;i++){
+    var opt=document.createElement(\'option\'); 
+    opt.value=produtos[i].id; 
+    opt.textContent=produtos[i].nome + \' (\' + money(produtos[i].preco) + \')\'; 
+    select.appendChild(opt); 
+  }
+  ge(\'add-item-qty\').value=\'1\'; 
+  ge(\'btn-confirmar-add-item-dinamico\').onclick=function(){
+    var id=parseInt(select.value,10), 
+    qty=parseInt(gv(\'add-item-qty\'),10)||1, 
+    p=findProduto(id); 
+    if(!p) return; 
+    
+    // Validação de estoque antes de adicionar à sacola
+    if (p.estoque < qty) {
+      alert(\'Estoque insuficiente para \' + p.nome + \'. Disponível: \' + p.estoque);
+      return;
+    }
+
+    var found=null; 
+    for(var j=0;j<sacolaAtual.length;j++) {
+      if(sacolaAtual[j].prodId===id) {
+        found=sacolaAtual[j];
+        break;
+      }
+    }
+    if(found) {
+      // Validação de estoque ao adicionar mais itens a um produto já na sacola
+      if (p.estoque < (found.qty + qty)) {
+        alert(\'Estoque insuficiente para \' + p.nome + \'. Disponível: \' + p.estoque + \', já na sacola: \' + found.qty + \', adicionando: \' + qty);
+        return;
+      }
+      found.qty+=qty; 
+    } else {
+      sacolaAtual.push({prodId:p.id,nome:p.nome,qty:qty,preco:p.preco});
+    }
+    closeM(\'modal-add-item-venda\'); 
+    renderSacolaItens(); 
+  }; 
+  openM(\'modal-add-item-venda\'); 
+}
+function abrirVendaDetail(id){ 
+  var p=findProduto(id); 
+  if(!p) return; 
+  ge(\'venda-detail-body\').innerHTML=\'<h2>\' + escapeHtml(p.nome) + \'</h2><div style="font-size:26px;font-weight:900;color:var(--green)">\' + money(p.preco) + \'</div><p style="color:var(--text2)">\' + escapeHtml(p.desc||\'\') + \'</p>\'; 
+  ge(\'venda-detail-footer\').innerHTML=\'<button class="btn btn-primary btn-full" onclick="compartilharProduto(\' + p.id + \')">Compartilhar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>\'; 
+  openM(\'modal-venda-detail\'); 
+}
+function compartilharProduto(id){ var p=findProduto(id); if(!p) return; var msg=p.nome+\'\\nPreço: \' + money(p.preco) + \'\\n\' + (p.desc||\'\'); if(navigator.share) navigator.share({title:p.nome,text:msg}).catch(function(){}); else window.open(\'https://wa.me/?text=\' + encodeURIComponent(msg),\'_blank\'); }
+function abrirEditarVenda(id){ alert(\'Edição detalhada de venda será reativada depois que a carga estiver estável.\'); }
 function salvarEdicaoVenda(){}
 function excluirVendaDinamica(id){}
 function excluirProdutoDoSistema(id){}
 
-function loadScriptOnce(src, cb, err){ var old=document.querySelector('script[src="'+src+'"]'); if(old){ cb(); return; } var s=document.createElement('script'); s.src=src; s.onload=cb; s.onerror=err || function(){}; document.head.appendChild(s); }
+function loadScriptOnce(src, cb, err){ var old=document.querySelector(\'script[src="\' + src + '\']\'); if(old){ cb(); return; } var s=document.createElement(\'script\'); s.src=src; s.onload=cb; s.onerror=err || function(){}; document.head.appendChild(s); }
 function cameraErrorMessage(e){
-  var name = e && e.name ? e.name : '';
-  if(name === 'NotAllowedError' || name === 'PermissionDeniedError') return 'Permissao da camera negada. Libere a camera nas configuracoes do navegador.';
-  if(name === 'NotFoundError' || name === 'DevicesNotFoundError') return 'Nenhuma camera foi encontrada neste dispositivo.';
-  if(name === 'NotReadableError' || name === 'TrackStartError') return 'A camera esta em uso por outro app ou nao pode ser aberta agora.';
-  if(name === 'OverconstrainedError' || name === 'ConstraintNotSatisfiedError') return 'Nao consegui abrir a camera traseira. Tente Virar Camera.';
-  return 'Nao foi possivel abrir a camera. Erro: ' + (name || 'desconhecido') + '.';
+  var name = e && e.name ? e.name : \'\';
+  if(name === \'NotAllowedError\' || name === \'PermissionDeniedError\') return \'Permissão da câmera negada. Libere a câmera nas configurações do navegador.\';
+  if(name === \'NotFoundError\' || name === \'DevicesNotFoundError\') return \'Nenhuma câmera foi encontrada neste dispositivo.\';
+  if(name === \'NotReadableError\' || name === \'TrackStartError\') return \'A câmera está em uso por outro app ou não pode ser aberta agora.\';
+  if(name === \'OverconstrainedError\' || name === \'ConstraintNotSatisfiedError\') return \'Não consegui abrir a câmera traseira. Tente Virar Câmera.\';
+  return \'Não foi possível abrir a câmera. Erro: \' + (name || \'desconhecido\') + \'.\';
 }
 function ligarCameraScannerRealtime(){
-  ge('scan-result').innerHTML='<div class="alerta warning">Abrindo camera...</div>';
-  loadScriptOnce('https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js', function(){
+  ge(\'scan-result\').innerHTML=\'<div class="alerta warning">Abrindo câmera...</div>\';
+  loadScriptOnce(\'https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js\', function(){
     if(!window.ZXing || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      ge('scan-result').innerHTML='<div class="alerta danger">Scanner indisponivel neste navegador. Abra em Safari/Chrome atualizado por HTTPS.</div>';
+      ge(\'scan-result\').innerHTML=\'<div class="alerta danger">Scanner indisponível neste navegador. Abra em Safari/Chrome atualizado por HTTPS.</div>\';
       return;
     }
     desligarCameraScanner();
     zxingCodeReader = new ZXing.BrowserMultiFormatReader();
-    var constraints = { video: { facingMode: currentDeviceIndex === 1 ? 'user' : { ideal: 'environment' } }, audio: false };
+    var constraints = { video: { facingMode: currentDeviceIndex === 1 ? \'user\' : { ideal: \'environment\' } }, audio: false };
     try {
-      zxingCodeReader.decodeFromConstraints(constraints, 'scanner-video', function(result, err){
+      zxingCodeReader.decodeFromConstraints(constraints, \'scanner-video\', function(result, err){
         if(result){
           var code = result.getText().trim();
           desligarCameraScanner();
           handleBarcode(code);
         }
       });
-      ge('scan-result').innerHTML='';
+      ge(\'scan-result\').innerHTML=\'\';
     } catch(e) {
       console.error(e);
-      ge('scan-result').innerHTML='<div class="alerta danger">' + escapeHtml(cameraErrorMessage(e)) + '</div>';
+      ge(\'scan-result\').innerHTML=\'<div class="alerta danger">\' + escapeHtml(cameraErrorMessage(e)) + \'</div>\';
     }
   }, function(){
-    ge('scan-result').innerHTML='<div class="alerta danger">Nao foi possivel carregar o leitor. Verifique a internet.</div>';
+    ge(\'scan-result\').innerHTML=\'<div class="alerta danger">Não foi possível carregar o leitor. Verifique a internet.</div>\';
   });
 }
 function startScannerDecoding(){ ligarCameraScannerRealtime(); }
-function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); zxingCodeReader=null; } var video=ge('scanner-video'); if(video && video.srcObject){ video.srcObject.getTracks().forEach(function(t){t.stop();}); video.srcObject=null; } }
+function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); zxingCodeReader=null; } var video=ge(\'scanner-video\'); if(video && video.srcObject){ video.srcObject.getTracks().forEach(function(t){t.stop();}); video.srcObject=null; } }
 function alternarCameraScanner(){ currentDeviceIndex = currentDeviceIndex === 1 ? 0 : 1; desligarCameraScanner(); ligarCameraScannerRealtime(); }
-function clearScan(){ desligarCameraScanner(); ge('scan-result').innerHTML=''; scanFieldTarget=null; lastBarcode=null; showSec('painel',ge('ni-painel')); }
-function scanForField(fid){ scanFieldTarget=fid; closeM('modal-produto'); showSec('scanner',ge('ni-scanner')); }
-function handleBarcode(code){ if(!code) return; lastBarcode=code; if(scanFieldTarget){ var el=ge(scanFieldTarget); if(el) el.value=code; scanFieldTarget=null; showSec('estoque',ge('ni-estoque')); openM('modal-produto'); return; } var p=null; for(var i=0;i<produtos.length;i++) if(produtos[i].barcode===code){ p=produtos[i]; break; } if(p) mostrarProdutoFound(p); else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto nao cadastrado</div><div class="alerta-sub">Codigo: <b>'+escapeHtml(code)+'</b></div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo()">Cadastrar Agora</button></div></div>'; }
+function clearScan(){ desligarCameraScanner(); ge(\'scan-result\').innerHTML=\'\'; scanFieldTarget=null; lastBarcode=null; showSec(\'painel\',ge(\'ni-painel\')); }
+function scanForField(fid){ scanFieldTarget=fid; closeM(\'modal-produto\'); showSec(\'scanner\',ge(\'ni-scanner\')); }
+function handleBarcode(code){
+  if(!code) return; 
+  lastBarcode=code; 
+  if(scanFieldTarget){
+    var el=ge(scanFieldTarget); 
+    if(el) el.value=code; 
+    scanFieldTarget=null; 
+    showSec(\'estoque\',ge(\'ni-estoque\')); 
+    openM(\'modal-produto\'); 
+    return; 
+  }
+  
+  var matchingProducts = findProdutosByBarcode(code); // Busca todos os produtos com o barcode
+
+  if (matchingProducts.length === 1) {
+    mostrarProdutoFound(matchingProducts[0]);
+  } else if (matchingProducts.length > 1) {
+    // Se múltiplos produtos forem encontrados, exibe uma lista para o usuário escolher
+    var html = \'<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Múltiplos produtos encontrados</div><div class="alerta-sub">Selecione o produto correto:</div>\';
+    matchingProducts.forEach(function(p) {
+      html += \'<button class="btn btn-sm btn-outline" style="margin-top:5px; width:100%;" onclick="mostrarProdutoFound(\' + p.id + \'); closeM(\'modal-scan-result\');">\' + escapeHtml(p.nome) + \' - \' + money(p.preco) + \'</button>\';
+    });
+    html += \'</div></div>\';
+    ge(\'scan-result\').innerHTML = html;
+  } else {
+    ge(\'scan-result\').innerHTML=\'<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: <b>\' + escapeHtml(code) + \'</b></div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo()">Cadastrar Agora</button></div></div>\'; 
+  }
+}
 
 window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.abrirNovoProduto=abrirNovoProduto; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.clearFoto=clearFoto; window.editarProduto=editarProduto; window.toggleCategoriaVisivel=toggleCategoriaVisivel; window.iniciarFluxoProd=iniciarFluxoProd; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.adicionarMaisItemNaSacola=adicionarMaisItemNaSacola; window.alterarQtdItemSacola=alterarQtdItemSacola; window.removerItemDaSacola=removerItemDaSacola; window.abrirVendaDetail=abrirVendaDetail; window.compartilharProduto=compartilharProduto; window.clearScan=clearScan; window.scanForField=scanForField; window.handleBarcode=handleBarcode; window.alternarCameraScanner=alternarCameraScanner; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.abrirEditarVenda=abrirEditarVenda; window.salvarEdicaoVenda=salvarEdicaoVenda; window.excluirVendaDinamica=excluirVendaDinamica; window.excluirProdutoDoSistema=excluirProdutoDoSistema; window.copiarPix=copiarPix;
+window.selPrazoTipo = selPrazoTipo; // Expor a função globalmente
 
 syncDrive();
 })();
 </script>
 </body>
 </html>
-
-
-
-
