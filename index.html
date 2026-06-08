@@ -143,8 +143,11 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .alerta-body{flex:1;min-width:0}
 .alerta-title{font-size:13px;font-weight:700}
 .alerta-sub{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5}
-.pix-box{text-align:center;padding:4px 0 8px}
+.pix-box{text-align:center;padding:15px;background:#fff;border-radius:var(--r);margin:10px 0;color:#000}
 .pix-amount{font-size:32px;font-weight:900;color:var(--green);margin-bottom:12px}
+.qr-container{width:200px;height:200px;margin:0 auto 15px;background:#fff;display:flex;align-items:center;justify-content:center;border:1px solid #eee;border-radius:var(--r3);overflow:hidden}
+.qr-container img{width:100%;height:100%;object-fit:contain}
+.pix-code-box{background:#f3f4f6;padding:10px;border-radius:8px;font-family:monospace;font-size:10px;word-break:break-all;margin-bottom:10px;border:1px dashed #ccc;max-height:60px;overflow-y:auto}
 .sumbox{background:var(--bg3);border-radius:var(--r2);padding:12px 14px;margin-bottom:13px;width:100%}
 .sumtotal{display:flex;justify-content:space-between;font-size:17px;font-weight:800;border-top:1px solid var(--border);padding-top:8px;margin-top:4px}
 .loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:12px;color:var(--text2);font-size:13px}
@@ -410,6 +413,11 @@ var FOTO_MAX_DIM = 640;
 var FOTO_JPEG_QUALITY = 0.55;
 var TAXA_CARTAO_CREDITO = 0.03; 
 
+// CONFIGURAÇÃO DO PIX - COLOQUE SUA CHAVE AQUI
+var PIX_CHAVE = "SEU_PIX_AQUI"; 
+var PIX_NOME = "PAMP ELETRONICOS";
+var PIX_CIDADE = "SUA CIDADE";
+
 function ge(id){ return document.getElementById(id); }
 function gv(id){ var el = ge(id); return el ? el.value : ''; }
 function escapeHtml(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -427,24 +435,16 @@ function isGithubPages(){ return !hasGoogle(); }
 
 function normalizeDriveUrl(url) {
   if (!url || typeof url !== 'string' || url.indexOf('data:image') === 0) return url;
-  
-  // Se já for o link direto ou thumbnail, mantém
-  if (url.includes('drive.google.com/uc?') || url.includes('drive.google.com/thumbnail')) return url;
-
   var id = '';
-  // Tenta extrair o ID de vários formatos comuns do Drive
   var matchD = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   var matchId = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  
   if (matchD && matchD[1]) id = matchD[1];
   else if (matchId && matchId[1]) id = matchId[1];
-  
-  if (id) return 'https://drive.google.com/uc?export=view&id=' + id;
+  if (id) return 'https://lh3.googleusercontent.com/d/' + id + '=w400-h400?authuser=0';
   return url;
 }
 
 function getBestFoto(p) {
-  // Prioriza thumbUrl para miniaturas, depois fotoUrl, depois a foto normal normalizada
   var url = p.thumbUrl || p.fotoUrl || p.foto || '';
   return normalizeDriveUrl(url);
 }
@@ -587,8 +587,8 @@ function renderEstoque(){
             '<span>' + escapeHtml(catName.toUpperCase()) + ' (' + lista.length + ')</span><span id="seta-cat-' + c + '">v</span></div>' +
             '<div id="cat-' + c + '" style="display:none; padding:6px; background:rgba(0,0,0,0.2);">';
     for(var n=0;n<lista.length;n++){
-      var p = lista[n], imgUrl = getBestFoto(p), img = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '">' : 'BOX';
-      html += '<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(' + p.id + ')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">' + img + '</div><div class="pcard-info"><div class="pcard-name"><b>' + escapeHtml(p.nome) + '</b></div><div class="pcard-sub">' + money(p.preco) + '</div><div style="margin-top:2px"><span class="badge ' + (Number(p.estoque)<=Number(p.min)?'ba':'bg') + '">Est: ' + p.estoque + '</span></div></div></div><div style="display:flex; gap:6px; padding:0 10px 10px;"><button class="btn btn-xs" style="flex:1" onclick="event.stopPropagation();editarProduto(' + p.id + ')">Editar</button><button class="btn btn-xs btn-primary" style="flex:1" onclick="event.stopPropagation();iniciarFluxoProd(' + p.id + ')">Lançar</button></div></div>';
+      var p = lista[n], imgUrl = getBestFoto(p), img = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" onerror="this.src=\'https://via.placeholder.com/64?text=SEM+FOTO\'">' : 'BOX';
+      html += '<div class="card" style="margin-bottom:6px; background:var(--bg2);"><div class="pcard" style="padding:10px;" onclick="abrirVendaDetail(' + p.id + ')"><div class="pcard-img" style="width:48px; height:48px; font-size:12px;">' + img + '</div><div class="pcard-info"><div class="pcard-name"><b>' + escapeHtml(p.nome) + '</b></div><div class="pcard-sub">' + money(p.preco) + '</div><div style="margin-top:2px"><span class="badge ' + (Number(p.estoque)<=Number(p.min)?'ba':'bg') + '">Est: ' + p.estoque + '</span></div></div></div><div style="display:flex; gap:6px; padding:0 10px 10px;"><button class="btn btn-xs" style="flex:1" onclick="event.stopPropagation();editarProduto(' + p.id + ')">Editar</button><button class="btn btn-xs btn-red" style="flex:1" onclick="event.stopPropagation();excluirProduto(' + p.id + ')">Excluir</button><button class="btn btn-xs btn-primary" style="flex:1" onclick="event.stopPropagation();iniciarFluxoProd(' + p.id + ')">Lançar</button></div></div>';
     }
     html += '</div></div>';
   }
@@ -596,16 +596,9 @@ function renderEstoque(){
 }
 
 function toggleCategoriaVisivel(id){ 
-  var el = ge(id); 
-  var seta = ge('seta-' + id); 
-  if(!el) return; 
-  if(el.style.display === 'none' || el.style.display === ''){ 
-    el.style.display = 'block'; 
-    if(seta) seta.innerHTML = '^'; 
-  } else { 
-    el.style.display = 'none'; 
-    if(seta) seta.innerHTML = 'v'; 
-  } 
+  var el = ge(id); var seta = ge('seta-' + id); if(!el) return; 
+  if(el.style.display === 'none' || el.style.display === ''){ el.style.display = 'block'; if(seta) seta.innerHTML = '^'; } 
+  else { el.style.display = 'none'; if(seta) seta.innerHTML = 'v'; } 
 }
 
 function renderVendas(){
@@ -642,7 +635,7 @@ function abrirVendaDetail(id, isVenda){
   } else {
     var p = findProduto(id); if(!p) return;
     var imgUrl = normalizeDriveUrl(p.fotoUrl || p.foto || '');
-    var html = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">BOX</div>';
+    var html = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" class="prod-detail-img" onerror="this.src=\'https://via.placeholder.com/220?text=SEM+FOTO\'">' : '<div class="prod-detail-placeholder">BOX</div>';
     html += '<h3>' + escapeHtml(p.nome) + '</h3><div class="mval g">' + money(p.preco) + '</div><p style="color:var(--text2); font-size:13px; margin:10px 0;">' + escapeHtml(p.desc || 'Sem descrição.') + '</p>';
     ge('venda-detail-body').innerHTML = html;
     ge('venda-detail-footer').innerHTML = '<button class="btn btn-primary btn-full" onclick="iniciarFluxoProd(' + p.id + '); closeM(\'modal-venda-detail\');">Lançar Saída</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>';
@@ -656,6 +649,8 @@ function togglePagamentoParcela(vId, pIdx){
 }
 
 function excluirVenda(id){ if(!confirm('Deseja excluir esta venda permanentemente?')) return; for(var i=0;i<vendas.length;i++){ if(vendas[i].id===id){ vendas.splice(i,1); break; } } saveBoth('Venda excluída'); closeM('modal-venda-detail'); }
+
+function excluirProduto(id){ if(!confirm('Tem certeza que deseja excluir este produto do estoque?')) return; for(var i=0;i<produtos.length;i++){ if(produtos[i].id===id){ produtos.splice(i,1); break; } } saveBoth('Produto excluído'); }
 
 function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
 function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
@@ -694,7 +689,7 @@ function iniciarFluxoProd(id){ currentProdId=id; var p=findProduto(id); if(p) mo
 function mostrarProdutoFound(prod){ 
   currentProdId=prod.id; ge('pf-title').textContent=prod.nome; 
   var imgUrl = normalizeDriveUrl(prod.fotoUrl || prod.foto || '');
-  var html = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">BOX</div>';
+  var html = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" class="prod-detail-img" onerror="this.src=\'https://via.placeholder.com/220?text=SEM+FOTO\'">' : '<div class="prod-detail-placeholder">BOX</div>';
   html += '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span class="detail-key">Preço</span><span style="font-weight:800;color:var(--green)">' + money(prod.preco) + '</span></div><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saída</div></div></div>'; 
   ge('pf-body').innerHTML=html; ge('pf-footer').innerHTML='<button class="btn btn-primary btn-full" onclick="continuarFluxoProd()">Continuar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-prod-found\')">Fechar</button>'; 
   openM('modal-prod-found'); 
@@ -717,7 +712,38 @@ function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(
 function totalSacola(){ var t=0; for(var i=0;i<sacolaAtual.length;i++) t += sacolaAtual[i].preco * sacolaAtual[i].qty; return t; }
 function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque -= sacolaAtual[i].qty; } }
 
-function abrirVista(){ var total=totalSacola(); ge('vista-body').innerHTML = '<div class="pix-box"><div class="pix-amount">' + money(total) + '</div><p style="color:var(--text2);font-size:12px">Confirme o recebimento.</p></div>'; openM('modal-vista'); }
+function crc16(data) {
+    var crc = 0xFFFF;
+    for (var i = 0; i < data.length; i++) {
+        crc ^= data.charCodeAt(i) << 8;
+        for (var j = 0; j < 8; j++) {
+            if ((crc & 0x8000) !== 0) crc = (crc << 1) ^ 0x1021;
+            else crc <<= 1;
+        }
+    }
+    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+function gerarPixCopiaECola(valor){
+  var v = parseFloat(valor).toFixed(2);
+  var payload = "00020101021226";
+  var gui = "0014BR.GOV.BCB.PIX";
+  var chave = "01" + PIX_CHAVE.length.toString().padStart(2, '0') + PIX_CHAVE;
+  var merchantInfo = (gui.length + chave.length).toString().padStart(2, '0') + gui + chave;
+  payload += merchantInfo + "52040000530398654" + v.length.toString().padStart(2, '0') + v + "5802BR59" + PIX_NOME.length.toString().padStart(2, '0') + PIX_NOME + "60" + PIX_CIDADE.length.toString().padStart(2, '0') + PIX_CIDADE + "62070503***6304";
+  return payload + crc16(payload);
+}
+
+function abrirVista(){ 
+  var total=totalSacola(); 
+  var pixPayload = gerarPixCopiaECola(total);
+  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(pixPayload);
+  ge('vista-body').innerHTML = '<div class="pix-box"><div class="pix-amount">' + money(total) + '</div><div class="qr-container"><img src="' + qrUrl + '" alt="QR Code PIX"></div><div class="pix-code-box" id="pix-code">' + pixPayload + '</div><button class="btn btn-sm btn-outline btn-full" onclick="copiarPix()">Copiar Código PIX</button></div>'; 
+  openM('modal-vista'); 
+}
+
+function copiarPix(){ var code = ge('pix-code').textContent; navigator.clipboard.writeText(code); alert('Código PIX copiado!'); }
+
 function confirmarVista(){ var total=totalSacola(); baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:total, data:today() }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
 
 function abrirPrazo(){ ge('prazo-detalhes-container').style.display='none'; ge('prazo-footer').style.display='none'; openM('modal-prazo'); }
@@ -764,18 +790,13 @@ function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); 
 function handleBarcode(code){
   if(!code) return; 
   lastBarcode=code;
-  console.log('Barcode lido:', code);
   var codeLimpado = String(code).trim().toLowerCase();
   var matches = produtos.filter(function(p){ 
     var bcProd = String(p.barcode || '').trim().toLowerCase();
     return bcProd === codeLimpado; 
   });
-  
-  if(matches.length){ 
-    mostrarProdutoFound(matches[0]); 
-  } else { 
-    ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+code+'\')">Cadastrar Agora</button></div></div>';
-  }
+  if(matches.length) mostrarProdutoFound(matches[0]); 
+  else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+code+'\')">Cadastrar Agora</button></div></div>';
 }
 
 function abrirSeletorVendaDireta(){
@@ -785,7 +806,7 @@ function abrirSeletorVendaDireta(){
   modal.innerHTML=html + '</div></div>'; openM('modal-venda-direta-seletor');
 }
 
-window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail; window.editarProduto=editarProduto; window.iniciarFluxoProd=iniciarFluxoProd; window.abrirNovoProduto=abrirNovoProduto; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.alternarCameraScanner=function(){ currentDeviceIndex=currentDeviceIndex===1?0:1; ligarCameraScannerRealtime(); }; window.clearScan=function(){ desligarCameraScanner(); showSec('painel'); }; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.togglePagamentoParcela=togglePagamentoParcela; window.excluirVenda=excluirVenda; window.clearFoto=clearFoto; window.toggleCategoriaVisivel=toggleCategoriaVisivel; window.handleBarcode=handleBarcode;
+window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail; window.editarProduto=editarProduto; window.iniciarFluxoProd=iniciarFluxoProd; window.abrirNovoProduto=abrirNovoProduto; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.alternarCameraScanner=function(){ currentDeviceIndex=currentDeviceIndex===1?0:1; ligarCameraScannerRealtime(); }; window.clearScan=function(){ desligarCameraScanner(); showSec('painel'); }; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.togglePagamentoParcela=togglePagamentoParcela; window.excluirVenda=excluirVenda; window.excluirProduto=excluirProduto; window.clearFoto=clearFoto; window.toggleCategoriaVisivel=toggleCategoriaVisivel; window.handleBarcode=handleBarcode; window.copiarPix=copiarPix;
 
 syncDrive();
 })();
