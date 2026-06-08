@@ -172,21 +172,21 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </div>
 
 <div class="sec" id="sec-scanner">
-<div class="shead"><span class="stitle">Leitor de Cdigo de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">x Parar</button></div>
+<div class="shead"><span class="stitle">Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">x Parar</button></div>
 <div class="video-scan-container">
   <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
-     Posicione o cdigo de barras na linha vermelha
+     Posicione o código de barras na linha vermelha.
   </div>
   <div class="video-wrapper">
     <video id="scanner-video" autoplay playsinline muted></video>
     <div class="laser-line"></div>
   </div>
   <div style="width:100%; padding:12px; display:flex; gap:8px; background:var(--bg2);">
-    <button class="btn btn-sm btn-outline" style="flex:1" onclick="window.alternarCameraScanner()"> Virar Cmera</button>
+    <button class="btn btn-sm btn-outline" style="flex:1" onclick="window.alternarCameraScanner()">Virar Câmera</button>
   </div>
 </div>
 <div class="manual-scan">
-<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o cdigo manualmente</div>
+<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o código manualmente</div>
 <div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Cdigo de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
 </div>
 <div id="scan-result" style="margin-top:10px"></div>
@@ -227,25 +227,25 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-entrada">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title"> Entrada de Estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-entrada')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Entrada de estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-entrada')">x</button></div>
 <div class="sheet-body" id="entrada-body"></div>
-<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarEntrada()">OK Confirmar entrada</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-entrada')">Cancelar</button></div>
+<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarEntrada()">OK, confirme entrada</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-entrada')">Cancelar</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-saida-tipo">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title"> Sacola de Sada (Carrinho)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Sacola de Saída (Carrinho)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">x</button></div>
 <div class="sheet-body">
   <div id="sacola-itens-lista" style="margin-bottom:15px"></div>
-  <button class="btn btn-outline btn-full" style="margin-bottom:15px; border:1px dashed var(--accent)" onclick="window.adicionarMaisItemNaSacola()"> Adicionar Outro Produto</button>
+  <button class="btn btn-outline btn-full" style="margin-bottom:15px; border:1px dashed var(--accent)" onclick="window.adicionarMaisItemNaSacola()"> Adicionar outro produto à sacola</button>
   <div class="opcoes-grid">
     <div class="opcao-card" id="op-venda" onclick="selSaida('venda')"><div class="opcao-icon"></div><div class="opcao-label">Venda</div><div class="opcao-sub">Faturar sacola</div></div>
-    <div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-icon"></div><div class="opcao-label">Troca</div><div class="opcao-sub">Registrar devoluo</div></div>
+    <div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-icon"></div><div class="opcao-label">Troca</div><div class="opcao-sub">Registrar devolução</div></div>
   </div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar para Fechamento ></button><button class="btn btn-ghost btn-full" onclick="closeM('modal-saida-tipo')">Cancelar</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar para fechamento ></button><button class="btn btn-ghost btn-full" onclick="closeM('modal-saida-tipo')">Cancelar</button></div>
 </div>
 </div>
 
@@ -258,9 +258,9 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </div>
 </div>
 
-<div class="overlay" id="modal-vista"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento  Vista - Pix</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">x</button></div><div class="sheet-body" id="vista-body"></div><div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">OK Finalizar Venda Pix</button></div></div></div>
-<div class="overlay" id="modal-prazo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento  Prazo (Fiado)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">x</button></div><div class="sheet-body" id="prazo-body"></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">OK Registrar no Fiado</button></div></div></div>
-<div class="overlay" id="modal-troca"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">x</button></div><div class="sheet-body" id="troca-body"></div><div class="sheet-footer"><button class="btn btn-amber btn-full" onclick="confirmarTroca()">OK Registrar Devoluo</button></div></div></div>
+<div class="overlay" id="modal-vista"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento à vista - Pix</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">x</button></div><div class="sheet-body" id="vista-body"></div><div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">OK, finalize venda com Pix</button></div></div></div>
+<div class="overlay" id="modal-prazo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Fechamento à prazo (Fiado)</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">x</button></div><div class="sheet-body" id="prazo-body"></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">OK, registrar venda à prazo</button></div></div></div>
+<div class="overlay" id="modal-troca"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">x</button></div><div class="sheet-body" id="troca-body"></div><div class="sheet-footer"><button class="btn btn-amber btn-full" onclick="confirmarTroca()">OK, registrar devolução</button></div></div></div>
 
 <div class="overlay" id="modal-produto">
 <div class="sheet">
@@ -271,12 +271,12 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="fg"><label class="fl">Nome do produto</label><input class="fi" type="text" id="mp-nome"></div>
 <div class="frow"><div class="fg"><label class="fl">Marca</label><input class="fi" type="text" id="mp-marca"></div><div class="fg"><label class="fl">Modelo</label><input class="fi" type="text" id="mp-modelo"></div></div>
 <div class="fg"><label class="fl">Descrio</label><textarea class="fi" id="mp-desc" rows="2"></textarea></div>
-<div class="fg"><label class="fl">Categoria</label><select class="fi" id="mp-cat"><option value="CABOS">CABOS</option><option value="HEADPHONES">HEADPHONES</option><option value="CARREGADORES">CARREGADORES</option><option value="ADAPTADORES">ADAPTADORES</option><option value="ACESSRIOS">ACESSRIOS</option></select></div>
-<div class="frow"><div class="fg"><label class="fl">Preo de Custo (R$)</label><input class="fi" type="number" id="mp-custo" step="0.01"></div><div class="fg"><label class="fl">Preo de Venda (R$)</label><input class="fi" type="number" id="mp-preco" step="0.01"></div></div>
-<div class="frow"><div class="fg"><label class="fl">Estoque Inicial</label><input class="fi" type="number" id="mp-estoque" value="1"></div><div class="fg"><label class="fl">Estoque Mnimo</label><input class="fi" type="number" id="mp-min" value="5"></div></div>
-<div class="fg"><label class="fl">Cdigo de barras (EAN)</label><div style="display:flex;gap:8px"><input class="fi" type="text" id="mp-barcode" placeholder="Cdigo numrico" style="flex:1"><button type="button" class="btn btn-primary" onclick="scanForField('mp-barcode')"> Escanear</button></div></div>
+<div class="fg"><label class="fl">Categoria</label><select class="fi" id="mp-cat"><option value="CABOS">CABOS</option><option value="HEADPHONES">HEADPHONES</option><option value="CARREGADORES">CARREGADORES</option><option value="ADAPTADORES">ADAPTADORES</option><option value="ACESSÓRIOS">ACESSÓRIOS</option><option value="ELETROS">ELETROS</option></select></div>
+<div class="frow"><div class="fg"><label class="fl">Preo de Custo (R$)</label><input class="fi" type="number" id="mp-custo" step="0.01"></div><div class="fg"><label class="fl">Preço de venda (R$)</label><input class="fi" type="number" id="mp-preco" step="0.01"></div></div>
+<div class="frow"><div class="fg"><label class="fl">Estoque Inicial</label><input class="fi" type="number" id="mp-estoque" value="1"></div><div class="fg"><label class="fl">Estoque mínimo</label><input class="fi" type="number" id="mp-min" value="5"></div></div>
+<div class="fg"><label class="fl">Cdigo de barras (EAN)</label><div style="display:flex;gap:8px"><input class="fi" type="text" id="mp-barcode" placeholder="Cdigo numrico" style="flex:1"><button type="button" class="btn btn-primary" onclick="scanForField('mp-barcode')">Escanear</button></div></div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-sistema" onclick="window.salvarProduto()">OK Salvar Produto no Sistema</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-produto')">Cancelar</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-sistema" onclick="window.salvarProduto()">OK, salvar produto no sistema</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-produto')">Cancelar</button></div>
 </div>
 </div>
 
@@ -294,7 +294,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="sheet-handle"></div>
 <div class="sheet-header"><span class="sheet-title"> Editar Venda a Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-editar-venda')">x</button></div>
 <div class="sheet-body" id="editar-venda-body"></div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-venda-prazo" onclick="window.salvarEdicaoVenda()"> Salvar Alteraes</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-editar-venda')">Cancelar</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-salvar-venda-prazo" onclick="window.salvarEdicaoVenda()"> Salvar Alterações</button><button class="btn btn-ghost btn-full" onclick="closeM('modal-editar-venda')">Cancelar</button></div>
 </div>
 </div>
 
@@ -306,7 +306,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
   <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" id="add-item-select-prod"></select></div>
   <div class="fg"><label class="fl">Quantidade</label><input class="fi" type="number" id="add-item-qty" value="1"></div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">OK Inserir Item</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">OK IInserir Item</button></div>
 </div>
 </div>
 
