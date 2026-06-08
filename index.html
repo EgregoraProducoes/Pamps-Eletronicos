@@ -250,6 +250,8 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
         <option>CAPAS</option>
         <option>PELICULAS</option>
         <option>VARIADOS</option>
+        <option>ADAPTADORES</option>
+        <option>HEADPHONES</option>
         <option>OUTROS</option>
       </select>
     </div>
@@ -599,9 +601,14 @@ function abrirVendaDetail(id, isVenda){
   if(isVenda){
     var v = null; for(var i=0;i<vendas.length;i++) if(vendas[i].id===id) v=vendas[i]; if(!v) return;
     var html = '<h3>Venda #' + v.id + '</h3><div class="sumbox"><b>' + escapeHtml(v.cliente || 'Balcão') + '</b><br>' + fmtD(v.data) + '</div><p style="white-space:pre-wrap; font-size:13px; margin:10px 0;">' + escapeHtml(v.produto) + '</p><div class="mval g">' + money(v.valor) + '</div>';
-    if(v.tipo==='prazo' && v.parcelas){ html += '<hr style="margin:10px 0; border:none; border-top:1px solid var(--border)">'; v.parcelas.forEach(function(p){ html += '<div class="prow"><div class="pnum">'+p.num+'</div><div class="pinfo">'+money(p.valor)+' - '+fmtD(p.venc)+'</div><span class="badge '+(p.pago?'bg':'br')+'">'+(p.pago?'Pago':'Pendente')+'</span></div>'; }); }
+    if(v.tipo==='prazo' && v.parcelas){ 
+      html += '<hr style="margin:10px 0; border:none; border-top:1px solid var(--border)">'; 
+      v.parcelas.forEach(function(p, idx){ 
+        html += '<div class="prow"><div class="pnum">'+p.num+'</div><div class="pinfo">'+money(p.valor)+' - '+fmtD(p.venc)+'</div><button class="btn btn-xs '+(p.pago?'btn-success':'btn-outline')+'" onclick="togglePagamentoParcela('+v.id+','+idx+')">'+(p.pago?'PAGO':'PENDENTE')+'</button></div>'; 
+      }); 
+    }
     ge('venda-detail-body').innerHTML = html;
-    ge('venda-detail-footer').innerHTML = '<button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Fechar</button>';
+    ge('venda-detail-footer').innerHTML = '<button class="btn btn-red btn-full" onclick="excluirVenda('+v.id+')">Excluir Venda</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Fechar</button>';
   } else {
     var p = findProduto(id); if(!p) return;
     var html = p.foto ? '<img src="' + escapeHtml(p.foto) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">BOX</div>';
@@ -611,6 +618,13 @@ function abrirVendaDetail(id, isVenda){
   }
   openM('modal-venda-detail');
 }
+
+function togglePagamentoParcela(vId, pIdx){
+  var v = null; for(var i=0;i<vendas.length;i++) if(vendas[i].id===vId) v=vendas[i];
+  if(v && v.parcelas[pIdx]){ v.parcelas[pIdx].pago = !v.parcelas[pIdx].pago; saveBoth('Status da parcela atualizado'); closeM('modal-venda-detail'); }
+}
+
+function excluirVenda(id){ if(!confirm('Deseja excluir esta venda permanentemente?')) return; for(var i=0;i<vendas.length;i++){ if(vendas[i].id===id){ vendas.splice(i,1); break; } } saveBoth('Venda excluída'); closeM('modal-venda-detail'); }
 
 function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; ge('mp-title').textContent='Editar Produto'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
 function abrirNovoProduto(){ editingProdId=null; ge('mp-title').textContent='Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
@@ -716,7 +730,7 @@ function ligarCameraScannerRealtime(){
 function desligarCameraScanner(){ if(zxingCodeReader){ zxingCodeReader.reset(); zxingCodeReader=null; } }
 function handleBarcode(code){
   if(!code) return; lastBarcode=code;
-  var matches = produtos.filter(function(p){ return p.barcode===code; });
+  var matches = produtos.filter(function(p){ return String(p.barcode).trim()===String(code).trim(); });
   if(matches.length) mostrarProdutoFound(matches[0]);
   else ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+code+'\')">Cadastrar Agora</button></div></div>';
 }
@@ -728,7 +742,7 @@ function abrirSeletorVendaDireta(){
   modal.innerHTML=html + '</div></div>'; openM('modal-venda-direta-seletor');
 }
 
-window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail; window.editarProduto=editarProduto; window.iniciarFluxoProd=iniciarFluxoProd; window.abrirNovoProduto=abrirNovoProduto; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.alternarCameraScanner=function(){ currentDeviceIndex=currentDeviceIndex===1?0:1; ligarCameraScannerRealtime(); }; window.clearScan=function(){ desligarCameraScanner(); showSec('painel'); }; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta;
+window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive; window.renderEstoque=renderEstoque; window.renderVendas=renderVendas; window.renderAlertas=renderAlertas; window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd; window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag; window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca; window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail; window.editarProduto=editarProduto; window.iniciarFluxoProd=iniciarFluxoProd; window.abrirNovoProduto=abrirNovoProduto; window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.alternarCameraScanner=function(){ currentDeviceIndex=currentDeviceIndex===1?0:1; ligarCameraScannerRealtime(); }; window.clearScan=function(){ desligarCameraScanner(); showSec('painel'); }; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.togglePagamentoParcela=togglePagamentoParcela; window.excluirVenda=excluirVenda; window.clearFoto=clearFoto;
 
 syncDrive();
 })();
