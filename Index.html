@@ -187,31 +187,32 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div id="painel-body"><div class="loader"><div class="spinner"></div>Carregando dados...</div></div>
 </div>
 
-<div class="sec" id="sec-scanner">
-<div class="shead"><span class="stitle">📷 Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">✕ Parar</button></div>
-<div class="video-scan-container">
-  <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
-     📷 Posicione o código na linha vermelha
-  </div>
-  <div class="video-wrapper" id="video-wrapper-scanner">
-    <video id="scanner-video" autoplay playsinline muted></video>
-    <div class="laser-line"></div>
-  </div>
-  <div class="zoom-controls">
-    <button class="zoom-btn" onclick="zoomCamera(-0.5)">🔍 Zoom -</button>
-    <button class="zoom-btn" onclick="zoomCameraReset()">🔘 1x</button>
-    <button class="zoom-btn" onclick="zoomCamera(0.5)">🔍 Zoom +</button>
-  </div>
-  <div style="width:100%; padding:12px; display:flex; gap:8px; background:var(--bg2);">
-    <button class="btn btn-sm btn-outline" style="flex:1" onclick="alternarCameraScanner()">🔄 Virar Câmera</button>
-    <button class="btn btn-sm btn-outline" style="flex:1" onclick="limparUltimaLeitura()">🗑️ Limpar Scanner</button>
-  </div>
-</div>
-<div class="manual-scan">
-<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o código manualmente</div>
-<div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Código de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
-</div>
-<div id="scan-result" style="margin-top:10px"></div>
+<<div class="sec" id="sec-scanner">
+    <div class="shead"><span class="stitle">📷 Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">✕ Parar</button></div>
+    <div class="video-scan-container">
+        <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
+            📷 Posicione o código na linha vermelha
+        </div>
+        <div class="video-wrapper" id="video-wrapper-scanner">
+            <video id="scanner-video" autoplay playsinline muted></video>
+            <div class="laser-line"></div>
+        </div>
+        <!-- BOTÕES DE ZOOM -->
+        <div style="display:flex; gap:8px; justify-content:center; padding:10px; background:var(--bg3);">
+            <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(-0.5)">🔍 - Zoom</button>
+            <button class="btn btn-sm" style="background:var(--accent);" onclick="zoomCameraReset()">1x</button>
+            <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(0.5)">🔍 + Zoom</button>
+        </div>
+        <div style="width:100%; padding:12px; display:flex; gap:8px; background:var(--bg2);">
+            <button class="btn btn-sm btn-outline" style="flex:1" onclick="alternarCameraScanner()">🔄 Virar Câmera</button>
+            <button class="btn btn-sm btn-outline" style="flex:1; background:rgba(239,68,68,0.2); border-color:var(--red);" onclick="limparUltimaLeitura()">🗑️ Limpar Scanner</button>
+        </div>
+    </div>
+    <div class="manual-scan">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o código manualmente</div>
+        <div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Código de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
+    </div>
+    <div id="scan-result" style="margin-top:10px"></div>
 </div>
 
 <div class="sec" id="sec-estoque">
