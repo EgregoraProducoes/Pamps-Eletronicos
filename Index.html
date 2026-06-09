@@ -547,15 +547,72 @@ function postHiddenForm(fields, ok, fail){
     function ligarCameraScannerRealtime() {
         zoomLevel = 1;
         var scanResult = document.getElementById('scan-result');
-        if (scanResult) scanResult.innerHTML = '<div class="alerta warning">📷 Abrindo câmera...</div>';
+        if (scanResult) scanResult.innerHTML = '<div class="alerta warning">📷 Verificando permissão da câmera...</div>';
+
+        // Primeiro verifica se o navegador suporta a API de mídia
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Seu navegador não suporta acesso à câmera. Use um navegador atualizado (Chrome, Edge, Safari).</div></div>';
+            return;
+        }
+
+        // Carrega a biblioteca ZXing se necessário
         if (!window.ZXing) {
             var script = document.createElement('script');
             script.src = 'https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js';
             script.onload = function () { iniciarScannerComZoom(); };
+            script.onerror = function () {
+                scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Erro ao carregar biblioteca de scanner.</div></div>';
+            };
             document.head.appendChild(script);
         } else {
             iniciarScannerComZoom();
         }
+    }
+
+    function iniciarScannerComZoom() {
+        if (!window.ZXing) return;
+        if (window.scannerAtivo) return;
+
+        var scanResult = document.getElementById('scan-result');
+
+        // Função para tentar iniciar com uma configuração de câmera
+        function tentarIniciar(constraints) {
+            if (zxingCodeReader) {
+                try { zxingCodeReader.reset(); } catch (e) { }
+            }
+            zxingCodeReader = new ZXing.BrowserMultiFormatReader();
+
+            // O método decodeFromConstraints retorna uma Promise
+            zxingCodeReader.decodeFromConstraints(constraints, 'scanner-video')
+                .then(function (result) {
+                    // Callback para cada leitura bem-sucedida
+                    if (result && result.getText) {
+                        var code = result.getText().trim();
+                        if (code !== ultimoCodigoLido) {
+                            ultimoCodigoLido = code;
+                            handleBarcode(code);
+                        }
+                    }
+                })
+                .catch(function (err) {
+                    console.error('Erro ao iniciar scanner:', err);
+                    if (scanResult) {
+                        scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Erro ao acessar câmera: ' + err.message + '<br>Verifique se você permitiu o acesso à câmera e recarregue a página.</div></div>';
+                    }
+                    window.scannerAtivo = false;
+                });
+
+            if (scanResult) scanResult.innerHTML = '';
+            setTimeout(aplicarZoom, 500);
+        }
+
+        window.scannerAtivo = true;
+
+        // Primeiro tenta a câmera traseira (environment)
+        tentarIniciar({ video: { facingMode: 'environment' } });
+
+        // Se não funcionar, podemos tentar a frontal (mas o erro já aparece no catch)
+        // Por simplicidade, a tentativa única já mostra o erro se falhar.
     }
 
     function iniciarScannerComZoom() {
