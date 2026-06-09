@@ -519,6 +519,105 @@ function postHiddenForm(fields, ok, fail){
   form.submit();
 }
 
+    // FUNÇÕES DE ZOOM DO SCANNER
+    var zoomLevel = 1;
+
+    function aplicarZoom() {
+        var video = document.getElementById('scanner-video');
+        if (video) {
+            video.style.transform = 'scale(' + zoomLevel + ')';
+            video.style.transformOrigin = 'center center';
+        }
+    }
+
+    function zoomCamera(incremento) {
+        zoomLevel = Math.max(1, Math.min(3, zoomLevel + incremento));
+        aplicarZoom();
+        var status = document.getElementById('stxt');
+        if (status) status.textContent = 'Zoom: ' + zoomLevel + 'x';
+        setTimeout(function () {
+            if (status) status.textContent = 'Conectado';
+        }, 1500);
+    }
+
+    function zoomCameraReset() {
+        zoomLevel = 1;
+        aplicarZoom();
+        var status = document.getElementById('stxt');
+        if (status) status.textContent = 'Zoom resetado';
+        setTimeout(function () {
+            if (status) status.textContent = 'Conectado';
+        }, 1500);
+    }
+
+    // Substitua a função ligarCameraScannerRealtime por esta:
+    function ligarCameraScannerRealtime() {
+        zoomLevel = 1;
+        var scanResult = document.getElementById('scan-result');
+        if (scanResult) scanResult.innerHTML = '<div class="alerta warning">📷 Abrindo câmera...</div>';
+
+        if (!window.ZXing) {
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js';
+            script.onload = function () { iniciarScannerComZoom(); };
+            document.head.appendChild(script);
+        } else {
+            iniciarScannerComZoom();
+        }
+    }
+
+    function iniciarScannerComZoom() {
+        if (!window.ZXing) return;
+        if (window.scannerAtivo) return;
+        window.scannerAtivo = true;
+
+        if (zxingCodeReader) {
+            try { zxingCodeReader.reset(); } catch (e) { }
+        }
+
+        zxingCodeReader = new ZXing.BrowserMultiFormatReader();
+        zxingCodeReader.decodeFromConstraints({ video: { facingMode: 'environment' } }, 'scanner-video', function (result) {
+            if (result && result.getText) {
+                var code = result.getText().trim();
+                if (code !== ultimoCodigoLido) {
+                    ultimoCodigoLido = code;
+                    handleBarcode(code);
+                }
+            }
+        });
+
+        var scanResult = document.getElementById('scan-result');
+        if (scanResult) scanResult.innerHTML = '';
+        setTimeout(aplicarZoom, 500);
+    }
+
+    function desligarCameraScanner() {
+        window.scannerAtivo = false;
+        if (zxingCodeReader) {
+            try { zxingCodeReader.reset(); } catch (e) { }
+            zxingCodeReader = null;
+        }
+    }
+
+    function limparUltimaLeitura() {
+        ultimoCodigoLido = null;
+        var manualBc = document.getElementById('manual-bc');
+        if (manualBc) manualBc.value = '';
+        var scanResult = document.getElementById('scan-result');
+        if (scanResult) scanResult.innerHTML = '';
+        var status = document.getElementById('stxt');
+        if (status) status.textContent = 'Scanner limpo';
+        setTimeout(function () {
+            if (status && status.textContent === 'Scanner limpo') status.textContent = 'Conectado';
+        }, 1500);
+    }
+
+    function clearScan() {
+        desligarCameraScanner();
+        limparUltimaLeitura();
+        showSec('painel');
+    }
+
 function syncDrive(){
   setSS('spin','Carregando...');
   ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Carregando...</div>';
