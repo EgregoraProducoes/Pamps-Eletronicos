@@ -519,7 +519,7 @@ function postHiddenForm(fields, ok, fail){
   form.submit();
 }
 
-    // FUNÇÕES DE ZOOM DO SCANNER
+    // FUNÇÕES DE ZOOM DO SCANNER (VERSÃO CORRIGIDA E ÚNICA)
     var zoomLevel = 1;
 
     function aplicarZoom() {
@@ -533,29 +533,21 @@ function postHiddenForm(fields, ok, fail){
     function zoomCamera(incremento) {
         zoomLevel = Math.max(1, Math.min(3, zoomLevel + incremento));
         aplicarZoom();
-        var status = document.getElementById('stxt');
-        if (status) status.textContent = 'Zoom: ' + zoomLevel + 'x';
-        setTimeout(function () {
-            if (status) status.textContent = 'Conectado';
-        }, 1500);
+        setSS('ok', 'Zoom: ' + zoomLevel + 'x');
+        setTimeout(function () { if (document.getElementById('stxt').textContent === 'Zoom: ' + zoomLevel + 'x') setSS('ok', 'Conectado'); }, 1500);
     }
 
     function zoomCameraReset() {
         zoomLevel = 1;
         aplicarZoom();
-        var status = document.getElementById('stxt');
-        if (status) status.textContent = 'Zoom resetado';
-        setTimeout(function () {
-            if (status) status.textContent = 'Conectado';
-        }, 1500);
+        setSS('ok', 'Zoom: 1x');
+        setTimeout(function () { if (document.getElementById('stxt').textContent === 'Zoom: 1x') setSS('ok', 'Conectado'); }, 1500);
     }
 
-    // Substitua a função ligarCameraScannerRealtime por esta:
     function ligarCameraScannerRealtime() {
         zoomLevel = 1;
         var scanResult = document.getElementById('scan-result');
         if (scanResult) scanResult.innerHTML = '<div class="alerta warning">📷 Abrindo câmera...</div>';
-
         if (!window.ZXing) {
             var script = document.createElement('script');
             script.src = 'https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js';
@@ -570,11 +562,9 @@ function postHiddenForm(fields, ok, fail){
         if (!window.ZXing) return;
         if (window.scannerAtivo) return;
         window.scannerAtivo = true;
-
         if (zxingCodeReader) {
             try { zxingCodeReader.reset(); } catch (e) { }
         }
-
         zxingCodeReader = new ZXing.BrowserMultiFormatReader();
         zxingCodeReader.decodeFromConstraints({ video: { facingMode: 'environment' } }, 'scanner-video', function (result) {
             if (result && result.getText) {
@@ -585,7 +575,6 @@ function postHiddenForm(fields, ok, fail){
                 }
             }
         });
-
         var scanResult = document.getElementById('scan-result');
         if (scanResult) scanResult.innerHTML = '';
         setTimeout(aplicarZoom, 500);
@@ -605,11 +594,8 @@ function postHiddenForm(fields, ok, fail){
         if (manualBc) manualBc.value = '';
         var scanResult = document.getElementById('scan-result');
         if (scanResult) scanResult.innerHTML = '';
-        var status = document.getElementById('stxt');
-        if (status) status.textContent = 'Scanner limpo';
-        setTimeout(function () {
-            if (status && status.textContent === 'Scanner limpo') status.textContent = 'Conectado';
-        }, 1500);
+        setSS('ok', 'Scanner limpo');
+        setTimeout(function () { if (document.getElementById('stxt').textContent === 'Scanner limpo') setSS('ok', 'Conectado'); }, 1500);
     }
 
     function clearScan() {
