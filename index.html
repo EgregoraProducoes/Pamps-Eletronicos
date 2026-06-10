@@ -90,14 +90,14 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .ba{background:var(--amber-bg);color:var(--amber)}
 .bb{background:var(--blue-bg);color:var(--blue)}
 .bp{background:var(--purple-bg);color:var(--purple)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 12px;border-radius:var(--r3);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:6px 10px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
 .btn:active{transform:scale(.96);opacity:.82}
 .btn-primary{background:var(--accent);border-color:var(--accent2);color:#fff}
 .btn-success{background:var(--green2);border-color:var(--green);color:#fff}
 .btn-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-.btn-full{width:100%;padding:10px 12px;font-size:13px;border-radius:var(--r2);display:flex}
-.btn-sm{padding:5px 9px;font-size:11px;border-radius:7px}
-.btn-xs{padding:3px 6px;font-size:10px;border-radius:6px}
+.btn-full{width:100%;padding:8px 10px;font-size:12px;border-radius:8px;display:flex}
+.btn-sm{padding:4px 7px;font-size:10px;border-radius:6px}
+.btn-xs{padding:2px 5px;font-size:9px;border-radius:5px}
 .btn-ghost{background:transparent;border-color:transparent;color:var(--text2)}
 .btn-outline{background:transparent;border-color:var(--accent);color:var(--accent)}
 
@@ -189,7 +189,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div id="painel-body"><div class="loader"><div class="spinner"></div>Carregando dados...</div></div>
 </div>
 
-<<div class="sec" id="sec-scanner">
+<div class="sec" id="sec-scanner">
     <div class="shead"><span class="stitle">📷 Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">✕ Parar</button></div>
     <div class="video-scan-container">
         <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
@@ -281,12 +281,12 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
     </div>
     <button class="btn btn-xs btn-red" style="margin-top:8px;" onclick="clearFoto()">🗑️ Remover Foto</button>
   </div>
-  <div class="fg"><label class="fl">🏷️ Nome</label><input class="fi" type="text" id="mp-nome" placeholder="Ex: Capa iPhone 14"></div>
+  <div class="fg"><label class="fl">🏷️ Nome</label><input class="fi" type="text" id="mp-nome" placeholder="Ex: Capa iPhone 14" autocomplete="off"></div>
   <div class="frow">
-    <div class="fg"><label class="fl">🏭 Marca</label><input class="fi" type="text" id="mp-marca" placeholder="Marca"></div>
-    <div class="fg"><label class="fl">📱 Modelo</label><input class="fi" type="text" id="mp-modelo" placeholder="Modelo"></div>
+    <div class="fg"><label class="fl">🏭 Marca</label><input class="fi" type="text" id="mp-marca" placeholder="Marca" autocomplete="off"></div>
+    <div class="fg"><label class="fl">📱 Modelo</label><input class="fi" type="text" id="mp-modelo" placeholder="Modelo" autocomplete="off"></div>
   </div>
-  <div class="fg"><label class="fl">📝 Descrição</label><textarea class="fi" id="mp-desc" rows="2" placeholder="Descrição do produto"></textarea></div>
+  <div class="fg"><label class="fl">📝 Descrição</label><textarea class="fi" id="mp-desc" rows="2" placeholder="Descrição do produto" autocomplete="off"></textarea></div>
   <div class="frow">
     <div class="fg"><label class="fl">📂 Categoria</label>
       <select class="fi" id="mp-cat"></select>
@@ -432,7 +432,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.1';
+var APP_VERSION = 'V 1.2';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -1304,6 +1304,146 @@ function abrirVendaDetail(id, isVenda){
   }
   openM('modal-venda-detail');
 }
+
+function limparFormularioProduto(){
+  var ids = ['mp-nome','mp-marca','mp-modelo','mp-desc','mp-custo','mp-preco','mp-estoque','mp-min','mp-barcode'];
+  for(var i=0;i<ids.length;i++){ var el=ge(ids[i]); if(el) el.value=''; }
+  if(ge('mp-estoque')) ge('mp-estoque').value='1';
+  if(ge('mp-min')) ge('mp-min').value='5';
+  if(ge('mp-custo')) ge('mp-custo').value='0';
+  if(ge('mp-preco')) ge('mp-preco').value='0';
+  clearFoto();
+}
+
+abrirNovoProduto = function(){
+  editingProdId = null;
+  currentProdId = null;
+  atualizarSelectCategorias('CABOS');
+  ge('mp-title').textContent='📦 Novo Produto';
+  limparFormularioProduto();
+  if(ge('mp-cat')) ge('mp-cat').value='CABOS';
+  setTimeout(limparFormularioProduto, 60);
+  openM('modal-produto');
+};
+
+abrirNovoProdutoComCodigo = function(code){
+  var codigo = String(code || '').trim();
+  ultimoCodigoLido = null;
+  abrirNovoProduto();
+  if(ge('mp-barcode')) ge('mp-barcode').value = codigo;
+  limparResultadoScanner();
+  if(ge('manual-bc')) ge('manual-bc').value = '';
+};
+
+handleBarcode = function(code){
+  code = String(code || '').trim();
+  if(!code) return;
+  var codeLimpado = code.toLowerCase();
+  var matches = produtos.filter(function(p){ return String(p.barcode || '').trim().toLowerCase() === codeLimpado; });
+  if(matches.length){
+    currentProdId = matches[0].id;
+    mostrarProdutoFound(matches[0]);
+    limparResultadoScanner();
+  } else {
+    currentProdId = null;
+    var safe = code.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+safe+'\')">Cadastrar</button><button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="limparUltimaLeitura()">Limpar</button></div></div>';
+  }
+};
+
+function scannerVideoTrack(){
+  var video = ge('scanner-video');
+  var stream = video && video.srcObject;
+  return stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
+}
+
+aplicarZoom = function(){
+  var video = ge('scanner-video');
+  if(video){ video.style.transform = 'none'; video.style.filter = 'none'; }
+  var track = scannerVideoTrack();
+  if(track && track.getCapabilities && track.applyConstraints){
+    var caps = track.getCapabilities();
+    if(caps.zoom){
+      var z = Math.max(caps.zoom.min || 1, Math.min(caps.zoom.max || 1, zoomLevel));
+      track.applyConstraints({advanced:[{zoom:z, focusMode:'continuous'}]}).catch(function(){});
+      return;
+    }
+    track.applyConstraints({advanced:[{focusMode:'continuous'}]}).catch(function(){});
+  }
+};
+
+zoomCamera = function(incremento){
+  zoomLevel = Math.max(1, Math.min(3, zoomLevel + incremento));
+  aplicarZoom();
+  setSS('ok', 'Zoom câmera: ' + zoomLevel.toFixed(1) + 'x');
+};
+
+zoomCameraReset = function(){
+  zoomLevel = 1;
+  aplicarZoom();
+  setSS('ok', 'Zoom câmera: 1x');
+};
+
+desligarCameraScanner = function(){
+  window.scannerAtivo = false;
+  var video = ge('scanner-video');
+  if(video && video.srcObject && video.srcObject.getTracks){
+    video.srcObject.getTracks().forEach(function(t){ try{ t.stop(); }catch(e){} });
+    video.srcObject = null;
+  }
+  if(zxingCodeReader){ try{ zxingCodeReader.reset(); }catch(e){} zxingCodeReader = null; }
+};
+
+limparResultadoScanner = function(){ var scanResult = ge('scan-result'); if(scanResult) scanResult.innerHTML = ''; };
+limparUltimaLeitura = function(){
+  ultimoCodigoLido = null;
+  currentProdId = null;
+  if(ge('manual-bc')) ge('manual-bc').value = '';
+  limparResultadoScanner();
+  setSS('ok', 'Scanner limpo');
+};
+
+clearScan = function(){
+  desligarCameraScanner();
+  limparUltimaLeitura();
+  showSec('painel');
+};
+
+iniciarScanner = function(){
+  if(!window.ZXing) return;
+  desligarCameraScanner();
+  window.scannerAtivo = true;
+  zxingCodeReader = new ZXing.BrowserMultiFormatReader();
+  var constraints = {video:{facingMode:'environment', width:{ideal:1280}, height:{ideal:720}, focusMode:'continuous'}};
+  zxingCodeReader.decodeFromConstraints(constraints, 'scanner-video', function(result){
+    if(result && result.getText){
+      var code = result.getText().trim();
+      if(code && code !== ultimoCodigoLido){
+        ultimoCodigoLido = code;
+        handleBarcode(code);
+      }
+    }
+  });
+  limparResultadoScanner();
+  setTimeout(aplicarZoom, 800);
+};
+
+alternarCameraScanner = function(){
+  currentDeviceIndex = currentDeviceIndex === 0 ? 1 : 0;
+  desligarCameraScanner();
+  setTimeout(function(){
+    if(!window.ZXing) return;
+    zxingCodeReader = new ZXing.BrowserMultiFormatReader();
+    var mode = currentDeviceIndex===0 ? 'environment' : 'user';
+    zxingCodeReader.decodeFromConstraints({video:{facingMode:mode, width:{ideal:1280}, height:{ideal:720}, focusMode:'continuous'}}, 'scanner-video', function(result){
+      if(result && result.getText){
+        var code = result.getText().trim();
+        if(code && code !== ultimoCodigoLido){ ultimoCodigoLido = code; handleBarcode(code); }
+      }
+    });
+    setTimeout(aplicarZoom, 800);
+  }, 150);
+};
 
 var confirmarVistaOriginal = confirmarVista;
 confirmarVista = function(){
