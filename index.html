@@ -146,6 +146,9 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .opcao-icon{font-size:32px;margin-bottom:8px}
 .opcao-label{font-size:14px;font-weight:800}
 .opcao-sub{font-size:11px;color:var(--text2);margin-top:3px}
+.opcoes-grid.compact{display:flex;justify-content:center;align-items:center;gap:8px;margin:10px 0 14px}
+.opcoes-grid.compact .opcao-card{width:auto;min-width:0;padding:7px 12px;border-width:1px;border-radius:8px;flex:0 0 auto}
+.opcoes-grid.compact .opcao-label{font-size:12px;line-height:1}
 .prow{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:var(--r3);padding:10px 12px;margin-bottom:6px}
 .pnum{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pinfo{flex:1;font-size:13px;font-weight:600}
@@ -442,7 +445,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.3';
+var APP_VERSION = 'V 1.4';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -1509,7 +1512,7 @@ renderEstoque = function(){
 mostrarProdutoFound = function(prod){
   currentProdId=prod.id;
   ge('pf-title').textContent=prod.nome;
-  var html = produtoFotoHtml(prod) + '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span>Preco</span><span style="color:var(--green);font-weight:800">' + money(prod.preco) + '</span></div><p style="color:var(--text2);font-size:13px;margin:8px 0 12px">' + escapeHtml(prod.desc || '') + '</p><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saida</div></div></div>';
+  var html = produtoFotoHtml(prod) + '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span>Preco</span><span style="color:var(--green);font-weight:800">' + money(prod.preco) + '</span></div><p style="color:var(--text2);font-size:13px;margin:8px 0 12px">' + escapeHtml(prod.desc || '') + '</p><div class="opcoes-grid compact"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saida</div></div></div>';
   ge('pf-body').innerHTML=html;
   ge('pf-footer').innerHTML='<div class="action-row">' + actionBtn('share','↗','Compartilhar','compartilharProduto('+prod.id+')') + actionBtn('ok','✓','Continuar','continuarFluxoProd()') + actionBtn('back','←','Voltar',"closeM('modal-prod-found')") + '</div>';
   openM('modal-prod-found');
