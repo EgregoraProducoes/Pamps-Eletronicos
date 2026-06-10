@@ -445,7 +445,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.4';
+var APP_VERSION = 'V 1.5';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -1479,6 +1479,29 @@ confirmarPrazo = function(){
 function actionBtn(cls, label, title, onclick){
   return '<button class="icon-btn ' + cls + '" title="' + title + '" aria-label="' + title + '" onclick="' + onclick + '">' + label + '</button>';
 }
+function syncBtn(){ return '<button class="btn btn-sm btn-outline" onclick="syncDrive()">Sync</button>'; }
+
+renderPainel = function(){
+  var receita = 0, semEstq = 0;
+  for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === 'vista' || vendas[i].tipo === 'prazo') receita += Number(vendas[i].valor || 0);
+  for(var j=0;j<produtos.length;j++) if(Number(produtos[j].estoque || 0) === 0) semEstq++;
+  var recentes = vendas.slice().reverse().slice(0,6);
+  var meses = resumoPorMes ? resumoPorMes() : [];
+  var comprasTotal = 0; for(var d=0;d<meses.length;d++) comprasTotal += Number(meses[d].comprasTotal || 0);
+  var html = '<div class="drive-banner">Google Drive - Banco de Dados Ativo</div>';
+  html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">' + money(receita) + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Compras</div><div class="mval a" style="font-size:18px">' + money(comprasTotal) + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
+  html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + cAlerts() + '</div></div></div>';
+  html += '<div class="shead"><span class="stitle">Menu</span><div style="display:flex;gap:6px">' + syncBtn() + '<button class="btn btn-sm btn-outline" onclick="abrirMenuMeses()">Meses</button><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div></div>';
+  for(var m=0;m<meses.length && m<6;m++) html += renderMesCard(meses[m], 'painel-mes');
+  html += '<div class="shead"><span class="stitle">Ultimas Transacoes</span>' + syncBtn() + '</div>';
+  for(var k=0;k<recentes.length;k++){
+    var v = recentes[k];
+    html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)"><div class="card-body"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>' + escapeHtml(String(v.produto||'').split('\n')[0]) + '</b><br><small style="color:var(--text2)">' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div><div><b>' + money(v.valor) + '</b></div></div></div></div>';
+  }
+  ge('painel-body').innerHTML = html;
+};
 
 renderEstoque = function(){
   var categorias = {};
@@ -1487,7 +1510,7 @@ renderEstoque = function(){
     if(!categorias[cat]) categorias[cat]=[];
     categorias[cat].push(p);
   }
-  var html = '<div class="shead"><span class="stitle">Inventario</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>';
+  var html = '<div class="shead"><span class="stitle">Inventario</span><div style="display:flex;gap:6px">' + syncBtn() + '<button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div></div>';
   var keys = Object.keys(categorias).sort();
   for(var c=0;c<keys.length;c++){
     var catName = keys[c], lista = categorias[catName], catId = 'cat-estoque-' + c;
@@ -1507,6 +1530,29 @@ renderEstoque = function(){
     html += '</div></div>';
   }
   ge('estoque-body').innerHTML = html;
+};
+
+renderVendas = function(){
+  var html = '<div class="shead"><span class="stitle">Historico</span><div style="display:flex;gap:6px">' + syncBtn() + '<button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Nova Venda</button></div></div>';
+  var list = vendas.slice().reverse().slice(0,20);
+  for(var i=0;i<list.length;i++){
+    var v = list[i];
+    html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)"><div class="card-body"><b>' + money(v.valor) + '</b><br><small>' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcao') + '</small></div></div>';
+  }
+  ge('vendas-body').innerHTML = html;
+};
+
+renderAlertas = function(){
+  var html = '<div class="shead"><span class="stitle">Alertas</span>' + syncBtn() + '</div>';
+  var encontrou = false;
+  for(var i=0;i<produtos.length;i++){
+    if(Number(produtos[i].estoque||0) <= Number(produtos[i].min||0)){
+      html += '<div class="alerta warning"><div class="alerta-body"><b>' + escapeHtml(produtos[i].nome) + '</b><br>Estoque: ' + produtos[i].estoque + ' / Minimo: ' + produtos[i].min + '</div></div>';
+      encontrou = true;
+    }
+  }
+  if(!encontrou) html += '<div class="alerta ok"><div class="alerta-body">Nenhum alerta no momento</div></div>';
+  ge('alertas-body').innerHTML = html;
 };
 
 mostrarProdutoFound = function(prod){
