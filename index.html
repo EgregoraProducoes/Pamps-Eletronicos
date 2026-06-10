@@ -445,7 +445,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.5';
+var APP_VERSION = 'V 1.6';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -1486,15 +1486,15 @@ renderPainel = function(){
   for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === 'vista' || vendas[i].tipo === 'prazo') receita += Number(vendas[i].valor || 0);
   for(var j=0;j<produtos.length;j++) if(Number(produtos[j].estoque || 0) === 0) semEstq++;
   var recentes = vendas.slice().reverse().slice(0,6);
-  var meses = resumoPorMes ? resumoPorMes() : [];
+  var meses = (typeof resumoPorMes === 'function') ? resumoPorMes() : [];
   var comprasTotal = 0; for(var d=0;d<meses.length;d++) comprasTotal += Number(meses[d].comprasTotal || 0);
   var html = '<div class="drive-banner">Google Drive - Banco de Dados Ativo</div>';
   html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g" style="font-size:18px">' + money(receita) + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Compras</div><div class="mval a" style="font-size:18px">' + money(comprasTotal) + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + cAlerts() + '</div></div></div>';
-  html += '<div class="shead"><span class="stitle">Menu</span><div style="display:flex;gap:6px">' + syncBtn() + '<button class="btn btn-sm btn-outline" onclick="abrirMenuMeses()">Meses</button><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div></div>';
-  for(var m=0;m<meses.length && m<6;m++) html += renderMesCard(meses[m], 'painel-mes');
+  html += '<div class="shead"><span class="stitle">Menu</span><div style="display:flex;gap:6px">' + syncBtn() + ((typeof abrirMenuMeses === 'function') ? '<button class="btn btn-sm btn-outline" onclick="abrirMenuMeses()">Meses</button>' : '') + '<button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div></div>';
+  if(typeof renderMesCard === 'function') for(var m=0;m<meses.length && m<6;m++) html += renderMesCard(meses[m], 'painel-mes');
   html += '<div class="shead"><span class="stitle">Ultimas Transacoes</span>' + syncBtn() + '</div>';
   for(var k=0;k<recentes.length;k++){
     var v = recentes[k];
