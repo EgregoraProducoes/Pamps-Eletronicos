@@ -460,37 +460,28 @@ function getBestFoto(p) {
 }
 
 function getData(filename, ok, fail){
-  if(isGithubPages()){
-    var cbName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    var script = document.createElement('script');
-    var timer = setTimeout(function(){ cleanup(); fail(new Error('Tempo esgotado')); }, 20000);
-    function cleanup(){ clearTimeout(timer); try { delete window[cbName]; } catch(e) { window[cbName] = null; } if(script.parentNode) script.parentNode.removeChild(script); }
-    window[cbName] = function(data){ cleanup(); ok(JSON.stringify(data || [])); };
-    script.onerror = function(){ cleanup(); fail(new Error('Erro na API')); };
-    script.src = API_BASE + '?api=getData&filename=' + encodeURIComponent(filename) + '&callback=' + encodeURIComponent(cbName) + '&_=' + Date.now();
-    document.head.appendChild(script);
-    return;
+  if(filename === 'produtos.json') {
+    ok(localStorage.getItem('pamps_produtos') || '[]');
+  } else if(filename === 'vendas.json') {
+    ok(localStorage.getItem('pamps_vendas') || '[]');
+  } else {
+    ok('[]');
   }
-  google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getData(filename);
 }
-
+  
 function saveData(filename, data, ok, fail){
-  if(isGithubPages()){
-    var fields = { filename: filename, data: JSON.stringify(data) };
-    if(filename === 'produtos.json'){
-      var cleaned = [];
-      for(var i=0;i<data.length;i++){
-        var item = {}; for(var k in data[i]) if(data[i].hasOwnProperty(k)) item[k] = data[i][k];
-        cleaned.push(item);
-      }
-      fields.data = JSON.stringify(cleaned);
+  try {
+    if(filename === 'produtos.json') {
+      localStorage.setItem('pamps_produtos', JSON.stringify(data));
+    } else if(filename === 'vendas.json') {
+      localStorage.setItem('pamps_vendas', JSON.stringify(data));
     }
-    postHiddenForm(fields, ok, fail);
-    return;
+    if(ok) ok(true);
+  } catch(e) {
+    if(fail) fail(e);
   }
-  google.script.run.withSuccessHandler(ok).withFailureHandler(fail).saveData(filename, data);
 }
-
+ 
 function postHiddenForm(fields, ok, fail){
   var frameName = 'apiFrame_' + Date.now();
   var iframe = document.createElement('iframe');
@@ -613,20 +604,20 @@ function handleBarcode(code) {
 }
 
 function syncDrive(){
-  setSS('spin','Carregando v2.3...');
-  ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Carregando...</div>';
-  getData('produtos.json', function(prodRaw){
-    getData('vendas.json', function(vendRaw){
-      var p = parseJson(prodRaw, []); var v = parseJson(vendRaw, []);
-      produtos = Array.isArray(p) ? p : (p.produtos || []);
-      vendas = Array.isArray(v) ? v : (v.vendas || []);
-      configApp.categorias = CATEGORIAS_PADRAO.slice();
-      produtos.forEach(function(prod) { if (prod.foto) prod.foto = normalizeDriveUrl(prod.foto); });
-      atualizarSelectCategorias();
-      refreshLocalViews();
-      setSS('ok','Conectado');
-    }, showLoadError);
-  }, showLoadError);
+  setSS('spin','Carregando v2.3 Local...');
+  ge('painel-body').innerHTML = '<div class="loader"><div class="spinner"></div>Carregando dados locais...</div>';
+  
+  var prodRaw = localStorage.getItem('pamps_produtos') || '[]';
+  var vendRaw = localStorage.getItem('pamps_vendas') || '[]';
+  
+  produtos = parseJson(prodRaw, []);
+  vendas = parseJson(vendRaw, []);
+  
+  configApp.categorias = CATEGORIAS_PADRAO.slice();
+  
+  atualizarSelectCategorias();
+  refreshLocalViews();
+  setSS('ok','Conectado v2.3 (Local)');
 }
 
 function showLoadError(err){
