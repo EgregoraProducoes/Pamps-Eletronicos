@@ -930,14 +930,50 @@ function totalSacola(){ var t=0; for(var i=0;i<sacolaAtual.length;i++) t += saco
 
 function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque -= sacolaAtual[i].qty; } }
 
+function pixPad2(n){ return String(n).padStart(2, '0'); }
+function pixCampo(id, valor){ valor = String(valor || ''); return id + pixPad2(valor.length) + valor; }
+function pixTexto(valor, max){
+  return String(valor || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9 $%*+\-./:]/gi, '')
+    .toUpperCase()
+    .substring(0, max);
+}
+
+function crc16(data) {
+  var crc = 0xFFFF;
+  for (var i = 0; i < data.length; i++) {
+    crc ^= (data.charCodeAt(i) & 0xFF) << 8;
+    for (var j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
 function gerarPixCopiaECola(valor){
   var amount = Number(valor || 0);
+  if(!isFinite(amount) || amount <= 0) throw new Error('Valor PIX invalido.');
+
   var chave = String(PIX_CHAVE || '').trim();
-  var merchantAccount = '0014BR.GOV.BCB.PIX01' + String(chave.length).padStart(2,'0') + chave;
-  var payload = '000201' + String(merchantAccount.length + 4).padStart(2,'0') + merchantAccount + '5204000053039865405' + amount.toFixed(2) + '5802BR5914' + PIX_NOME.substring(0,25) + '6009' + PIX_CIDADE.substring(0,15) + '62070503***6304';
-  var crc = 0xFFFF;
-  for(var i=0;i<payload.length;i++){ crc ^= payload.charCodeAt(i) << 8; for(var j=0;j<8;j++){ crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1); crc &= 0xFFFF; } }
-  return payload + crc.toString(16).toUpperCase().padStart(4,'0');
+  var merchantAccount = pixCampo('00', 'BR.GOV.BCB.PIX') + pixCampo('01', chave);
+  var txid = '***';
+  var payload =
+    pixCampo('00', '01') +
+    pixCampo('01', '12') +
+    pixCampo('26', merchantAccount) +
+    pixCampo('52', '0000') +
+    pixCampo('53', '986') +
+    pixCampo('54', amount.toFixed(2)) +
+    pixCampo('58', 'BR') +
+    pixCampo('59', pixTexto(PIX_NOME, 25)) +
+    pixCampo('60', pixTexto(PIX_CIDADE, 15)) +
+    pixCampo('62', pixCampo('05', txid)) +
+    '6304';
+
+  return payload + crc16(payload);
 }
 
 function abrirVista(){ 
