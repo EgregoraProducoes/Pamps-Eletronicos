@@ -76,7 +76,7 @@ input,select,textarea{font-family:var(--font)}
 .card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:8px}
 .card-body{padding:10px 12px}
 
-/* Botões compactos com efeito 3D */
+/* Botões compactos */
 .btn, .icon-btn {
   display:inline-flex;
   align-items:center;
@@ -114,6 +114,7 @@ input,select,textarea{font-family:var(--font)}
 .icon-btn.back{background:var(--bg4);border-color:var(--bg4);color:#fff}
 .icon-btn.share{background:var(--green2);border-color:var(--green);color:#fff}
 .icon-btn.ok{background:var(--accent);border-color:var(--accent2);color:#fff}
+.icon-btn.add{background:var(--purple);border-color:var(--purple);color:#fff}
 
 /* foto produto */
 .foto-area{width:100%;max-width:220px;aspect-ratio:4/3;background:var(--bg3);border-radius:var(--r);border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;overflow:hidden;position:relative;margin:0 auto}
@@ -164,12 +165,15 @@ input,select,textarea{font-family:var(--font)}
 .fl{font-size:10px;margin-bottom:3px}
 .fi{padding:6px 8px;font-size:13px}
 .frow{gap:8px}
+.parcela-row{display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap}
+.parcela-row label{font-size:10px; min-width:40px}
+.parcela-row input{flex:1; min-width:120px}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.0</span></div>
+<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.1</span></div>
 <div class="sync-row"><div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div></div>
 </div>
 
@@ -213,7 +217,7 @@ input,select,textarea{font-family:var(--font)}
 <button class="ni" id="ni-alertas" onclick="showSec('alertas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span>Alertas</span><span class="ni-badge" id="alert-badge">0</span></button>
 </nav>
 
-<!-- Modais (mesmos IDs) -->
+<!-- Modais (IDs mantidos) -->
 <div class="overlay" id="modal-prod-found"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prod-found')">✕</button></div><div class="sheet-body" id="pf-body"></div><div class="sheet-footer" id="pf-footer"></div></div></div>
 <div class="overlay" id="modal-categorias"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">📂 Categorias</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-categorias')">✕</button></div><div class="sheet-body"><div id="categorias-editor"></div><button class="btn btn-sm btn-outline btn-full" onclick="adicionarCategoriaLinha()">+ Adicionar categoria</button></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="salvarCategorias()">💾 Salvar</button></div></div></div>
 <div class="overlay" id="modal-produto"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title" id="mp-title">📦 Novo Produto</span><button class="btn btn-sm btn-ghost" onclick="fecharModalProduto()">✕</button></div><div class="sheet-body"><div class="fg"><label class="fl">📷 Foto</label><div class="foto-area" onclick="ge('foto-file').click()"><img src="" id="foto-preview" style="display:none;"><div class="foto-area-label" id="foto-placeholder">+ Adicionar Foto</div><input type="file" id="foto-file" accept="image/*" capture="environment" style="display:none;" onchange="previewFoto(this)"></div><button class="btn btn-xs btn-red" style="margin-top:6px;" onclick="clearFoto()">🗑️ Remover</button></div><div class="fg"><label class="fl">🏷️ Nome</label><input class="fi" type="text" id="mp-nome"></div><div class="frow"><div class="fg"><label class="fl">🏭 Marca</label><input class="fi" type="text" id="mp-marca"></div><div class="fg"><label class="fl">📱 Modelo</label><input class="fi" type="text" id="mp-modelo"></div></div><div class="fg"><label class="fl">📝 Descrição</label><textarea class="fi" id="mp-desc" rows="2"></textarea></div><div class="frow"><div class="fg"><label class="fl">📂 Categoria</label><select class="fi" id="mp-cat"></select></div><div class="fg"><label class="fl">🔢 Código</label><input class="fi" type="text" id="mp-barcode"></div></div><div class="frow"><div class="fg"><label class="fl">💰 Custo</label><input class="fi" type="number" id="mp-custo" step="0.01"></div><div class="fg"><label class="fl">💵 Preço</label><input class="fi" type="number" id="mp-preco" step="0.01"></div></div><div class="frow"><div class="fg"><label class="fl">📦 Estoque</label><input class="fi" type="number" id="mp-estoque"></div><div class="fg"><label class="fl">⚠️ Mínimo</label><input class="fi" type="number" id="mp-min"></div></div></div><div class="sheet-footer" id="produto-footer"></div></div></div>
@@ -221,7 +225,7 @@ input,select,textarea{font-family:var(--font)}
 <div class="overlay" id="modal-saida-tipo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">🛒 Tipo de Saída</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">✕</button></div><div class="sheet-body"><div id="sacola-itens-lista"></div><div class="opcoes-grid"><div class="opcao-card" id="op-venda" onclick="selSaida('venda')"><div class="opcao-label">💰 Venda</div></div><div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-label">🔄 Troca</div></div></div></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar</button><button class="btn btn-ghost btn-full" onclick="adicionarMaisItemNaSacola()">+ Adicionar</button></div></div></div>
 <div class="overlay" id="modal-forma-pag"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">💳 Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-forma-pag')">✕</button></div><div class="sheet-body"><div class="opcoes-grid"><div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-label">💵 À Vista</div></div><div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-label">📅 A Prazo</div></div></div></div><div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextPag()">Continuar</button></div></div></div>
 <div class="overlay" id="modal-vista"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">💵 Pagamento à Vista</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">✕</button></div><div class="sheet-body" id="vista-body"></div><div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">✅ Confirmar Venda</button></div></div></div>
-<div class="overlay" id="modal-prazo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">📅 Pagamento a Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">✕</button></div><div class="sheet-body" id="prazo-body"><div class="opcoes-grid"><div class="opcao-card" id="op-fiado" onclick="selPrazoTipo('fiado')"><div class="opcao-label">📝 Fiado</div><div class="opcao-sub">Até 3x, acima de R$100</div></div><div class="opcao-card" id="op-cartao" onclick="selPrazoTipo('cartao')"><div class="opcao-label">💳 Cartão</div><div class="opcao-sub">Taxas após 3x</div></div></div><div id="prazo-detalhes-container" style="display:none;"><div class="fg"><label class="fl">👤 Cliente</label><input class="fi" id="prazo-nome"></div><div class="frow"><div class="fg"><label class="fl">📱 WhatsApp</label><input class="fi" id="prazo-tel"></div><div class="fg"><label class="fl">📍 Setor</label><input class="fi" id="prazo-setor"></div></div><div class="fg"><label class="fl">📊 Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div><div id="prazo-parcelas-ui"></div><div id="prazo-taxa-info" class="alerta warning" style="display:none;"></div></div></div><div class="sheet-footer" id="prazo-footer" style="display:none;"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">✅ Confirmar Venda</button></div></div></div>
+<div class="overlay" id="modal-prazo"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">📅 Pagamento a Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">✕</button></div><div class="sheet-body" id="prazo-body"><div class="opcoes-grid"><div class="opcao-card" id="op-fiado" onclick="selPrazoTipo('fiado')"><div class="opcao-label">📝 Fiado</div><div class="opcao-sub">Até 3x, acima de R$100</div></div><div class="opcao-card" id="op-cartao" onclick="selPrazoTipo('cartao')"><div class="opcao-label">💳 Cartão</div><div class="opcao-sub">Taxas após 3x</div></div></div><div id="prazo-detalhes-container" style="display:none;"><div class="fg"><label class="fl">👤 Cliente</label><input class="fi" id="prazo-nome"></div><div class="frow"><div class="fg"><label class="fl">📱 WhatsApp</label><input class="fi" id="prazo-tel"></div><div class="fg"><label class="fl">📍 Setor</label><input class="fi" id="prazo-setor"></div></div><div class="fg"><label class="fl">📊 Parcelas</label><select class="fi" id="prazo-parc" onchange="regerarParcelasPorNumero()"></select></div><div id="prazo-parcelas-ui"></div><div id="prazo-taxa-info" class="alerta warning" style="display:none;"></div></div></div><div class="sheet-footer" id="prazo-footer" style="display:none;"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">✅ Confirmar Venda</button></div></div></div>
 <div class="overlay" id="modal-troca"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">🔄 Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">✕</button></div><div class="sheet-body" id="troca-body"></div><div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarTroca()">Confirmar</button></div></div></div>
 <div class="overlay" id="modal-venda-detail"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">📋 Detalhes</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">✕</button></div><div class="sheet-body" id="venda-detail-body"></div><div class="sheet-footer" id="venda-detail-footer"></div></div></div>
 <div class="overlay" id="modal-venda-direta-seletor"></div>
@@ -248,7 +252,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 2.0';
+var APP_VERSION = 'V 2.1';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -257,6 +261,10 @@ var zoomLevel = 1;
 var PIX_CHAVE = "+5521976943868";
 var PIX_NOME = "PAMPS ELETRONICOS";
 var PIX_CIDADE = "RIO DE JANEIRO";
+
+// --- Variáveis para edição de venda a prazo ---
+var vendaPrazoEmEdicaoId = null;
+var vendaPrazoQtdOriginal = {};
 
 // --- UTILITÁRIOS ---
 function ge(id){ return document.getElementById(id); }
@@ -422,7 +430,7 @@ function toggleCategoriaEstoque(catName,id){
   }
 }
 
-// --- VENDAS (lista simples) ---
+// --- VENDAS (lista) ---
 function renderVendas(){
   var html='<div class="shead"><span class="stitle">📜 Histórico</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Nova Venda</button></div>';
   var list=vendas.slice().reverse().slice(0,20);
@@ -493,15 +501,154 @@ function abrirVista(){ var total=totalSacola(); var pixPayload=gerarPixCopiaECol
 function copiarPix(){ var code=document.querySelector('#vista-body .pix-code-box'); if(code){ navigator.clipboard.writeText(code.textContent); alert('Código PIX copiado!'); } }
 function confirmarVista(){ baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:totalSacola(), data:today(), cliente:'Balcão', itens:itensSacolaSnapshot() }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
 
-// --- VENDA A PRAZO (com edição e status de parcelas) ---
-function abrirPrazo(){ ge('prazo-detalhes-container').style.display='none'; ge('prazo-footer').style.display='none'; openM('modal-prazo'); }
-function selPrazoTipo(t){ prazoTipo=t; ge('prazo-detalhes-container').style.display='block'; ge('prazo-footer').style.display='flex'; atualizarParcelasMultiUI(); }
-function atualizarParcelasMultiUI(){ var total=totalSacola(), nMax=12; if(prazoTipo==='fiado') nMax=(total>=100?3:2); var sel=ge('prazo-parc'); sel.innerHTML=''; for(var i=1;i<=nMax;i++){ var opt=document.createElement('option'); opt.value=i; opt.textContent=i+'x'; sel.appendChild(opt); } var n=parseInt(sel.value,10)||1, vp=total/n, html=''; for(var i=1;i<=n;i++){ var d=new Date(); d.setMonth(d.getMonth()+i); html+='<div><label>📅 Venc '+i+'</label><input class="fi" type="date" id="pdata-'+i+'" value="'+d.toISOString().split('T')[0]+'"></div>'; } ge('prazo-parcelas-ui').innerHTML=html; }
-function recalcularParcelasComDataBase(v, n, dataBaseStr){ var total=Number(v.valor||0); n=Math.max(1,Math.min(n,12)); var valorParc=total/n; var novas=[]; var dataBase=new Date(dataBaseStr+'T00:00:00'); for(var i=1;i<=n;i++){ var dt=new Date(dataBase); dt.setMonth(dt.getMonth()+i); var venc=dt.toISOString().split('T')[0]; var antiga=(v.parcelas||[])[i-1]||{}; novas.push({ num:i, valor:valorParc, venc:venc, pago:!!antiga.pago }); } v.parcelas=novas; }
-function confirmarPrazo(){ var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1; var itens=itensSacolaSnapshot(); if(window.vendaPrazoEmEdicaoId){ var v=findVenda(window.vendaPrazoEmEdicaoId); if(v){ for(var i=0;i<itens.length;i++){ var delta=itens[i].qty - (window.vendaPrazoQtdOriginal[itens[i].prodId]||0); if(delta>0){ var p=findProduto(itens[i].prodId); if(p) p.estoque-=delta; } } v.itens=itens; v.produto=sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'); v.valor=total; if(gv('prazo-nome')) v.cliente=gv('prazo-nome'); v.data=today(); recalcularParcelasComDataBase(v, n, today()); window.vendaPrazoEmEdicaoId=null; window.vendaPrazoQtdOriginal={}; closeM('modal-prazo'); saveBoth('Venda atualizada'); sacolaAtual=[]; return; } } baixarEstoque(); var parcelas=[]; var vp=total/n; for(var i=1;i<=n;i++){ var d=new Date(); d.setMonth(d.getMonth()+i); parcelas.push({ num:i, valor:vp, venc:d.toISOString().split('T')[0], pago:false }); } vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), cliente:gv('prazo-nome'), tipo:'prazo', valor:total, data:today(), parcelas:parcelas, itens:itens }); closeM('modal-prazo'); saveBoth('Venda salva'); sacolaAtual=[]; }
-function editarVendaPrazo(id){ var v=findVenda(id); if(!v||v.tipo!=='prazo') return; window.vendaPrazoEmEdicaoId=v.id; sacolaAtual=[]; var itens=v.itens||[]; window.vendaPrazoQtdOriginal={}; for(var i=0;i<itens.length;i++){ var item=itens[i]; sacolaAtual.push({ prodId:item.prodId, nome:item.nome, qty:Number(item.qty), preco:Number(item.preco) }); window.vendaPrazoQtdOriginal[item.prodId]=Number(item.qty); } saidaTipo='venda'; pagTipo='prazo'; prazoTipo='fiado'; closeM('modal-venda-detail'); abrirSaidaTipo(); }
-function togglePagamentoParcela(vId, pIdx){ var v=findVenda(vId); if(v&&v.parcelas&&v.parcelas[pIdx]){ v.parcelas[pIdx].pago=!v.parcelas[pIdx].pago; saveBoth('Status da parcela alterado'); closeM('modal-venda-detail'); } }
-function obterStatusParcela(parcela){ if(parcela.pago) return {text:'✅ PAGO', class:'status-pago'}; var hoje=new Date(); hoje.setHours(0,0,0,0); var venc=new Date(parcela.venc+'T00:00:00'); var diffDias=Math.floor((hoje-venc)/86400000); if(diffDias>2) return {text:'⚠️ ATRASADO', class:'status-atrasado'}; return {text:'⏳ PENDENTE', class:'status-pendente'}; }
+// --- VENDA A PRAZO (com edição, parcelas editáveis manualmente e status) ---
+function abrirPrazo(){ 
+  ge('prazo-detalhes-container').style.display='none'; 
+  ge('prazo-footer').style.display='none'; 
+  openM('modal-prazo'); 
+}
+function selPrazoTipo(t){ 
+  prazoTipo=t; 
+  ge('prazo-detalhes-container').style.display='block'; 
+  ge('prazo-footer').style.display='flex'; 
+  regerarParcelasPorNumero(); 
+}
+function regerarParcelasPorNumero(){
+  var total=totalSacola();
+  var nMax=12;
+  if(prazoTipo==='fiado') nMax=(total>=100?3:2);
+  var sel=ge('prazo-parc');
+  var currentVal=sel.value;
+  sel.innerHTML='';
+  for(var i=1;i<=nMax;i++){ var opt=document.createElement('option'); opt.value=i; opt.textContent=i+'x'; sel.appendChild(opt); }
+  if(currentVal && currentVal<=nMax) sel.value=currentVal;
+  else sel.value=Math.min(nMax,2);
+  gerarCamposParcelas();
+}
+function gerarCamposParcelas(){
+  var n=parseInt(ge('prazo-parc').value,10)||1;
+  var container=ge('prazo-parcelas-ui');
+  if(!container) return;
+  var html='';
+  // Se estiver editando uma venda existente, tenta carregar as datas originais
+  var vendaOriginal=null;
+  if(vendaPrazoEmEdicaoId) vendaOriginal=findVenda(vendaPrazoEmEdicaoId);
+  for(var i=1;i<=n;i++){
+    var dataVenc = '';
+    if(vendaOriginal && vendaOriginal.parcelas && vendaOriginal.parcelas[i-1] && vendaOriginal.parcelas[i-1].venc){
+      dataVenc = vendaOriginal.parcelas[i-1].venc;
+    } else {
+      var dt=new Date();
+      dt.setMonth(dt.getMonth()+i);
+      dataVenc = dt.toISOString().split('T')[0];
+    }
+    html+='<div class="parcela-row"><label>📅 Parcela '+i+'</label><input class="fi data-parcela" type="date" value="'+dataVenc+'" data-num="'+i+'"></div>';
+  }
+  container.innerHTML=html;
+}
+function coletarParcelasDoForm(){
+  var inputs=document.querySelectorAll('#prazo-parcelas-ui .data-parcela');
+  var parcelas=[];
+  var n=inputs.length;
+  var total=totalSacola();
+  var valorParc=total/n;
+  for(var i=0;i<n;i++){
+    parcelas.push({
+      num:i+1,
+      valor:valorParc,
+      venc:inputs[i].value,
+      pago:false
+    });
+  }
+  return parcelas;
+}
+function confirmarPrazo(){
+  var total=totalSacola();
+  var n=parseInt(ge('prazo-parc').value,10)||1;
+  var parcelas=coletarParcelasDoForm();
+  var itens=itensSacolaSnapshot();
+  if(vendaPrazoEmEdicaoId){
+    var v=findVenda(vendaPrazoEmEdicaoId);
+    if(v){
+      // Ajusta estoque: devolve os itens originais e depois baixa os novos
+      for(var id in vendaPrazoQtdOriginal){
+        var qtdOrig=vendaPrazoQtdOriginal[id];
+        if(qtdOrig>0){
+          var prod=findProduto(parseInt(id));
+          if(prod) prod.estoque+=qtdOrig;
+        }
+      }
+      for(var i=0;i<itens.length;i++){
+        var prodAt=findProduto(itens[i].prodId);
+        if(prodAt) prodAt.estoque-=itens[i].qty;
+      }
+      v.itens=itens;
+      v.produto=sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n');
+      v.valor=total;
+      if(gv('prazo-nome')) v.cliente=gv('prazo-nome');
+      if(gv('prazo-tel')) v.whatsapp=gv('prazo-tel');
+      if(gv('prazo-setor')) v.setor=gv('prazo-setor');
+      v.data=today();
+      v.parcelas=parcelas;
+      vendaPrazoEmEdicaoId=null;
+      vendaPrazoQtdOriginal={};
+      closeM('modal-prazo');
+      saveBoth('Venda atualizada');
+      sacolaAtual=[];
+      return;
+    }
+  }
+  baixarEstoque();
+  vendas.push({
+    id:nextId(vendas),
+    produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'),
+    cliente:gv('prazo-nome'),
+    tipo:'prazo',
+    valor:total,
+    data:today(),
+    parcelas:parcelas,
+    itens:itens,
+    whatsapp:gv('prazo-tel'),
+    setor:gv('prazo-setor')
+  });
+  closeM('modal-prazo');
+  saveBoth('Venda salva');
+  sacolaAtual=[];
+}
+function editarVendaPrazo(id){
+  var v=findVenda(id);
+  if(!v||v.tipo!=='prazo') return;
+  vendaPrazoEmEdicaoId=v.id;
+  sacolaAtual=[];
+  vendaPrazoQtdOriginal={};
+  var itens=v.itens||[];
+  for(var i=0;i<itens.length;i++){
+    var item=itens[i];
+    sacolaAtual.push({ prodId:item.prodId, nome:item.nome, qty:Number(item.qty), preco:Number(item.preco) });
+    vendaPrazoQtdOriginal[item.prodId]=Number(item.qty);
+  }
+  saidaTipo='venda';
+  pagTipo='prazo';
+  prazoTipo='fiado';
+  closeM('modal-venda-detail');
+  abrirSaidaTipo();
+}
+function togglePagamentoParcela(vId, pIdx){
+  var v=findVenda(vId);
+  if(v&&v.parcelas&&v.parcelas[pIdx]){
+    v.parcelas[pIdx].pago=!v.parcelas[pIdx].pago;
+    saveBoth('Status da parcela alterado');
+    closeM('modal-venda-detail');
+  }
+}
+function obterStatusParcela(parcela){
+  if(parcela.pago) return {text:'✅ PAGO', class:'status-pago'};
+  var hoje=new Date(); hoje.setHours(0,0,0,0);
+  var venc=new Date(parcela.venc+'T00:00:00');
+  var diffDias=Math.floor((hoje-venc)/86400000);
+  if(diffDias>2) return {text:'⚠️ ATRASADO', class:'status-atrasado'};
+  return {text:'⏳ PENDENTE', class:'status-pendente'};
+}
 function abrirVendaDetail(id, isVenda){
   if(isVenda){
     var v=findVenda(id); if(!v) return;
@@ -551,7 +698,7 @@ window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.sho
 window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd;
 window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag;
 window.confirmarVista=confirmarVista; window.confirmarPrazo=confirmarPrazo; window.confirmarTroca=confirmarTroca;
-window.atualizarParcelasMultiUI=atualizarParcelasMultiUI; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail;
+window.regerarParcelasPorNumero=regerarParcelasPorNumero; window.selPrazoTipo=selPrazoTipo; window.abrirVendaDetail=abrirVendaDetail;
 window.editarProduto=editarProduto; window.iniciarFluxoProd=iniciarFluxoProd; window.abrirNovoProduto=abrirNovoProduto;
 window.abrirNovoProdutoComCodigo=abrirNovoProdutoComCodigo; window.alternarCameraScanner=alternarCameraScanner;
 window.clearScan=clearScan; window.abrirSeletorVendaDireta=abrirSeletorVendaDireta; window.excluirVenda=excluirVenda;
