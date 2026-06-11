@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -315,10 +315,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
     <div class="fg"><label class="fl">âš ï¸ Estoque MÃ­nimo</label><input class="fi" type="number" id="mp-min" placeholder="5"></div>
   </div>
 </div>
-<div class="sheet-footer">
-  <button class="btn btn-primary btn-full" onclick="salvarProduto()">ðŸ’¾ Salvar Produto</button>
-  <button class="btn btn-ghost btn-full" onclick="fecharModalProduto()">âŒ Cancelar</button>
-</div>
+<div class="sheet-footer" id="produto-footer"></div>
 </div>
 </div>
 
@@ -445,7 +442,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.7';
+var APP_VERSION = 'V 1.8';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -1484,6 +1481,19 @@ function actionBtn(cls, label, title, onclick){
   return '<button class="icon-btn ' + cls + '" title="' + title + '" aria-label="' + title + '" onclick="' + onclick + '">' + label + '</button>';
 }
 function syncBtn(){ return '<button class="btn btn-sm btn-outline" onclick="syncDrive()">Sync</button>'; }
+function renderProdutoFooter(){
+  var el = ge('produto-footer'); if(!el) return;
+  var html = '<div class="action-row">' + actionBtn('ok','✓','Salvar','salvarProduto()');
+  if(editingProdId) html += actionBtn('delete outline','×','Excluir','excluirProdutoAtual()');
+  html += actionBtn('back','←','Voltar','fecharModalProduto()') + '</div>';
+  el.innerHTML = html;
+}
+function excluirProdutoAtual(){
+  if(!editingProdId) return;
+  var id = editingProdId;
+  fecharModalProduto();
+  excluirProduto(id);
+}
 
 renderPainel = function(){
   var receita = 0, semEstq = 0;
@@ -1559,6 +1569,38 @@ renderAlertas = function(){
   ge('alertas-body').innerHTML = html;
 };
 
+editarProduto = function(id){
+  var p=findProduto(id); if(!p) return;
+  editingProdId=p.id;
+  atualizarSelectCategorias(p.cat||'CABOS');
+  ge('mp-title').textContent='Editar Produto';
+  ge('mp-nome').value=p.nome||'';
+  ge('mp-marca').value=p.marca||'';
+  ge('mp-modelo').value=p.modelo||'';
+  ge('mp-desc').value=p.desc||'';
+  if(ge('mp-cat')) ge('mp-cat').value=p.cat||'CABOS';
+  ge('mp-custo').value=p.custo||'';
+  ge('mp-preco').value=p.preco||'';
+  ge('mp-estoque').value=p.estoque||0;
+  ge('mp-min').value=p.min||5;
+  ge('mp-barcode').value=p.barcode||'';
+  if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto();
+  renderProdutoFooter();
+  openM('modal-produto');
+};
+
+abrirNovoProduto = function(){
+  editingProdId = null;
+  currentProdId = null;
+  atualizarSelectCategorias('CABOS');
+  ge('mp-title').textContent='Novo Produto';
+  limparFormularioProduto();
+  if(ge('mp-cat')) ge('mp-cat').value='CABOS';
+  renderProdutoFooter();
+  setTimeout(function(){ limparFormularioProduto(); renderProdutoFooter(); }, 60);
+  openM('modal-produto');
+};
+
 mostrarProdutoFound = function(prod){
   currentProdId=prod.id;
   ge('pf-title').textContent=prod.nome;
@@ -1604,6 +1646,7 @@ window.adicionarMaisItemNaSacola=adicionarMaisItemNaSacola; window.abrirCategori
 window.adicionarCategoriaLinha=adicionarCategoriaLinha; window.salvarCategorias=salvarCategorias;
 window.compartilharProduto=compartilharProduto; window.editarVendaPrazo=editarVendaPrazo;
 window.adicionarItemVendaPrazo=adicionarItemVendaPrazo; window.abrirReparcelarVenda=abrirReparcelarVenda;
+window.renderProdutoFooter=renderProdutoFooter; window.excluirProdutoAtual=excluirProdutoAtual;
 
 function iniciarApp(){
   aplicarVersaoApp();
@@ -1618,4 +1661,5 @@ if(document.readyState === 'loading'){
 </script>
 </body>
 </html>
+
 
