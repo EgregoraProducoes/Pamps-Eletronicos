@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -191,7 +191,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <body>
 
 <div class="topbar">
-<div class="logo"><div class="logo-chip">x</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 1.0</span></div>
+<div class="logo"><div class="logo-chip">P</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 1.0</span></div>
 <div class="sync-row">
 <div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div>
 </div>
@@ -206,13 +206,13 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
     <div class="shead"><span class="stitle">Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">Parar</button></div>
     <div class="video-scan-container">
         <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
-            x Posicione o código na linha vermelha
+            Posicione o código na linha vermelha
         </div>
         <div class="video-wrapper" id="video-wrapper-scanner">
             <video id="scanner-video" autoplay playsinline muted></video>
             <div class="laser-line"></div>
         </div>
-        <!-- BOT"ES DE ZOOM -->
+        <!-- BOTOES DE ZOOM -->
         <div style="display:flex; gap:8px; justify-content:center; padding:10px; background:var(--bg3);">
             <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(-0.5)">- Zoom</button>
             <button class="btn btn-sm" style="background:var(--accent);" onclick="zoomCameraReset()">1x</button>
@@ -331,7 +331,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-saida-tipo">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">x: Tipo de Saída</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Tipo de Saída</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">x</button></div>
 <div class="sheet-body">
   <div id="sacola-itens-lista"></div>
   <div class="opcoes-grid">
@@ -349,8 +349,8 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="sheet-header"><span class="sheet-title">Forma de Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-forma-pag')">x</button></div>
 <div class="sheet-body">
   <div class="opcoes-grid">
-    <div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-label">x ì Vista</div></div>
-    <div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-label">x& ì Prazo</div></div>
+    <div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-label">A Vista</div></div>
+    <div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-label">A Prazo</div></div>
   </div>
 </div>
 <div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextPag()">Continuar</button></div>
@@ -369,7 +369,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-prazo">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">x& Pagamento à Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">x</button></div>
+<div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">Pagamento a Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">x</button></div>
 <div class="sheet-body" id="prazo-body">
   <div class="opcoes-grid">
     <div class="opcao-card" id="op-fiado" onclick="selPrazoTipo('fiado')"><div class="opcao-label">Fiado</div><div class="opcao-sub">Até 3x, acima de R$100</div></div>
@@ -381,7 +381,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
       <div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div>
       <div class="fg"><label class="fl">Setor</label><input class="fi" type="text" id="prazo-setor"></div>
     </div>
-    <div class="fg"><label class="fl">x` Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
+    <div class="fg"><label class="fl">Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
     <div id="prazo-parcelas-ui"></div>
     <div id="prazo-taxa-info" class="alerta warning" style="display:none; margin-top:10px;"><div class="alerta-body"></div></div>
   </div>
@@ -402,7 +402,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-venda-detail">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">x9 Detalhes</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">x</button></div>
+<div class="sheet-header"><span class="sheet-title">Detalhes</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">x</button></div>
 <div class="sheet-body" id="venda-detail-body"></div>
 <div class="sheet-footer" id="venda-detail-footer"></div>
 </div>
@@ -442,7 +442,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.8';
+var APP_VERSION = 'V 2.0';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -795,7 +795,7 @@ function renderPainel(){
   html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g">' + money(receita) + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + cAlerts() + '</div></div></div>';
-  html += '<div class="shead"><span class="stitle">x& Menu</span><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div>';
+  html += '<div class="shead"><span class="stitle">Menu</span><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div>';
   ge('painel-body').innerHTML = html;
 }
 
@@ -818,7 +818,7 @@ function renderEstoque(){
     
     html += '<div style="margin-bottom:8px; border:1px solid var(--border); border-radius:var(--r3); overflow:hidden;">' +
             '<div onclick="toggleCategoriaEstoque(\'' + catName + '\', \'' + catId + '\')" style="background:var(--bg3); padding:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">' +
-            '<span>x ' + escapeHtml(catName) + ' (' + lista.length + ')</span>' +
+            '<span>' + escapeHtml(catName) + ' (' + lista.length + ')</span>' +
             '<span id="seta-' + catId + '">' + setaIcon + '</span></div>' +
             '<div id="' + catId + '" style="display:' + displayInicial + '; padding:6px;">';
     
@@ -1164,7 +1164,7 @@ function handleBarcode(code){
 
 function abrirSeletorVendaDireta(){
   var modal=ge('modal-venda-direta-seletor');
-  var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">x: Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">x</button></div><div class="sheet-body">';
+  var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">x</button></div><div class="sheet-body">';
   produtos.forEach(function(p){ html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div><b>'+escapeHtml(p.nome)+'</b><br>'+money(p.preco)+'</div><div>Est: '+p.estoque+'</div></div>'; });
   modal.innerHTML=html + '</div></div>'; openM('modal-venda-direta-seletor');
 }
@@ -1259,9 +1259,7 @@ function recalcularParcelasVenda(v, n){
 }
 function editarVendaPrazo(id){
   var v = findVenda(id); if(!v || v.tipo !== 'prazo') return;
-  var op = prompt('Editar venda:\n1 - Adicionar item\n2 - Recalcular parcelas', '1');
-  if(op === '1') adicionarItemVendaPrazo(id);
-  if(op === '2') abrirReparcelarVenda(id);
+  adicionarItemVendaPrazo(id);
 }
 function adicionarItemVendaPrazo(id){
   var v = findVenda(id); if(!v) return;
@@ -1630,7 +1628,119 @@ abrirVendaDetail = function(id, isVenda){
   openM('modal-venda-detail');
 };
 
-// EXPORTAÇÃO DAS FONTES
+/* BLOCO: edicao de venda a prazo como nova venda.
+   Reabre a sacola da venda antiga, permite adicionar itens e recalcula parcelas no final. */
+var vendaPrazoEmEdicaoId = null;
+var vendaPrazoQtdOriginal = {};
+
+function mapaQtdSacola(itens){
+  var mapa = {};
+  for(var i=0;i<itens.length;i++){
+    var id = itens[i].prodId;
+    if(id == null || id === '') continue;
+    mapa[id] = (mapa[id] || 0) + Number(itens[i].qty || 0);
+  }
+  return mapa;
+}
+
+function sacolaFromVenda(v){
+  var itens = itensDaVenda(v), out = [];
+  for(var i=0;i<itens.length;i++){
+    out.push({
+      prodId: itens[i].prodId,
+      nome: itens[i].nome,
+      qty: Number(itens[i].qty || 0),
+      preco: Number(itens[i].preco || 0)
+    });
+  }
+  return out;
+}
+
+editarVendaPrazo = function(id){
+  var v = findVenda(id); if(!v || v.tipo !== 'prazo') return;
+  vendaPrazoEmEdicaoId = v.id;
+  sacolaAtual = sacolaFromVenda(v);
+  vendaPrazoQtdOriginal = mapaQtdSacola(sacolaAtual);
+  saidaTipo = 'venda';
+  pagTipo = 'prazo';
+  prazoTipo = 'fiado';
+  closeM('modal-venda-detail');
+  abrirSaidaTipo();
+};
+
+function ajustarEstoqueEdicaoPrazo(){
+  var atual = mapaQtdSacola(sacolaAtual);
+  for(var id in atual){
+    if(!atual.hasOwnProperty(id)) continue;
+    var delta = Number(atual[id] || 0) - Number(vendaPrazoQtdOriginal[id] || 0);
+    if(delta > 0){
+      var p = findProduto(id);
+      if(p) p.estoque = Number(p.estoque || 0) - delta;
+    }
+  }
+}
+
+function textoVendaEditadaPrazo(){
+  var linhas = [];
+  for(var i=0;i<sacolaAtual.length;i++){
+    var item = sacolaAtual[i];
+    var id = item.prodId;
+    var totalQty = Number(item.qty || 0);
+    var oldQty = (id == null || id === '') ? totalQty : Number(vendaPrazoQtdOriginal[id] || 0);
+    var novaQty = Math.max(0, totalQty - oldQty);
+    if(oldQty > 0) linhas.push(oldQty + 'x ' + item.nome);
+    if(novaQty > 0) linhas.push(novaQty + 'x ' + item.nome + ' (adicionado em ' + fmtD(today()) + ')');
+  }
+  return linhas.join('\n');
+}
+
+function parcelasComDatasPreservadas(v, n, total){
+  n = parseInt(n,10) || 1;
+  var antigas = v.parcelas || [];
+  var valor = Number(total || 0) / n;
+  var novas = [];
+  for(var i=1;i<=n;i++){
+    var antiga = antigas[i-1] || {};
+    var d = antiga.venc;
+    if(!d){
+      var dt = new Date();
+      dt.setMonth(dt.getMonth()+i);
+      d = dt.toISOString().split('T')[0];
+    }
+    novas.push({ num:i, valor:valor, venc:d, pago:!!antiga.pago });
+  }
+  return novas;
+}
+
+confirmarPrazo = function(){
+  var total=totalSacola(), n=parseInt(gv('prazo-parc'),10)||1, vp=total/n, parcelas=[];
+  for(var i=1;i<=n;i++) parcelas.push({num:i,valor:vp,venc:ge('pdata-'+i).value,pago:false});
+  var itens=itensSacolaSnapshot();
+
+  if(vendaPrazoEmEdicaoId){
+    var v = findVenda(vendaPrazoEmEdicaoId); if(!v) return;
+    ajustarEstoqueEdicaoPrazo();
+    v.itens = itens;
+    v.produto = textoVendaEditadaPrazo();
+    v.valor = total;
+    v.parcelas = parcelasComDatasPreservadas(v, n, total);
+    if(gv('prazo-nome')) v.cliente = gv('prazo-nome');
+    vendaPrazoEmEdicaoId = null;
+    vendaPrazoQtdOriginal = {};
+    closeM('modal-prazo'); saveBoth('Venda atualizada'); sacolaAtual=[];
+    return;
+  }
+
+  baixarEstoque();
+  vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(function(i){ return i.qty+'x '+i.nome; }).join('\n'), cliente:gv('prazo-nome'), tipo:'prazo', valor:total, data:today(), parcelas:parcelas, itens:itens });
+  closeM('modal-prazo'); saveBoth('Venda salva'); sacolaAtual=[];
+};
+
+adicionarItemVendaPrazo = function(id){
+  editarVendaPrazo(id);
+};
+
+// EXPORTA!ÒO DAS FUN!"ES
 window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive;
 window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd;
 window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag;
