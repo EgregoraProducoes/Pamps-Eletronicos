@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0a0f1e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pamp's Eletrônicos">
-<title>Pamp's Eletrônicos</title>
+<meta name="apple-mobile-web-app-title" content="Pamp's EletrÃ´nicos">
+<title>Pamp's EletrÃ´nicos</title>
 
 <style>
 :root{
@@ -191,7 +191,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <body>
 
 <div class="topbar">
-<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 1.0</span></div>
+<div class="logo"><div class="logo-chip">ðŸ“±</div><span class="app-name">Pamp's EletrÃ´nicos</span><span class="app-version" id="app-version-label">V 1.0</span></div>
 <div class="sync-row">
 <div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div>
 </div>
@@ -203,29 +203,29 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </div>
 
 <div class="sec" id="sec-scanner">
-    <div class="shead"><span class="stitle">📷 Leitor de Código de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">✕ Parar</button></div>
+    <div class="shead"><span class="stitle">ðŸ“· Leitor de CÃ³digo de Barras</span><button class="btn btn-sm btn-ghost" onclick="clearScan()">âœ• Parar</button></div>
     <div class="video-scan-container">
         <div style="width:100%; padding:10px; font-size:12px; background:var(--bg3); color:var(--text2); text-align:center; border-bottom:1px solid var(--border)">
-            📷 Posicione o código na linha vermelha
+            ðŸ“· Posicione o cÃ³digo na linha vermelha
         </div>
         <div class="video-wrapper" id="video-wrapper-scanner">
             <video id="scanner-video" autoplay playsinline muted></video>
             <div class="laser-line"></div>
         </div>
-        <!-- BOTÕES DE ZOOM -->
+        <!-- BOTÃ•ES DE ZOOM -->
         <div style="display:flex; gap:8px; justify-content:center; padding:10px; background:var(--bg3);">
-            <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(-0.5)">🔍 - Zoom</button>
+            <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(-0.5)">ðŸ” - Zoom</button>
             <button class="btn btn-sm" style="background:var(--accent);" onclick="zoomCameraReset()">1x</button>
-            <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(0.5)">🔍 + Zoom</button>
+            <button class="btn btn-sm" style="background:var(--bg4);" onclick="zoomCamera(0.5)">ðŸ” + Zoom</button>
         </div>
         <div style="width:100%; padding:12px; display:flex; gap:8px; background:var(--bg2);">
-            <button class="btn btn-sm btn-outline" style="flex:1" onclick="alternarCameraScanner()">🔄 Virar Câmera</button>
-            <button class="btn btn-sm btn-outline" style="flex:1; background:rgba(239,68,68,0.2); border-color:var(--red);" onclick="limparUltimaLeitura()">🗑️ Limpar Scanner</button>
+            <button class="btn btn-sm btn-outline" style="flex:1" onclick="alternarCameraScanner()">ðŸ”„ Virar CÃ¢mera</button>
+            <button class="btn btn-sm btn-outline" style="flex:1; background:rgba(239,68,68,0.2); border-color:var(--red);" onclick="limparUltimaLeitura()">ðŸ—‘ï¸ Limpar Scanner</button>
         </div>
     </div>
     <div class="manual-scan">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o código manualmente</div>
-        <div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="Código de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px">Ou digite o cÃ³digo manualmente</div>
+        <div style="display:flex;gap:8px"><input class="fi" type="text" id="manual-bc" placeholder="CÃ³digo de barras..." style="flex:1;font-size:14px"><button class="btn btn-primary" onclick="handleBarcode(ge('manual-bc').value.trim())">Buscar</button></div>
     </div>
     <div id="scan-result" style="margin-top:10px"></div>
 </div>
@@ -245,7 +245,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 
 <div class="side-panel" id="side-meses" onclick="if(event.target===this) fecharMenuMeses()">
   <div class="side-menu">
-    <div class="shead"><span class="stitle">📁 Arquivo mensal</span><button class="btn btn-sm btn-ghost" onclick="fecharMenuMeses()">✕</button></div>
+    <div class="shead"><span class="stitle">ðŸ“ Arquivo mensal</span><button class="btn btn-sm btn-ghost" onclick="fecharMenuMeses()">âœ•</button></div>
     <div id="side-meses-body"></div>
   </div>
 </div>
@@ -260,7 +260,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-prod-found">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prod-found')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title" id="pf-title">Produto</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prod-found')">âœ•</button></div>
 <div class="sheet-body" id="pf-body"></div>
 <div class="sheet-footer" id="pf-footer"></div>
 </div>
@@ -269,13 +269,13 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-categorias">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">📂 Categorias</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-categorias')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ“‚ Categorias</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-categorias')">âœ•</button></div>
 <div class="sheet-body">
   <div id="categorias-editor"></div>
   <button class="btn btn-sm btn-outline btn-full" onclick="adicionarCategoriaLinha()">+ Adicionar categoria</button>
 </div>
 <div class="sheet-footer">
-  <button class="btn btn-primary btn-full" onclick="salvarCategorias()">💾 Salvar categorias</button>
+  <button class="btn btn-primary btn-full" onclick="salvarCategorias()">ðŸ’¾ Salvar categorias</button>
 </div>
 </div>
 </div>
@@ -283,41 +283,41 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-produto">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title" id="mp-title">📦 Novo Produto</span><button class="btn btn-sm btn-ghost" onclick="fecharModalProduto()">✕</button></div>
+<div class="sheet-header"><span class="sheet-title" id="mp-title">ðŸ“¦ Novo Produto</span><button class="btn btn-sm btn-ghost" onclick="fecharModalProduto()">âœ•</button></div>
 <div class="sheet-body">
   <div class="fg">
-    <label class="fl">📷 Foto do Produto</label>
+    <label class="fl">ðŸ“· Foto do Produto</label>
     <div class="foto-area" onclick="ge('foto-file').click()">
       <img src="" id="foto-preview" style="display:none;">
       <div class="foto-area-label" id="foto-placeholder">+ Adicionar Foto</div>
       <input type="file" id="foto-file" accept="image/*" capture="environment" style="display:none;" onchange="previewFoto(this)">
     </div>
-    <button class="btn btn-xs btn-red" style="margin-top:8px;" onclick="clearFoto()">🗑️ Remover Foto</button>
+    <button class="btn btn-xs btn-red" style="margin-top:8px;" onclick="clearFoto()">ðŸ—‘ï¸ Remover Foto</button>
   </div>
-  <div class="fg"><label class="fl">🏷️ Nome</label><input class="fi" type="text" id="mp-nome" placeholder="Ex: Capa iPhone 14" autocomplete="off"></div>
+  <div class="fg"><label class="fl">ðŸ·ï¸ Nome</label><input class="fi" type="text" id="mp-nome" placeholder="Ex: Capa iPhone 14" autocomplete="off"></div>
   <div class="frow">
-    <div class="fg"><label class="fl">🏭 Marca</label><input class="fi" type="text" id="mp-marca" placeholder="Marca" autocomplete="off"></div>
-    <div class="fg"><label class="fl">📱 Modelo</label><input class="fi" type="text" id="mp-modelo" placeholder="Modelo" autocomplete="off"></div>
+    <div class="fg"><label class="fl">ðŸ­ Marca</label><input class="fi" type="text" id="mp-marca" placeholder="Marca" autocomplete="off"></div>
+    <div class="fg"><label class="fl">ðŸ“± Modelo</label><input class="fi" type="text" id="mp-modelo" placeholder="Modelo" autocomplete="off"></div>
   </div>
-  <div class="fg"><label class="fl">📝 Descrição</label><textarea class="fi" id="mp-desc" rows="2" placeholder="Descrição do produto" autocomplete="off"></textarea></div>
+  <div class="fg"><label class="fl">ðŸ“ DescriÃ§Ã£o</label><textarea class="fi" id="mp-desc" rows="2" placeholder="DescriÃ§Ã£o do produto" autocomplete="off"></textarea></div>
   <div class="frow">
-    <div class="fg"><label class="fl">📂 Categoria</label>
+    <div class="fg"><label class="fl">ðŸ“‚ Categoria</label>
       <select class="fi" id="mp-cat"></select>
     </div>
-    <div class="fg"><label class="fl">🔢 Código de Barras</label><input class="fi" type="text" id="mp-barcode" placeholder="Código de barras"></div>
+    <div class="fg"><label class="fl">ðŸ”¢ CÃ³digo de Barras</label><input class="fi" type="text" id="mp-barcode" placeholder="CÃ³digo de barras"></div>
   </div>
   <div class="frow">
-    <div class="fg"><label class="fl">💰 Custo (R$)</label><input class="fi" type="number" id="mp-custo" step="0.01" placeholder="0,00"></div>
-    <div class="fg"><label class="fl">💵 Preço Venda (R$)</label><input class="fi" type="number" id="mp-preco" step="0.01" placeholder="0,00"></div>
+    <div class="fg"><label class="fl">ðŸ’° Custo (R$)</label><input class="fi" type="number" id="mp-custo" step="0.01" placeholder="0,00"></div>
+    <div class="fg"><label class="fl">ðŸ’µ PreÃ§o Venda (R$)</label><input class="fi" type="number" id="mp-preco" step="0.01" placeholder="0,00"></div>
   </div>
   <div class="frow">
-    <div class="fg"><label class="fl">📦 Estoque</label><input class="fi" type="number" id="mp-estoque" placeholder="0"></div>
-    <div class="fg"><label class="fl">⚠️ Estoque Mínimo</label><input class="fi" type="number" id="mp-min" placeholder="5"></div>
+    <div class="fg"><label class="fl">ðŸ“¦ Estoque</label><input class="fi" type="number" id="mp-estoque" placeholder="0"></div>
+    <div class="fg"><label class="fl">âš ï¸ Estoque MÃ­nimo</label><input class="fi" type="number" id="mp-min" placeholder="5"></div>
   </div>
 </div>
 <div class="sheet-footer">
-  <button class="btn btn-primary btn-full" onclick="salvarProduto()">💾 Salvar Produto</button>
-  <button class="btn btn-ghost btn-full" onclick="fecharModalProduto()">❌ Cancelar</button>
+  <button class="btn btn-primary btn-full" onclick="salvarProduto()">ðŸ’¾ Salvar Produto</button>
+  <button class="btn btn-ghost btn-full" onclick="fecharModalProduto()">âŒ Cancelar</button>
 </div>
 </div>
 </div>
@@ -325,21 +325,21 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-entrada">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">📥 Entrada de Estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-entrada')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ“¥ Entrada de Estoque</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-entrada')">âœ•</button></div>
 <div class="sheet-body" id="entrada-body"></div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarEntrada()">✅ Confirmar Entrada</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="confirmarEntrada()">âœ… Confirmar Entrada</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-saida-tipo">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">🛒 Tipo de Saída</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ›’ Tipo de SaÃ­da</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-saida-tipo')">âœ•</button></div>
 <div class="sheet-body">
   <div id="sacola-itens-lista"></div>
   <div class="opcoes-grid">
-    <div class="opcao-card" id="op-venda" onclick="selSaida('venda')"><div class="opcao-label">💰 Venda</div></div>
-    <div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-label">🔄 Troca</div></div>
+    <div class="opcao-card" id="op-venda" onclick="selSaida('venda')"><div class="opcao-label">ðŸ’° Venda</div></div>
+    <div class="opcao-card" id="op-troca" onclick="selSaida('troca')"><div class="opcao-label">ðŸ”„ Troca</div></div>
   </div>
 </div>
 <div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextSaida()">Continuar</button><button class="btn btn-ghost btn-full" onclick="adicionarMaisItemNaSacola()">+ Adicionar Item</button></div>
@@ -349,11 +349,11 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-forma-pag">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">💳 Forma de Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-forma-pag')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ’³ Forma de Pagamento</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-forma-pag')">âœ•</button></div>
 <div class="sheet-body">
   <div class="opcoes-grid">
-    <div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-label">💵 À Vista</div></div>
-    <div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-label">📅 À Prazo</div></div>
+    <div class="opcao-card" id="op-vista" onclick="selPag('vista')"><div class="opcao-label">ðŸ’µ Ã€ Vista</div></div>
+    <div class="opcao-card" id="op-prazo" onclick="selPag('prazo')"><div class="opcao-label">ðŸ“… Ã€ Prazo</div></div>
   </div>
 </div>
 <div class="sheet-footer"><button class="btn btn-primary btn-full" onclick="nextPag()">Continuar</button></div>
@@ -363,49 +363,49 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-vista">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">💵 Pagamento à Vista</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ’µ Pagamento Ã  Vista</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-vista')">âœ•</button></div>
 <div class="sheet-body" id="vista-body"></div>
-<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">✅ Confirmar Venda</button></div>
+<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarVista()">âœ… Confirmar Venda</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-prazo">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">📅 Pagamento à Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title" id="prazo-modal-title">ðŸ“… Pagamento Ã  Prazo</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-prazo')">âœ•</button></div>
 <div class="sheet-body" id="prazo-body">
   <div class="opcoes-grid">
-    <div class="opcao-card" id="op-fiado" onclick="selPrazoTipo('fiado')"><div class="opcao-label">📝 Fiado</div><div class="opcao-sub">Até 3x, acima de R$100</div></div>
-    <div class="opcao-card" id="op-cartao" onclick="selPrazoTipo('cartao')"><div class="opcao-label">💳 Cartão de Crédito</div><div class="opcao-sub">Com taxas após 3x</div></div>
+    <div class="opcao-card" id="op-fiado" onclick="selPrazoTipo('fiado')"><div class="opcao-label">ðŸ“ Fiado</div><div class="opcao-sub">AtÃ© 3x, acima de R$100</div></div>
+    <div class="opcao-card" id="op-cartao" onclick="selPrazoTipo('cartao')"><div class="opcao-label">ðŸ’³ CartÃ£o de CrÃ©dito</div><div class="opcao-sub">Com taxas apÃ³s 3x</div></div>
   </div>
   <div id="prazo-detalhes-container" style="display:none;">
-    <div class="fg" id="fg-prazo-nome"><label class="fl">👤 Nome Cliente</label><input class="fi" type="text" id="prazo-nome"></div>
+    <div class="fg" id="fg-prazo-nome"><label class="fl">ðŸ‘¤ Nome Cliente</label><input class="fi" type="text" id="prazo-nome"></div>
     <div class="frow" id="frow-prazo-contato">
-      <div class="fg"><label class="fl">📱 WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div>
-      <div class="fg"><label class="fl">📍 Setor</label><input class="fi" type="text" id="prazo-setor"></div>
+      <div class="fg"><label class="fl">ðŸ“± WhatsApp</label><input class="fi" type="tel" id="prazo-tel"></div>
+      <div class="fg"><label class="fl">ðŸ“ Setor</label><input class="fi" type="text" id="prazo-setor"></div>
     </div>
-    <div class="fg"><label class="fl">📊 Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
+    <div class="fg"><label class="fl">ðŸ“Š Parcelas</label><select class="fi" id="prazo-parc" onchange="atualizarParcelasMultiUI()"></select></div>
     <div id="prazo-parcelas-ui"></div>
     <div id="prazo-taxa-info" class="alerta warning" style="display:none; margin-top:10px;"><div class="alerta-body"></div></div>
   </div>
 </div>
-<div class="sheet-footer" id="prazo-footer" style="display:none;"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">✅ Confirmar Venda</button></div>
+<div class="sheet-footer" id="prazo-footer" style="display:none;"><button class="btn btn-primary btn-full" onclick="confirmarPrazo()">âœ… Confirmar Venda</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-troca">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">🔄 Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ”„ Registrar Troca</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-troca')">âœ•</button></div>
 <div class="sheet-body" id="troca-body"></div>
-<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarTroca()">✅ Confirmar Troca</button></div>
+<div class="sheet-footer"><button class="btn btn-success btn-full" onclick="confirmarTroca()">âœ… Confirmar Troca</button></div>
 </div>
 </div>
 
 <div class="overlay" id="modal-venda-detail">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">📋 Detalhes</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">ðŸ“‹ Detalhes</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-venda-detail')">âœ•</button></div>
 <div class="sheet-body" id="venda-detail-body"></div>
 <div class="sheet-footer" id="venda-detail-footer"></div>
 </div>
@@ -416,12 +416,12 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 <div class="overlay" id="modal-add-item-venda">
 <div class="sheet">
 <div class="sheet-handle"></div>
-<div class="sheet-header"><span class="sheet-title">➕ Adicionar Item</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-add-item-venda')">✕</button></div>
+<div class="sheet-header"><span class="sheet-title">âž• Adicionar Item</span><button class="btn btn-sm btn-ghost" onclick="closeM('modal-add-item-venda')">âœ•</button></div>
 <div class="sheet-body">
   <div class="fg"><label class="fl">Selecione o Produto</label><select class="fi" id="add-item-select-prod"></select></div>
   <div class="fg"><label class="fl">Quantidade</label><input class="fi" type="number" id="add-item-qty" value="1"></div>
 </div>
-<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">✅ OK Inserir Item</button></div>
+<div class="sheet-footer"><button class="btn btn-primary btn-full" id="btn-confirmar-add-item-dinamico">âœ… OK Inserir Item</button></div>
 </div>
 </div>
 
@@ -445,7 +445,7 @@ var currentDeviceIndex = 0;
 var renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 1.6';
+var APP_VERSION = 'V 1.7';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160;
 var FOTO_JPEG_QUALITY = 0.28;
@@ -459,7 +459,9 @@ var PIX_CIDADE = "RIO DE JANEIRO";
 
 function ge(id){ return document.getElementById(id); }
 function gv(id){ var el = ge(id); return el ? el.value : ''; }
-function aplicarVersaoApp(){ var el = ge('app-version-label'); if(el) el.textContent = APP_VERSION; document.title = "Pamp's Eletrônicos " + APP_VERSION; }
+function aplicarVersaoApp(){ var el = ge('app-version-label'); if(el) el.textContent = APP_VERSION; document.title = "Pamp's EletrÃ´nicos " + APP_VERSION; }
+window.onerror = function(msg){ setTimeout(function(){ try{ setSS('err','Erro no app'); var p=ge('painel-body'); if(p) p.innerHTML='<div class="alerta danger"><div class="alerta-body">Erro ao abrir no celular: '+escapeHtml(msg)+'</div></div>'; }catch(e){} }, 0); };
+window.onunhandledrejection = function(ev){ var r = ev && ev.reason ? (ev.reason.message || ev.reason) : 'Erro desconhecido'; window.onerror(r); };
 function escapeHtml(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function money(v){ return 'R$ ' + Number(v || 0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function today(){ return new Date().toISOString().split('T')[0]; }
@@ -469,7 +471,9 @@ function nextId(arr){ var max = 0; for(var i=0;i<arr.length;i++){ if((arr[i].id 
 function openM(id){ var el = ge(id); if(el) el.classList.add('open'); }
 function closeM(id){ var el = ge(id); if(el) el.classList.remove('open'); }
 function setSS(state, txt){ var t=ge('stxt'), d=ge('sdot'); if(t) t.textContent=txt; if(d) d.className='dot' + (state==='spin'?' spin':state==='err'?' err':''); }
-function parseJson(raw, fallback){ try { return raw ? JSON.parse(raw) : fallback; } catch(e){ console.error('JSON inválido', e); return fallback; } }
+function parseJson(raw, fallback){ try { return raw ? JSON.parse(raw) : fallback; } catch(e){ console.error('JSON invÃ¡lido', e); return fallback; } }
+function safeStoreGet(k){ try { return window.localStorage ? window.localStorage.getItem(k) : null; } catch(e){ return null; } }
+function safeStoreSet(k,v){ try { if(window.localStorage) window.localStorage.setItem(k,v); } catch(e){} }
 function hasGoogle(){ return window.google && google.script && google.script.run; }
 function isGithubPages(){ return !hasGoogle(); }
 
@@ -491,12 +495,12 @@ function getBestFoto(p) {
 
 function produtoFotoHtml(p){
   var imgUrl = getBestFoto(p);
-  return imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">📦</div>';
+  return imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" class="prod-detail-img">' : '<div class="prod-detail-placeholder">ðŸ“¦</div>';
 }
 
 function compartilharProduto(id){
   var p = findProduto(id); if(!p) return;
-  var texto = p.nome + '\n' + (p.desc ? p.desc + '\n' : '') + 'Preço: ' + money(p.preco);
+  var texto = p.nome + '\n' + (p.desc ? p.desc + '\n' : '') + 'PreÃ§o: ' + money(p.preco);
   var imgUrl = getBestFoto(p);
   var shareData = { title:p.nome, text:texto };
   if(imgUrl) shareData.url = imgUrl;
@@ -557,7 +561,7 @@ function postHiddenForm(fields, ok, fail){
   form.submit();
 }
 
-    // FUNÇÕES DE ZOOM DO SCANNER (VERSÃO CORRIGIDA E ÚNICA)
+    // FUNÃ‡Ã•ES DE ZOOM DO SCANNER (VERSÃƒO CORRIGIDA E ÃšNICA)
     var zoomLevel = 1;
 
     function aplicarZoom() {
@@ -585,15 +589,15 @@ function postHiddenForm(fields, ok, fail){
     function ligarCameraScannerRealtime() {
         zoomLevel = 1;
         var scanResult = document.getElementById('scan-result');
-        if (scanResult) scanResult.innerHTML = '<div class="alerta warning">📷 Verificando permissão da câmera...</div>';
+        if (scanResult) scanResult.innerHTML = '<div class="alerta warning">ðŸ“· Verificando permissÃ£o da cÃ¢mera...</div>';
 
-        // Primeiro verifica se o navegador suporta a API de mídia
+        // Primeiro verifica se o navegador suporta a API de mÃ­dia
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Seu navegador não suporta acesso à câmera. Use um navegador atualizado (Chrome, Edge, Safari).</div></div>';
+            scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Seu navegador nÃ£o suporta acesso Ã  cÃ¢mera. Use um navegador atualizado (Chrome, Edge, Safari).</div></div>';
             return;
         }
 
-        // Carrega a biblioteca ZXing se necessário
+        // Carrega a biblioteca ZXing se necessÃ¡rio
         if (!window.ZXing) {
             var script = document.createElement('script');
             script.src = 'https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js';
@@ -613,14 +617,14 @@ function postHiddenForm(fields, ok, fail){
 
         var scanResult = document.getElementById('scan-result');
 
-        // Função para tentar iniciar com uma configuração de câmera
+        // FunÃ§Ã£o para tentar iniciar com uma configuraÃ§Ã£o de cÃ¢mera
         function tentarIniciar(constraints) {
             if (zxingCodeReader) {
                 try { zxingCodeReader.reset(); } catch (e) { }
             }
             zxingCodeReader = new ZXing.BrowserMultiFormatReader();
 
-            // O método decodeFromConstraints retorna uma Promise
+            // O mÃ©todo decodeFromConstraints retorna uma Promise
             zxingCodeReader.decodeFromConstraints(constraints, 'scanner-video')
                 .then(function (result) {
                     // Callback para cada leitura bem-sucedida
@@ -635,7 +639,7 @@ function postHiddenForm(fields, ok, fail){
                 .catch(function (err) {
                     console.error('Erro ao iniciar scanner:', err);
                     if (scanResult) {
-                        scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Erro ao acessar câmera: ' + err.message + '<br>Verifique se você permitiu o acesso à câmera e recarregue a página.</div></div>';
+                        scanResult.innerHTML = '<div class="alerta danger"><div class="alerta-body">Erro ao acessar cÃ¢mera: ' + err.message + '<br>Verifique se vocÃª permitiu o acesso Ã  cÃ¢mera e recarregue a pÃ¡gina.</div></div>';
                     }
                     window.scannerAtivo = false;
                 });
@@ -646,11 +650,11 @@ function postHiddenForm(fields, ok, fail){
 
         window.scannerAtivo = true;
 
-        // Primeiro tenta a câmera traseira (environment)
+        // Primeiro tenta a cÃ¢mera traseira (environment)
         tentarIniciar({ video: { facingMode: 'environment' } });
 
-        // Se não funcionar, podemos tentar a frontal (mas o erro já aparece no catch)
-        // Por simplicidade, a tentativa única já mostra o erro se falhar.
+        // Se nÃ£o funcionar, podemos tentar a frontal (mas o erro jÃ¡ aparece no catch)
+        // Por simplicidade, a tentativa Ãºnica jÃ¡ mostra o erro se falhar.
     }
 
     function iniciarScannerComZoom() {
@@ -790,11 +794,11 @@ function renderPainel(){
   var receita = 0, semEstq = 0;
   for(var i=0;i<vendas.length;i++) if(vendas[i].tipo === 'vista' || vendas[i].tipo === 'prazo') receita += Number(vendas[i].valor || 0);
   for(var j=0;j<produtos.length;j++) if(Number(produtos[j].estoque || 0) === 0) semEstq++;
-  var html = '<div class="drive-banner">☁️ Google Drive - Banco de Dados</div>';
+  var html = '<div class="drive-banner">â˜ï¸ Google Drive - Banco de Dados</div>';
   html += '<div class="metrics"><div class="mcard"><div class="mlabel">Receita Total</div><div class="mval g">' + money(receita) + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Sem Estoque</div><div class="mval r">' + semEstq + '</div></div>';
   html += '<div class="mcard"><div class="mlabel">Alertas</div><div class="mval a">' + cAlerts() + '</div></div></div>';
-  html += '<div class="shead"><span class="stitle">📅 Menu</span><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div>';
+  html += '<div class="shead"><span class="stitle">ðŸ“… Menu</span><button class="btn btn-sm btn-outline" onclick="abrirCategorias()">Categorias</button></div>';
   ge('painel-body').innerHTML = html;
 }
 
@@ -805,30 +809,30 @@ function renderEstoque(){
   var categoriasComProdutos = {};
   for(var i=0;i<produtos.length;i++){ var p=produtos[i]; var cat=p.cat||'OUTROS'; if(!categoriasComProdutos[cat]) categoriasComProdutos[cat]=[]; categoriasComProdutos[cat].push(p); }
   
-  var html = '<div class="shead"><span class="stitle">📦 Inventário</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>';
+  var html = '<div class="shead"><span class="stitle">ðŸ“¦ InventÃ¡rio</span><button class="btn btn-sm btn-primary" onclick="abrirNovoProduto()">+ Novo Item</button></div>';
   
   for(var c=0;c<todasCategorias.length;c++){
     var catName = todasCategorias[c];
     var lista = categoriasComProdutos[catName] || [];
     var catId = 'cat-' + c;
-    var estadoSalvo = localStorage.getItem('cat_' + catName);
+    var estadoSalvo = safeStoreGet('cat_' + catName);
     var displayInicial = (estadoSalvo === 'aberto') ? 'block' : 'none';
-    var setaIcon = (estadoSalvo === 'aberto') ? '▲' : '▼';
+    var setaIcon = (estadoSalvo === 'aberto') ? 'â–²' : 'â–¼';
     
     html += '<div style="margin-bottom:8px; border:1px solid var(--border); border-radius:var(--r3); overflow:hidden;">' +
             '<div onclick="toggleCategoriaEstoque(\'' + catName + '\', \'' + catId + '\')" style="background:var(--bg3); padding:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">' +
-            '<span>📁 ' + escapeHtml(catName) + ' (' + lista.length + ')</span>' +
+            '<span>ðŸ“ ' + escapeHtml(catName) + ' (' + lista.length + ')</span>' +
             '<span id="seta-' + catId + '">' + setaIcon + '</span></div>' +
             '<div id="' + catId + '" style="display:' + displayInicial + '; padding:6px;">';
     
     for(var n=0;n<lista.length;n++){
       var p = lista[n];
       var imgUrl = getBestFoto(p);
-      var img = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">' : '📦';
-      html += '<div class="card" style="margin-bottom:6px;" onclick="abrirVendaDetail(' + p.id + ')"><div style="display:flex;gap:10px;padding:10px;"><div style="width:48px;height:48px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;">' + img + '</div><div style="flex:1"><b>' + escapeHtml(p.nome) + '</b><br>' + money(p.preco) + '<br><span class="badge ' + (Number(p.estoque)<=Number(p.min)?'ba':'bg') + '">Est: ' + p.estoque + '</span></div><div><button class="btn btn-xs" onclick="event.stopPropagation();editarProduto(' + p.id + ')">✏️</button></div></div></div>';
+      var img = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">' : 'ðŸ“¦';
+      html += '<div class="card" style="margin-bottom:6px;" onclick="abrirVendaDetail(' + p.id + ')"><div style="display:flex;gap:10px;padding:10px;"><div style="width:48px;height:48px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;">' + img + '</div><div style="flex:1"><b>' + escapeHtml(p.nome) + '</b><br>' + money(p.preco) + '<br><span class="badge ' + (Number(p.estoque)<=Number(p.min)?'ba':'bg') + '">Est: ' + p.estoque + '</span></div><div><button class="btn btn-xs" onclick="event.stopPropagation();editarProduto(' + p.id + ')">âœï¸</button></div></div></div>';
     }
     if(lista.length === 0){
-      html += '<div style="padding:12px;text-align:center;color:var(--text2);">📭 Nenhum produto nesta categoria</div>';
+      html += '<div style="padding:12px;text-align:center;color:var(--text2);">ðŸ“­ Nenhum produto nesta categoria</div>';
     }
     html += '</div></div>';
   }
@@ -841,62 +845,62 @@ function toggleCategoriaEstoque(catName, elementId){
   if(!el) return;
   if(el.style.display === 'none' || el.style.display === ''){
     el.style.display = 'block';
-    if(setaEl) setaEl.innerHTML = '▲';
-    localStorage.setItem('cat_' + catName, 'aberto');
+    if(setaEl) setaEl.innerHTML = 'â–²';
+    safeStoreSet('cat_' + catName, 'aberto');
   } else {
     el.style.display = 'none';
-    if(setaEl) setaEl.innerHTML = '▼';
-    localStorage.setItem('cat_' + catName, 'fechado');
+    if(setaEl) setaEl.innerHTML = 'â–¼';
+    safeStoreSet('cat_' + catName, 'fechado');
   }
 }
 
 function renderVendas(){
-  var html = '<div class="shead"><span class="stitle">📜 Histórico</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Nova Venda</button></div>';
+  var html = '<div class="shead"><span class="stitle">ðŸ“œ HistÃ³rico</span><button class="btn btn-sm btn-primary" onclick="abrirSeletorVendaDireta()">+ Nova Venda</button></div>';
   var list = vendas.slice().reverse().slice(0,20);
   for(var i=0;i<list.length;i++){
     var v = list[i];
-    html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)"><div class="card-body"><b>' + money(v.valor) + '</b><br><small>' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'Balcão') + '</small></div></div>';
+    html += '<div class="card" onclick="abrirVendaDetail(' + v.id + ', true)"><div class="card-body"><b>' + money(v.valor) + '</b><br><small>' + fmtD(v.data) + ' - ' + escapeHtml(v.cliente || 'BalcÃ£o') + '</small></div></div>';
   }
   ge('vendas-body').innerHTML = html;
 }
 
 function renderAlertas(){
-  var html = '<div class="shead"><span class="stitle">⚠️ Alertas</span></div>';
+  var html = '<div class="shead"><span class="stitle">âš ï¸ Alertas</span></div>';
   var encontrou = false;
   for(var i=0;i<produtos.length;i++){
     if(Number(produtos[i].estoque||0) <= Number(produtos[i].min||0)){
-      html += '<div class="alerta warning"><div class="alerta-body"><b>' + escapeHtml(produtos[i].nome) + '</b><br>Estoque: ' + produtos[i].estoque + ' / Mínimo: ' + produtos[i].min + '</div></div>';
+      html += '<div class="alerta warning"><div class="alerta-body"><b>' + escapeHtml(produtos[i].nome) + '</b><br>Estoque: ' + produtos[i].estoque + ' / MÃ­nimo: ' + produtos[i].min + '</div></div>';
       encontrou = true;
     }
   }
-  if(!encontrou) html += '<div class="alerta ok"><div class="alerta-body">✅ Nenhum alerta no momento</div></div>';
+  if(!encontrou) html += '<div class="alerta ok"><div class="alerta-body">âœ… Nenhum alerta no momento</div></div>';
   ge('alertas-body').innerHTML = html;
 }
 
 function abrirVendaDetail(id, isVenda){
   if(isVenda){
     var v = null; for(var i=0;i<vendas.length;i++) if(vendas[i].id===id) v=vendas[i]; if(!v) return;
-    var html = '<h3>Venda #' + v.id + '</h3><div><b>' + escapeHtml(v.cliente || 'Balcão') + '</b><br>' + fmtD(v.data) + '</div><div class="mval g">' + money(v.valor) + '</div>';
+    var html = '<h3>Venda #' + v.id + '</h3><div><b>' + escapeHtml(v.cliente || 'BalcÃ£o') + '</b><br>' + fmtD(v.data) + '</div><div class="mval g">' + money(v.valor) + '</div>';
     ge('venda-detail-body').innerHTML = html;
     ge('venda-detail-footer').innerHTML = '<button class="btn btn-red btn-full" onclick="excluirVenda('+v.id+')">Excluir</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Fechar</button>';
   } else {
     var p = findProduto(id); if(!p) return;
     var html = '<h3>' + escapeHtml(p.nome) + '</h3><div class="mval g">' + money(p.preco) + '</div><p>' + escapeHtml(p.desc || '') + '</p>';
     ge('venda-detail-body').innerHTML = html;
-    ge('venda-detail-footer').innerHTML = '<button class="btn btn-primary btn-full" onclick="iniciarFluxoProd(' + p.id + '); closeM(\'modal-venda-detail\');">Lançar Saída</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>';
+    ge('venda-detail-footer').innerHTML = '<button class="btn btn-primary btn-full" onclick="iniciarFluxoProd(' + p.id + '); closeM(\'modal-venda-detail\');">LanÃ§ar SaÃ­da</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>';
   }
   openM('modal-venda-detail');
 }
 
-function excluirVenda(id){ if(!confirm('Excluir esta venda?')) return; for(var i=0;i<vendas.length;i++){ if(vendas[i].id===id){ vendas.splice(i,1); break; } } saveBoth('Venda excluída'); closeM('modal-venda-detail'); }
+function excluirVenda(id){ if(!confirm('Excluir esta venda?')) return; for(var i=0;i<vendas.length;i++){ if(vendas[i].id===id){ vendas.splice(i,1); break; } } saveBoth('Venda excluÃ­da'); closeM('modal-venda-detail'); }
 
-function excluirProduto(id){ if(!confirm('Excluir este produto?')) return; for(var i=0;i<produtos.length;i++){ if(produtos[i].id===id){ produtos.splice(i,1); break; } } saveBoth('Produto excluído'); refreshLocalViews(); }
+function excluirProduto(id){ if(!confirm('Excluir este produto?')) return; for(var i=0;i<produtos.length;i++){ if(produtos[i].id===id){ produtos.splice(i,1); break; } } saveBoth('Produto excluÃ­do'); refreshLocalViews(); }
 
-function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; atualizarSelectCategorias(p.cat||'CABOS'); ge('mp-title').textContent='✏️ Editar'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; if(ge('mp-cat')) ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
+function editarProduto(id){ var p=findProduto(id); if(!p) return; editingProdId=p.id; atualizarSelectCategorias(p.cat||'CABOS'); ge('mp-title').textContent='âœï¸ Editar'; ge('mp-nome').value=p.nome||''; ge('mp-marca').value=p.marca||''; ge('mp-modelo').value=p.modelo||''; ge('mp-desc').value=p.desc||''; if(ge('mp-cat')) ge('mp-cat').value=p.cat||'CABOS'; ge('mp-custo').value=p.custo||''; ge('mp-preco').value=p.preco||''; ge('mp-estoque').value=p.estoque||0; ge('mp-min').value=p.min||5; ge('mp-barcode').value=p.barcode||''; if(p.foto){ ge('foto-preview').src=p.foto; ge('foto-preview').style.display='block'; ge('foto-placeholder').style.display='none'; } else clearFoto(); openM('modal-produto'); }
 
 function fecharModalProduto(){ editingProdId=null; closeM('modal-produto'); }
 
-function abrirNovoProduto(){ editingProdId=null; atualizarSelectCategorias('CABOS'); ge('mp-title').textContent='📦 Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; if(ge('mp-cat')) ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
+function abrirNovoProduto(){ editingProdId=null; atualizarSelectCategorias('CABOS'); ge('mp-title').textContent='ðŸ“¦ Novo Produto'; ge('mp-nome').value=''; ge('mp-marca').value=''; ge('mp-modelo').value=''; ge('mp-desc').value=''; if(ge('mp-cat')) ge('mp-cat').value='CABOS'; ge('mp-custo').value=''; ge('mp-preco').value=''; ge('mp-estoque').value='1'; ge('mp-min').value='5'; ge('mp-barcode').value=''; clearFoto(); openM('modal-produto'); }
 
 function abrirNovoProdutoComCodigo(code){ 
   ultimoCodigoLido = code;
@@ -923,7 +927,7 @@ function previewFoto(input){
 
 function salvarProduto(){
   var nome=gv('mp-nome').trim(), preco=parseFloat(gv('mp-preco')), estoque=parseInt(gv('mp-estoque'),10);
-  if(!nome || isNaN(preco)){ alert('Preencha nome e preço.'); return; }
+  if(!nome || isNaN(preco)){ alert('Preencha nome e preÃ§o.'); return; }
   if(editingProdId){ 
     var p=findProduto(editingProdId); 
     if(p){ p.nome=nome; p.marca=gv('mp-marca'); p.modelo=gv('mp-modelo'); p.desc=gv('mp-desc'); p.cat=gv('mp-cat'); p.custo=parseFloat(gv('mp-custo'))||0; p.preco=preco; p.estoque=estoque; p.min=parseInt(gv('mp-min'),10)||5; p.barcode=gv('mp-barcode'); p.foto=fotoBase64 || p.foto || ''; }
@@ -939,7 +943,7 @@ function iniciarFluxoProd(id){ currentProdId=id; var p=findProduto(id); if(p) mo
 
 function mostrarProdutoFound(prod){ 
   currentProdId=prod.id; ge('pf-title').textContent=prod.nome; 
-  var html = produtoFotoHtml(prod) + '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span>Preço</span><span style="color:var(--green);font-weight:800">' + money(prod.preco) + '</span></div><p style="color:var(--text2);font-size:13px;margin:8px 0 12px">' + escapeHtml(prod.desc || '') + '</p><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saída</div></div></div>'; 
+  var html = produtoFotoHtml(prod) + '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span>PreÃ§o</span><span style="color:var(--green);font-weight:800">' + money(prod.preco) + '</span></div><p style="color:var(--text2);font-size:13px;margin:8px 0 12px">' + escapeHtml(prod.desc || '') + '</p><div class="opcoes-grid"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">SaÃ­da</div></div></div>'; 
   ge('pf-body').innerHTML=html; ge('pf-footer').innerHTML='<button class="btn btn-outline btn-full" onclick="compartilharProduto('+prod.id+')">Compartilhar produto</button><button class="btn btn-primary btn-full" onclick="continuarFluxoProd()">Continuar</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-prod-found\')">Fechar</button>'; 
   openM('modal-prod-found'); 
 }
@@ -1024,7 +1028,7 @@ function abrirVista(){
 
 function copiarPix(){ var code = document.querySelector('#vista-body .pix-code-box'); if(code) { navigator.clipboard.writeText(code.textContent); alert('PIX copiado!'); } }
 
-function confirmarVista(){ baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:totalSacola(), data:today(), cliente:'Balcão' }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
+function confirmarVista(){ baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:totalSacola(), data:today(), cliente:'BalcÃ£o' }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
 
 function abrirPrazo(){ ge('prazo-detalhes-container').style.display='none'; ge('prazo-footer').style.display='none'; openM('modal-prazo'); }
 
@@ -1052,10 +1056,10 @@ function confirmarTroca(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProd
 
 function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ saveData('config.json', configApp, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }
 
-// FUNÇÕES DO SCANNER COM ZOOM
+// FUNÃ‡Ã•ES DO SCANNER COM ZOOM
 function ligarCameraScannerRealtime(){
   zoomLevel = 1;
-  ge('scan-result').innerHTML='<div class="alerta warning">📷 Abrindo câmera...</div>';
+  ge('scan-result').innerHTML='<div class="alerta warning">ðŸ“· Abrindo cÃ¢mera...</div>';
   if(!window.ZXing){
     var script = document.createElement('script');
     script.src = 'https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js';
@@ -1157,13 +1161,13 @@ function handleBarcode(code){
     mostrarProdutoFound(matches[0]);
     limparResultadoScanner();
   } else {
-    ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">⚠️ Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+code.replace(/'/g, "\\'")+'\')">📦 Cadastrar</button><button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="limparUltimaLeitura()">🗑️ Limpar</button></div></div>';
+    ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">âš ï¸ Produto nÃ£o cadastrado</div><div class="alerta-sub">CÃ³digo: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+code.replace(/'/g, "\\'")+'\')">ðŸ“¦ Cadastrar</button><button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="limparUltimaLeitura()">ðŸ—‘ï¸ Limpar</button></div></div>';
   }
 }
 
 function abrirSeletorVendaDireta(){
   var modal=ge('modal-venda-direta-seletor');
-  var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">🛍️ Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">✕</button></div><div class="sheet-body">';
+  var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">ðŸ›ï¸ Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">âœ•</button></div><div class="sheet-body">';
   produtos.forEach(function(p){ html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div><b>'+escapeHtml(p.nome)+'</b><br>'+money(p.preco)+'</div><div>Est: '+p.estoque+'</div></div>'; });
   modal.innerHTML=html + '</div></div>'; openM('modal-venda-direta-seletor');
 }
@@ -1313,7 +1317,7 @@ function abrirVendaDetail(id, isVenda){
     var p = findProduto(id); if(!p) return;
     var htmlP = produtoFotoHtml(p) + '<h3>' + escapeHtml(p.nome) + '</h3><div class="mval g">' + money(p.preco) + '</div><p>' + escapeHtml(p.desc || '') + '</p>';
     ge('venda-detail-body').innerHTML = htmlP;
-    ge('venda-detail-footer').innerHTML = '<button class="btn btn-outline btn-full" onclick="compartilharProduto(' + p.id + ')">Compartilhar produto</button><button class="btn btn-primary btn-full" onclick="iniciarFluxoProd(' + p.id + '); closeM(\'modal-venda-detail\');">Lançar saída</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>';
+    ge('venda-detail-footer').innerHTML = '<button class="btn btn-outline btn-full" onclick="compartilharProduto(' + p.id + ')">Compartilhar produto</button><button class="btn btn-primary btn-full" onclick="iniciarFluxoProd(' + p.id + '); closeM(\'modal-venda-detail\');">LanÃ§ar saÃ­da</button><button class="btn btn-ghost btn-full" onclick="closeM(\'modal-venda-detail\')">Voltar</button>';
   }
   openM('modal-venda-detail');
 }
@@ -1332,7 +1336,7 @@ abrirNovoProduto = function(){
   editingProdId = null;
   currentProdId = null;
   atualizarSelectCategorias('CABOS');
-  ge('mp-title').textContent='📦 Novo Produto';
+  ge('mp-title').textContent='ðŸ“¦ Novo Produto';
   limparFormularioProduto();
   if(ge('mp-cat')) ge('mp-cat').value='CABOS';
   setTimeout(limparFormularioProduto, 60);
@@ -1360,7 +1364,7 @@ handleBarcode = function(code){
   } else {
     currentProdId = null;
     var safe = code.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+safe+'\')">Cadastrar</button><button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="limparUltimaLeitura()">Limpar</button></div></div>';
+    ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">Produto nÃ£o cadastrado</div><div class="alerta-sub">CÃ³digo: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:10px" onclick="abrirNovoProdutoComCodigo(\''+safe+'\')">Cadastrar</button><button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="limparUltimaLeitura()">Limpar</button></div></div>';
   }
 };
 
@@ -1388,13 +1392,13 @@ aplicarZoom = function(){
 zoomCamera = function(incremento){
   zoomLevel = Math.max(1, Math.min(3, zoomLevel + incremento));
   aplicarZoom();
-  setSS('ok', 'Zoom câmera: ' + zoomLevel.toFixed(1) + 'x');
+  setSS('ok', 'Zoom cÃ¢mera: ' + zoomLevel.toFixed(1) + 'x');
 };
 
 zoomCameraReset = function(){
   zoomLevel = 1;
   aplicarZoom();
-  setSS('ok', 'Zoom câmera: 1x');
+  setSS('ok', 'Zoom cÃ¢mera: 1x');
 };
 
 desligarCameraScanner = function(){
@@ -1514,17 +1518,17 @@ renderEstoque = function(){
   var keys = Object.keys(categorias).sort();
   for(var c=0;c<keys.length;c++){
     var catName = keys[c], lista = categorias[catName], catId = 'cat-estoque-' + c;
-    var estadoSalvo = localStorage.getItem('cat_' + catName);
+    var estadoSalvo = safeStoreGet('cat_' + catName);
     var displayInicial = (estadoSalvo === 'aberto') ? 'block' : 'none';
-    var setaIcon = (estadoSalvo === 'aberto') ? '▲' : '▼';
+    var setaIcon = (estadoSalvo === 'aberto') ? 'â–²' : 'â–¼';
     html += '<div style="margin-bottom:8px;border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;">' +
             '<div onclick="toggleCategoriaEstoque(\'' + catName + '\', \'' + catId + '\')" style="background:var(--bg3);padding:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">' +
             '<span>' + escapeHtml(catName) + ' (' + lista.length + ')</span><span id="seta-' + catId + '">' + setaIcon + '</span></div>' +
             '<div id="' + catId + '" style="display:' + displayInicial + ';padding:6px;">';
     for(var n=0;n<lista.length;n++){
       var item = lista[n], imgUrl = getBestFoto(item);
-      var img = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">' : '📦';
-      html += '<div class="card" style="margin-bottom:6px;" onclick="abrirVendaDetail(' + item.id + ')"><div style="display:flex;gap:10px;padding:10px;align-items:center;"><div style="width:48px;height:48px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;">' + img + '</div><div style="flex:1"><b>' + escapeHtml(item.nome) + '</b><br>' + money(item.preco) + '<br><span class="badge ' + (Number(item.estoque)<=Number(item.min)?'ba':'bg') + '">Est: ' + item.estoque + '</span></div>' + actionBtn('edit','✎','Editar','event.stopPropagation();editarProduto(' + item.id + ')') + '</div></div>';
+      var img = imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">' : 'ðŸ“¦';
+      html += '<div class="card" style="margin-bottom:6px;" onclick="abrirVendaDetail(' + item.id + ')"><div style="display:flex;gap:10px;padding:10px;align-items:center;"><div style="width:48px;height:48px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;">' + img + '</div><div style="flex:1"><b>' + escapeHtml(item.nome) + '</b><br>' + money(item.preco) + '<br><span class="badge ' + (Number(item.estoque)<=Number(item.min)?'ba':'bg') + '">Est: ' + item.estoque + '</span></div>' + actionBtn('edit','âœŽ','Editar','event.stopPropagation();editarProduto(' + item.id + ')') + '</div></div>';
     }
     if(lista.length === 0) html += '<div style="padding:12px;text-align:center;color:var(--text2);">Nenhum produto nesta categoria</div>';
     html += '</div></div>';
@@ -1560,7 +1564,7 @@ mostrarProdutoFound = function(prod){
   ge('pf-title').textContent=prod.nome;
   var html = produtoFotoHtml(prod) + '<div class="prod-detail-name">' + escapeHtml(prod.nome) + '</div><div class="detail-row"><span>Preco</span><span style="color:var(--green);font-weight:800">' + money(prod.preco) + '</span></div><p style="color:var(--text2);font-size:13px;margin:8px 0 12px">' + escapeHtml(prod.desc || '') + '</p><div class="opcoes-grid compact"><div class="opcao-card" id="op-entrada" onclick="selOpcaoProd(\'entrada\')"><div class="opcao-label">Entrada</div></div><div class="opcao-card" id="op-saida" onclick="selOpcaoProd(\'saida\')"><div class="opcao-label">Saida</div></div></div>';
   ge('pf-body').innerHTML=html;
-  ge('pf-footer').innerHTML='<div class="action-row">' + actionBtn('share','↗','Compartilhar','compartilharProduto('+prod.id+')') + actionBtn('ok','✓','Continuar','continuarFluxoProd()') + actionBtn('back','←','Voltar',"closeM('modal-prod-found')") + '</div>';
+  ge('pf-footer').innerHTML='<div class="action-row">' + actionBtn('share','â†—','Compartilhar','compartilharProduto('+prod.id+')') + actionBtn('ok','âœ“','Continuar','continuarFluxoProd()') + actionBtn('back','â†','Voltar',"closeM('modal-prod-found')") + '</div>';
   openM('modal-prod-found');
 };
 
@@ -1574,17 +1578,17 @@ abrirVendaDetail = function(id, isVenda){
       for(var pi=0;pi<v.parcelas.length;pi++) html += '<div class="bag-item"><div>' + v.parcelas[pi].num + 'x - ' + fmtD(v.parcelas[pi].venc) + '</div><b>' + money(v.parcelas[pi].valor) + '</b></div>';
     }
     ge('venda-detail-body').innerHTML = html;
-    ge('venda-detail-footer').innerHTML = '<div class="action-row">' + (v.tipo === 'prazo' ? actionBtn('edit','✎','Editar venda','editarVendaPrazo('+v.id+')') : '') + actionBtn('delete outline','×','Excluir','excluirVenda('+v.id+')') + actionBtn('back','←','Voltar',"closeM('modal-venda-detail')") + '</div>';
+    ge('venda-detail-footer').innerHTML = '<div class="action-row">' + (v.tipo === 'prazo' ? actionBtn('edit','âœŽ','Editar venda','editarVendaPrazo('+v.id+')') : '') + actionBtn('delete outline','Ã—','Excluir','excluirVenda('+v.id+')') + actionBtn('back','â†','Voltar',"closeM('modal-venda-detail')") + '</div>';
   } else {
     var p = findProduto(id); if(!p) return;
     var htmlP = produtoFotoHtml(p) + '<h3>' + escapeHtml(p.nome) + '</h3><div class="mval g">' + money(p.preco) + '</div><p>' + escapeHtml(p.desc || '') + '</p>';
     ge('venda-detail-body').innerHTML = htmlP;
-    ge('venda-detail-footer').innerHTML = '<div class="action-row">' + actionBtn('share','↗','Compartilhar','compartilharProduto(' + p.id + ')') + actionBtn('ok','✓','Lancar saida',"iniciarFluxoProd(" + p.id + "); closeM('modal-venda-detail')") + actionBtn('back','←','Voltar',"closeM('modal-venda-detail')") + '</div>';
+    ge('venda-detail-footer').innerHTML = '<div class="action-row">' + actionBtn('share','â†—','Compartilhar','compartilharProduto(' + p.id + ')') + actionBtn('ok','âœ“','Lancar saida',"iniciarFluxoProd(" + p.id + "); closeM('modal-venda-detail')") + actionBtn('back','â†','Voltar',"closeM('modal-venda-detail')") + '</div>';
   }
   openM('modal-venda-detail');
 };
 
-// EXPORTAÇÃO DAS FUNÇÕES
+// EXPORTAÃ‡ÃƒO DAS FUNÃ‡Ã•ES
 window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive;
 window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd;
 window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag;
@@ -1601,9 +1605,17 @@ window.adicionarCategoriaLinha=adicionarCategoriaLinha; window.salvarCategorias=
 window.compartilharProduto=compartilharProduto; window.editarVendaPrazo=editarVendaPrazo;
 window.adicionarItemVendaPrazo=adicionarItemVendaPrazo; window.abrirReparcelarVenda=abrirReparcelarVenda;
 
-aplicarVersaoApp();
-syncDrive();
+function iniciarApp(){
+  aplicarVersaoApp();
+  try { syncDrive(); } catch(e) { window.onerror(e.message || e); }
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', iniciarApp);
+} else {
+  iniciarApp();
+}
 })();
 </script>
 </body>
 </html>
+
