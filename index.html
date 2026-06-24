@@ -78,24 +78,25 @@ input,select,textarea{font-family:var(--font)}
   white-space:nowrap;
   box-shadow:0 1px 2px rgba(0,0,0,.2);
 }
-.btn:active, .icon-btn:active {
-  transform:translateY(1px);
-  box-shadow:0 0 1px rgba(0,0,0,.2);
+/* Feedback Geral de Clique para TODOS os botões - Mudança de cor imediata */
+.btn:active, .icon-btn:active, .opcao-card:active, .cat-tag:active {
+  transform: translateY(2px) scale(0.97) !important;
+  background-color: var(--purple) !important; /* Cor de indicação de clique geral */
+  color: #fff !important;
+  border-color: var(--purple) !important;
+  box-shadow: 0 0 2px rgba(0,0,0,.4) !important;
+  transition: none !important; /* Resposta imediata ao toque */
 }
-/* Botões específicos com cores */
-.btn-entrada { background:var(--bg3); border-color:var(--border2); color:var(--text); }
-.btn-entrada.ativo { background:var(--yellow-bg); border-color:var(--yellow); color:var(--yellow); }
-.btn-saida { background:var(--bg3); border-color:var(--border2); color:var(--text); }
-.btn-saida.ativo { background:var(--green-bg); border-color:var(--green); color:var(--green); }
 
-.btn-primary{background:var(--accent);border-color:var(--accent2);color:#fff}
-.btn-success{background:var(--green2);border-color:var(--green);color:#fff}
-.btn-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-.btn-full{width:100%;padding:6px 10px;font-size:11px;border-radius:8px}
-.btn-sm{padding:2px 6px;font-size:9px;border-radius:5px}
-.btn-xs{padding:1px 4px;font-size:8px;border-radius:4px}
-.btn-ghost{background:transparent;border-color:transparent;box-shadow:none}
-.btn-outline{background:transparent;border-color:var(--accent);color:var(--accent);box-shadow:none}
+/* Garante cor de feedback específica para o botão Salvar/OK ao clicar */
+.icon-btn.ok:active {
+  background-color: var(--green2) !important;
+  border-color: var(--green) !important;
+}
+
+/* Modificações específicas de estados selecionados existentes */
+.opcao-card.sel-entrada { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
+.opcao-card.sel-saida { background: var(--green-bg); border-color: var(--green); color: var(--green); }
 /* Grupo de botões inferiores com espaçamento e legenda */
 .bottom-action-group {
   display: flex;
@@ -256,7 +257,7 @@ input,select,textarea{font-family:var(--font)}
 </head>
 <body>
 <div class="topbar">
-<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.4</span></div>
+<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.5</span></div>
 <div class="sync-row"><div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div></div>
 </div>
 <div class="content">
@@ -384,15 +385,45 @@ function mostrarProdutoFound(prod){
   ge('pf-footer').innerHTML='<div class="action-row"><button class="icon-btn share" onclick="compartilharProduto('+prod.id+')">📤</button><button class="icon-btn ok" onclick="continuarFluxoProd()">✓</button><button class="icon-btn back" onclick="closeM(\'modal-prod-found\')">✕</button></div>';
   openM('modal-prod-found');
 }
-function selOpcaoProd(o){ opcaoProd=o; var entradaDiv=ge('op-entrada'), saidaDiv=ge('op-saida'); if(entradaDiv) entradaDiv.classList.toggle('sel-entrada',o==='entrada'); if(saidaDiv) saidaDiv.classList.toggle('sel-saida',o==='saida'); }
+function selOpcaoProd(o){ 
+  opcaoProd = o; 
+  var entradaDiv = ge('op-entrada'), saidaDiv = ge('op-saida'); 
+  if (entradaDiv) entradaDiv.classList.toggle('sel-entrada', o === 'entrada'); 
+  if (saidaDiv) saidaDiv.classList.toggle('sel-saida', o === 'saida'); 
+  
+  // Otimização: Avança automaticamente para a sessão seguinte sem precisar clicar no botão azul ✓
+  setTimeout(function() {
+    continuarFluxoProd();
+  }, 180); // Pequeno delay de 180ms para dar tempo de ver o efeito visual do clique
+}
 function continuarFluxoProd(){ closeM('modal-prod-found'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd==='entrada') abrirEntrada(); else { sacolaAtual=[{prodId:p.id, nome:p.nome, qty:1, preco:p.preco}]; abrirSaidaTipo(); } }
 function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div><b>'+escapeHtml(p.nome)+'</b><br>Estoque: '+p.estoque+'</div><div class="frow"><div><label>📦 Qtd</label><input id="ent-qty" class="fi" type="number" value="1"></div><div><label>💰 Custo</label><input id="ent-custo" class="fi" type="number" step="0.01" value="'+(p.custo||0)+'"></div></div>'; openM('modal-entrada'); }
 function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; var qty=parseInt(ge('ent-qty').value,10)||0, custo=parseFloat(ge('ent-custo').value)||0; p.estoque+=qty; p.custo=custo; closeM('modal-entrada'); saveBoth('Entrada registrada'); }
 function abrirSaidaTipo(){ renderSacolaItens(); openM('modal-saida-tipo'); }
 function renderSacolaItens(){ var total=0, html=''; for(var i=0;i<sacolaAtual.length;i++){ var item=sacolaAtual[i], sub=item.preco*item.qty; total+=sub; html+='<div class="bag-item"><div><b>'+escapeHtml(item.nome)+'</b><br>'+item.qty+'x '+money(item.preco)+'</div><b>'+money(sub)+'</b></div>'; } html+='<div class="sumbox">Total: <b>'+money(total)+'</b></div>'; ge('sacola-itens-lista').innerHTML=html; }
-function selSaida(t){ saidaTipo=t; var venda=ge('op-venda'), troca=ge('op-troca'); if(venda) venda.classList.toggle('sel-venda',t==='venda'); if(troca) troca.classList.toggle('sel-troca',t==='troca'); }
+function selSaida(t){ 
+  saidaTipo = t; 
+  var venda = ge('op-venda'), troca = ge('op-troca'); 
+  if (venda) venda.classList.toggle('sel-venda', t === 'venda'); 
+  if (troca) troca.classList.toggle('sel-troca', t === 'troca'); 
+  
+  // Otimização: Avança direto para a forma de pagamento ou troca
+  setTimeout(function() {
+    nextSaida();
+  }, 180);
+}
 function nextSaida(){ closeM('modal-saida-tipo'); if(saidaTipo==='troca') abrirTroca(); else openM('modal-forma-pag'); }
-function selPag(t){ pagTipo=t; var vista=ge('op-vista'), prazo=ge('op-prazo'); if(vista) vista.classList.toggle('sel-vista',t==='vista'); if(prazo) prazo.classList.toggle('sel-prazo',t==='prazo'); }
+function selPag(t){ 
+  pagTipo = t; 
+  var vista = ge('op-vista'), prazo = ge('op-prazo'); 
+  if (vista) vista.classList.toggle('sel-vista', t === 'vista'); 
+  if (prazo) prazo.classList.toggle('sel-prazo', t === 'prazo'); 
+  
+  // Otimização: Avança direto para o fechamento correspondente
+  setTimeout(function() {
+    nextPag();
+  }, 180);
+}
 function nextPag(){ closeM('modal-forma-pag'); if(pagTipo==='prazo') abrirPrazo(); else abrirVista(); }
 function totalSacola(){ var t=0; for(var i=0;i<sacolaAtual.length;i++) t+=sacolaAtual[i].preco*sacolaAtual[i].qty; return t; }
 function baixarEstoque(){ for(var i=0;i<sacolaAtual.length;i++){ var p=findProduto(sacolaAtual[i].prodId); if(p) p.estoque-=sacolaAtual[i].qty; } }
@@ -409,7 +440,12 @@ function abrirVista(){ var total=totalSacola(); var pixPayload=gerarPixCopiaECol
 function copiarPix(){ var code=document.querySelector('#vista-body .pix-code-box'); if(code){ navigator.clipboard.writeText(code.textContent); alert('Código PIX copiado!'); } }
 function confirmarVista(){ baixarEstoque(); vendas.push({ id:nextId(vendas), produto:sacolaAtual.map(i=>i.qty+'x '+i.nome).join('\n'), tipo:'vista', valor:totalSacola(), data:today(), cliente:'Balcão', itens:itensSacolaSnapshot() }); closeM('modal-vista'); saveBoth('Venda salva'); sacolaAtual=[]; }
 function abrirPrazo(){ ge('prazo-detalhes-container').style.display='none'; openM('modal-prazo'); var footer=ge('prazo-footer'); if(footer) footer.style.display='flex'; }
-function selPrazoTipo(t){ prazoTipo=t; ge('prazo-detalhes-container').style.display='block'; regerarParcelasPorNumero(); }
+function selPrazoTipo(t){ 
+  prazoTipo = t; 
+  var container = ge('prazo-detalhes-container');
+  if (container) container.style.display = 'block'; 
+  regerarParcelasPorNumero(); 
+}
 function regerarParcelasPorNumero(){ var total=totalSacola(), nMax=12; if(prazoTipo==='fiado') nMax=(total>=100?3:2); var sel=ge('prazo-parc'); var curr=sel.value; sel.innerHTML=''; for(var i=1;i<=nMax;i++){ var opt=document.createElement('option'); opt.value=i; opt.textContent=i+'x'; sel.appendChild(opt); } if(curr && curr<=nMax) sel.value=curr; else sel.value=Math.min(nMax,2); gerarCamposParcelas(); }
 function gerarCamposParcelas(){ var n=parseInt(ge('prazo-parc').value,10)||1, container=ge('prazo-parcelas-ui'); if(!container) return; var html='', vendaOriginal=null; if(vendaPrazoEmEdicaoId) vendaOriginal=findVenda(vendaPrazoEmEdicaoId); for(var i=1;i<=n;i++){ var dataVenc=''; if(vendaOriginal && vendaOriginal.parcelas && vendaOriginal.parcelas[i-1] && vendaOriginal.parcelas[i-1].venc) dataVenc=vendaOriginal.parcelas[i-1].venc; else{ var dt=new Date(); dt.setMonth(dt.getMonth()+i); dataVenc=dt.toISOString().split('T')[0]; } html+='<div class="parcela-row"><label>📅 Parcela '+i+'</label><input class="fi data-parcela" type="date" value="'+dataVenc+'" data-num="'+i+'"></div>'; } container.innerHTML=html; }
 function coletarParcelasDoForm(){ var inputs=document.querySelectorAll('#prazo-parcelas-ui .data-parcela'), parcelas=[], n=inputs.length, total=totalSacola(), valorParc=total/n; for(var i=0;i<n;i++) parcelas.push({ num:i+1, valor:valorParc, venc:inputs[i].value, pago:false }); return parcelas; }
