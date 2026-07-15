@@ -396,7 +396,26 @@ function selOpcaoProd(o){
     continuarFluxoProd();
   }, 180); // Pequeno delay de 180ms para dar tempo de ver o efeito visual do clique
 }
-function continuarFluxoProd(){ closeM('modal-prod-found'); var p=findProduto(currentProdId); if(!p) return; if(opcaoProd==='entrada') abrirEntrada(); else { sacolaAtual=[{prodId:p.id, nome:p.nome, qty:1, preco:p.preco}]; abrirSaidaTipo(); } }
+function continuarFluxoProd(){ 
+  closeM('modal-prod-found'); 
+  var p=findProduto(currentProdId); 
+  if(!p) return; 
+  
+  if(opcaoProd==='entrada') {
+    abrirEntrada(); 
+  } else { 
+    // Pergunta a quantidade desejada. Se o usuário cancelar ou digitar algo inválido, assume 1.
+    var qtdInformada = prompt("Digite a quantidade de unidades para a venda:", "1");
+    var qtd = parseInt(qtdInformada, 10);
+    if (isNaN(qtd) || qtd <= 0) {
+      qtd = 1; 
+    }
+    
+    // Insere na sacola com a quantidade escolhida pelo usuário
+    sacolaAtual=[{prodId:p.id, nome:p.nome, qty:qtd, preco:p.preco}]; 
+    abrirSaidaTipo(); 
+  } 
+}
 function abrirEntrada(){ var p=findProduto(currentProdId); if(!p) return; ge('entrada-body').innerHTML='<div><b>'+escapeHtml(p.nome)+'</b><br>Estoque: '+p.estoque+'</div><div class="frow"><div><label>📦 Qtd</label><input id="ent-qty" class="fi" type="number" value="1"></div><div><label>💰 Custo</label><input id="ent-custo" class="fi" type="number" step="0.01" value="'+(p.custo||0)+'"></div></div>'; openM('modal-entrada'); }
 function confirmarEntrada(){ var p=findProduto(currentProdId); if(!p) return; var qty=parseInt(ge('ent-qty').value,10)||0, custo=parseFloat(ge('ent-custo').value)||0; p.estoque+=qty; p.custo=custo; closeM('modal-entrada'); saveBoth('Entrada registrada'); }
 function abrirSaidaTipo(){ renderSacolaItens(); openM('modal-saida-tipo'); }
@@ -472,7 +491,18 @@ function limparUltimaLeitura(){ ultimoCodigoLido=null; if(ge('manual-bc')) ge('m
 function limparResultadoScanner(){ var sr=ge('scan-result'); if(sr) sr.innerHTML=''; }
 function clearScan(){ desligarCameraScanner(); limparUltimaLeitura(); showSec('painel'); }
 function handleBarcode(code){ if(!code) return; var codeLimpado=String(code).trim().toLowerCase(); var matches=produtos.filter(function(p){ return String(p.barcode||'').trim().toLowerCase()===codeLimpado; }); if(matches.length){ mostrarProdutoFound(matches[0]); limparResultadoScanner(); } else { ge('scan-result').innerHTML='<div class="alerta warning"><div class="alerta-body"><div class="alerta-title">⚠️ Produto não cadastrado</div><div class="alerta-sub">Código: '+escapeHtml(code)+'</div><button class="btn btn-sm btn-primary" style="margin-top:8px" onclick="abrirNovoProdutoComCodigo(\''+code.replace(/'/g,"\\'")+'\')">📦 Cadastrar</button><button class="btn btn-sm btn-ghost" style="margin-top:8px" onclick="limparUltimaLeitura()">🗑️ Limpar</button></div></div>'; } }
-function abrirSeletorVendaDireta(){ var modal=ge('modal-venda-direta-seletor'); var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title">🛍️ Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')">✕</button></div><div class="sheet-body">'; produtos.forEach(function(p){ html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div><b>'+escapeHtml(p.nome)+'</b><br>'+money(p.preco)+'</div><div>📦 Est: '+p.estoque+'</div></div>'; }); modal.innerHTML=html+'</div></div>'; openM('modal-venda-direta-seletor'); }
+function abrirSeletorVendaDireta(){ 
+  var modal=ge('modal-venda-direta-seletor'); 
+  var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> 🛍️  Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')"> ✕ </button></div><div class="sheet-body">';
+  
+  produtos.forEach(function(p){ 
+    // Modificado para rodar o iniciarFluxoProd e depois abrir as opções com quantidade
+    html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div><b>'+escapeHtml(p.nome)+'</b><br>'+money(p.preco)+'</div><div> 📦  Est: '+p.estoque+'</div></div>'; 
+  }); 
+  
+  modal.innerHTML=html+'</div></div>'; 
+  openM('modal-venda-direta-seletor'); 
+}
 window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive;
 window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd;
 window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag;
