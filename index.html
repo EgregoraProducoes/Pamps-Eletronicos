@@ -313,7 +313,7 @@ input,select,textarea{font-family:var(--font)}
 <script>
 (function(){
 'use strict';
-// ---- DADOS GLOBAIS (mantidos) ----
+// ---- DADOS GLOBAIS ----
 var produtos = [], vendas = [], currentProdId = null, saidaTipo = null, pagTipo = null, prazoTipo = null;
 var ultimoCodigoLido = null, fotoBase64 = null, editingProdId = null, opcaoProd = null, sacolaAtual = [];
 var zxingCodeReader = null, currentDeviceIndex = 0, renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
@@ -346,8 +346,8 @@ function normalizeDriveUrl(url){ if(!url || url.indexOf('data:image')===0) retur
 function getBestFoto(p){ return normalizeDriveUrl(p.thumbUrl||p.fotoUrl||p.foto||''); }
 function produtoFotoHtml(p){ var u=getBestFoto(p); return u?'<img src="'+escapeHtml(u)+'" class="prod-detail-img">':'<div class="prod-detail-placeholder">📦</div>'; }
 
-// ---- API (simplificada igual original) ----
-function getData(filename,ok,fail){ /* mantido */ if(isGithubPages()){ var cb='jsonp_'+Date.now()+'_'+Math.floor(Math.random()*1e5),s=document.createElement('script'),t=setTimeout(function(){cl();fail(new Error('Timeout'));},20000); function cl(){clearTimeout(t); try{ delete window[cb]; }catch(e){} if(s.parentNode) s.parentNode.removeChild(s); } window[cb]=function(d){cl();ok(JSON.stringify(d||[]));}; s.onerror=function(){cl();fail(new Error('API error'));}; s.src=API_BASE+'?api=getData&filename='+encodeURIComponent(filename)+'&callback='+encodeURIComponent(cb)+'&_='+Date.now(); document.head.appendChild(s); return; } google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getData(filename); }
+// ---- API ----
+function getData(filename,ok,fail){ if(isGithubPages()){ var cb='jsonp_'+Date.now()+'_'+Math.floor(Math.random()*1e5),s=document.createElement('script'),t=setTimeout(function(){cl();fail(new Error('Timeout'));},20000); function cl(){clearTimeout(t); try{ delete window[cb]; }catch(e){} if(s.parentNode) s.parentNode.removeChild(s); } window[cb]=function(d){cl();ok(JSON.stringify(d||[]));}; s.onerror=function(){cl();fail(new Error('API error'));}; s.src=API_BASE+'?api=getData&filename='+encodeURIComponent(filename)+'&callback='+encodeURIComponent(cb)+'&_='+Date.now(); document.head.appendChild(s); return; } google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getData(filename); }
 function saveData(filename,data,ok,fail){ if(isGithubPages()){ var fields={filename:filename,data:JSON.stringify(data)}; var fname='apiFrame_'+Date.now(),ifr=document.createElement('iframe'),form=document.createElement('form'); ifr.name=fname; ifr.style.display='none'; document.body.appendChild(ifr); form.method='POST'; form.action=API_BASE; form.target=fname; form.style.display='none'; for(var k in fields){ var inp=document.createElement('input'); inp.name=k; inp.value=fields[k]; form.appendChild(inp); } document.body.appendChild(form); ifr.onload=function(){ok(true);}; form.submit(); return; } google.script.run.withSuccessHandler(ok).withFailureHandler(fail).saveData(filename,data); }
 function syncDrive(){ setSS('spin','Carregando...'); ge('painel-body').innerHTML='<div class="loader"><div class="spinner"></div>Carregando...</div>'; getData('produtos.json',function(pr){ getData('vendas.json',function(vr){ getData('config.json',function(cr){ var p=parseJson(pr,[]), v=parseJson(vr,[]), cfg=parseJson(cr,{}); produtos=Array.isArray(p)?p:(p.produtos||[]); vendas=Array.isArray(v)?v:(v.vendas||[]); configApp=cfg&&typeof cfg==='object'&&!Array.isArray(cfg)?cfg:{}; if(!Array.isArray(configApp.categorias)||!configApp.categorias.length) configApp.categorias=CATEGORIAS_PADRAO.slice(); produtos.forEach(function(prod){if(prod.foto)prod.foto=normalizeDriveUrl(prod.foto);}); atualizarSelectCategorias(); refreshLocalViews(); setSS('ok','Conectado'); },function(){ configApp={categorias:CATEGORIAS_PADRAO.slice()}; var p=parseJson(pr,[]),v=parseJson(vr,[]); produtos=Array.isArray(p)?p:(p.produtos||[]); vendas=Array.isArray(v)?v:(v.vendas||[]); produtos.forEach(function(prod){if(prod.foto)prod.foto=normalizeDriveUrl(prod.foto);}); atualizarSelectCategorias(); refreshLocalViews(); setSS('ok','Conectado'); }); },showLoadError); },showLoadError); }
 function showLoadError(err){ setSS('err','Erro'); ge('painel-body').innerHTML='<div class="alerta danger">Erro: '+escapeHtml(err.message||err)+'</div>'; }
@@ -390,28 +390,22 @@ function selOpcaoProd(o){
   var entradaDiv = ge('op-entrada'), saidaDiv = ge('op-saida'); 
   if (entradaDiv) entradaDiv.classList.toggle('sel-entrada', o === 'entrada'); 
   if (saidaDiv) saidaDiv.classList.toggle('sel-saida', o === 'saida'); 
-  
-  // Otimização: Avança automaticamente para a sessão seguinte sem precisar clicar no botão azul ✓
   setTimeout(function() {
     continuarFluxoProd();
-  }, 180); // Pequeno delay de 180ms para dar tempo de ver o efeito visual do clique
+  }, 180);
 }
 function continuarFluxoProd(){ 
   closeM('modal-prod-found'); 
   var p=findProduto(currentProdId); 
   if(!p) return; 
-  
   if(opcaoProd==='entrada') {
     abrirEntrada(); 
   } else { 
-    // Pergunta a quantidade desejada. Se o usuário cancelar ou digitar algo inválido, assume 1.
     var qtdInformada = prompt("Digite a quantidade de unidades para a venda:", "1");
     var qtd = parseInt(qtdInformada, 10);
     if (isNaN(qtd) || qtd <= 0) {
       qtd = 1; 
     }
-    
-    // Insere na sacola com a quantidade escolhida pelo usuário
     sacolaAtual=[{prodId:p.id, nome:p.nome, qty:qtd, preco:p.preco}]; 
     abrirSaidaTipo(); 
   } 
@@ -425,8 +419,6 @@ function selSaida(t){
   var venda = ge('op-venda'), troca = ge('op-troca'); 
   if (venda) venda.classList.toggle('sel-venda', t === 'venda'); 
   if (troca) troca.classList.toggle('sel-troca', t === 'troca'); 
-  
-  // Otimização: Avança direto para a forma de pagamento ou troca
   setTimeout(function() {
     nextSaida();
   }, 180);
@@ -437,8 +429,6 @@ function selPag(t){
   var vista = ge('op-vista'), prazo = ge('op-prazo'); 
   if (vista) vista.classList.toggle('sel-vista', t === 'vista'); 
   if (prazo) prazo.classList.toggle('sel-prazo', t === 'prazo'); 
-  
-  // Otimização: Avança direto para o fechamento correspondente
   setTimeout(function() {
     nextPag();
   }, 180);
@@ -479,14 +469,157 @@ function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('pr
 function abrirCategorias(){ var cats=categoriasAtuais(), container=ge('categorias-editor'); if(!container) return; var html=''; for(var i=0;i<cats.length;i++){ html+='<div class="cat-editor-row"><input class="fi cat-input" value="'+escapeHtml(cats[i])+'"><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">🗑️</button></div>'; } container.innerHTML=html; openM('modal-categorias'); }
 function adicionarCategoriaLinha(){ var container=ge('categorias-editor'); if(container) container.insertAdjacentHTML('beforeend','<div class="cat-editor-row"><input class="fi cat-input" value=""><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">🗑️</button></div>'); }
 function salvarCategorias(){ var inputs=document.querySelectorAll('.cat-input'), cats=[]; for(var i=0;i<inputs.length;i++){ var v=inputs[i].value.trim().toUpperCase(); if(v && cats.indexOf(v)===-1) cats.push(v); } if(!cats.length) cats=CATEGORIAS_PADRAO.slice(); configApp.categorias=cats; saveData('config.json', configApp, function(){ closeM('modal-categorias'); atualizarSelectCategorias(); refreshLocalViews(); setSS('ok','Categorias salvas'); }, function(e){ alert(e.message||e); }); }
-// Scanner com zoom e feedback
-function ligarCameraScannerRealtime(){ zoomLevel=1; var scanResult=ge('scan-result'); if(scanResult) scanResult.innerHTML='<div class="alerta warning">📷 Abrindo câmera...</div>'; if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ scanResult.innerHTML='<div class="alerta danger">Navegador não suporta câmera</div>'; return; } if(!window.ZXing){ var script=document.createElement('script'); script.src='https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js'; script.onload=function(){ iniciarScanner(); }; script.onerror=function(){ scanResult.innerHTML='<div class="alerta danger">Erro ao carregar scanner</div>'; }; document.head.appendChild(script); } else { iniciarScanner(); } }
-function iniciarScanner(){ if(!window.ZXing) return; desligarCameraScanner(); window.scannerAtivo=true; zxingCodeReader=new ZXing.BrowserMultiFormatReader(); zxingCodeReader.decodeFromConstraints({video:{facingMode:'environment'}},'scanner-video',function(result){ if(result&&result.getText){ var code=result.getText().trim(); if(code!==ultimoCodigoLido){ ultimoCodigoLido=code; handleBarcode(code); } } }); limparResultadoScanner(); setTimeout(aplicarZoom,800); }
-function desligarCameraScanner(){ window.scannerAtivo=false; if(zxingCodeReader){ try{ zxingCodeReader.reset(); }catch(e){} zxingCodeReader=null; } var video=ge('scanner-video'); if(video&&video.srcObject&&video.srcObject.getTracks){ video.srcObject.getTracks().forEach(function(t){ try{ t.stop(); }catch(e){} }); video.srcObject=null; } }
-function aplicarZoom(){ var video=ge('scanner-video'); if(video) video.style.transform='scale('+zoomLevel+')'; }
-function zoomCamera(inc){ zoomLevel=Math.max(1,Math.min(3,zoomLevel+inc)); aplicarZoom(); setSS('ok','Zoom: '+zoomLevel.toFixed(1)+'x'); setTimeout(()=>{ if(ge('stxt').textContent==='Zoom: '+zoomLevel.toFixed(1)+'x') setSS('ok','Conectado'); },1500); }
-function zoomCameraReset(){ zoomLevel=1; aplicarZoom(); setSS('ok','Zoom: 1x'); setTimeout(()=>{ if(ge('stxt').textContent==='Zoom: 1x') setSS('ok','Conectado'); },1500); }
-function alternarCameraScanner(){ currentDeviceIndex=currentDeviceIndex===0?1:0; desligarCameraScanner(); setTimeout(function(){ if(!window.ZXing) return; zxingCodeReader=new ZXing.BrowserMultiFormatReader(); var mode=currentDeviceIndex===0?'environment':'user'; zxingCodeReader.decodeFromConstraints({video:{facingMode:mode}},'scanner-video',function(result){ if(result&&result.getText){ var code=result.getText().trim(); if(code!==ultimoCodigoLido){ ultimoCodigoLido=code; handleBarcode(code); } } }); setTimeout(aplicarZoom,800); },150); }
+
+// ---- SCANNER OTIMIZADO COM FOCO MACRO CONTINUO ----
+function ligarCameraScannerRealtime(){ 
+  zoomLevel=1; 
+  var scanResult=ge('scan-result'); 
+  if(scanResult) scanResult.innerHTML='<div class="alerta warning">📷 Abrindo câmera...</div>'; 
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ 
+    scanResult.innerHTML='<div class="alerta danger">Navegador não suporta câmera</div>'; 
+    return; 
+  } 
+  if(!window.ZXing){ 
+    var script=document.createElement('script'); 
+    script.src='https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js'; 
+    script.onload=function(){ iniciarScanner(); }; 
+    script.onerror=function(){ scanResult.innerHTML='<div class="alerta danger">Erro ao carregar scanner</div>'; }; 
+    document.head.appendChild(script); 
+  } else { 
+    iniciarScanner(); 
+  } 
+}
+
+function otimizarFocoCamera() {
+  var video = ge('scanner-video');
+  if (!video || !video.srcObject) return;
+  var tracks = video.srcObject.getVideoTracks();
+  if (tracks && tracks.length > 0) {
+    var track = tracks[0];
+    var constraints = { advanced: [] };
+    
+    // Verifica capacidade e força foco automático e contínuo
+    if (typeof track.getCapabilities === 'function') {
+      var capabilities = track.getCapabilities();
+      if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
+        constraints.advanced.push({ focusMode: 'continuous' });
+      }
+    } else {
+      constraints.advanced.push({ focusMode: 'continuous' });
+    }
+    
+    // Aplica a restrição de foco avançada na lente da câmera
+    if (constraints.advanced.length > 0 && typeof track.applyConstraints === 'function') {
+      track.applyConstraints(constraints).catch(function(e) {
+        console.log('Foco avançado não suportado no hardware:', e);
+      });
+    }
+  }
+}
+
+function iniciarScanner(){ 
+  if(!window.ZXing) return; 
+  desligarCameraScanner(); 
+  window.scannerAtivo=true; 
+  zxingCodeReader=new ZXing.BrowserMultiFormatReader(); 
+  
+  // Solicitando preferências de vídeo com resolução otimizada e foco contínuo
+  var constraintsVideo = {
+    video: {
+      facingMode: 'environment',
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+      focusMode: { ideal: 'continuous' }
+    }
+  };
+
+  zxingCodeReader.decodeFromConstraints(constraintsVideo, 'scanner-video', function(result){ 
+    if(result && result.getText){ 
+      var code=result.getText().trim(); 
+      if(code!==ultimoCodigoLido){ 
+        ultimoCodigoLido=code; 
+        handleBarcode(code); 
+      } 
+    } 
+  }); 
+
+  limparResultadoScanner(); 
+  setTimeout(function() {
+    aplicarZoom();
+    otimizarFocoCamera();
+  }, 800); 
+}
+
+function desligarCameraScanner(){ 
+  window.scannerAtivo=false; 
+  if(zxingCodeReader){ 
+    try{ zxingCodeReader.reset(); }catch(e){} 
+    zxingCodeReader=null; 
+  } 
+  var video=ge('scanner-video'); 
+  if(video && video.srcObject && video.srcObject.getTracks){ 
+    video.srcObject.getTracks().forEach(function(t){ 
+      try{ t.stop(); }catch(e){} 
+    }); 
+    video.srcObject=null; 
+  } 
+}
+
+function aplicarZoom(){ 
+  var video=ge('scanner-video'); 
+  if(video) video.style.transform='scale('+zoomLevel+')'; 
+}
+
+function zoomCamera(inc){ 
+  zoomLevel=Math.max(1,Math.min(3,zoomLevel+inc)); 
+  aplicarZoom(); 
+  otimizarFocoCamera(); // Força ajuste do foco ao mudar zoom
+  setSS('ok','Zoom: '+zoomLevel.toFixed(1)+'x'); 
+  setTimeout(()=>{ 
+    if(ge('stxt').textContent==='Zoom: '+zoomLevel.toFixed(1)+'x') setSS('ok','Conectado'); 
+  },1500); 
+}
+
+function zoomCameraReset(){ 
+  zoomLevel=1; 
+  aplicarZoom(); 
+  otimizarFocoCamera();
+  setSS('ok','Zoom: 1x'); 
+  setTimeout(()=>{ 
+    if(ge('stxt').textContent==='Zoom: 1x') setSS('ok','Conectado'); 
+  },1500); 
+}
+
+function alternarCameraScanner(){ 
+  currentDeviceIndex=currentDeviceIndex===0?1:0; 
+  desligarCameraScanner(); 
+  setTimeout(function(){ 
+    if(!window.ZXing) return; 
+    zxingCodeReader=new ZXing.BrowserMultiFormatReader(); 
+    var mode=currentDeviceIndex===0?'environment':'user'; 
+    zxingCodeReader.decodeFromConstraints({
+      video:{
+        facingMode:mode,
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        focusMode: { ideal: 'continuous' }
+      }
+    },'scanner-video',function(result){ 
+      if(result && result.getText){ 
+        var code=result.getText().trim(); 
+        if(code!==ultimoCodigoLido){ 
+          ultimoCodigoLido=code; 
+          handleBarcode(code); 
+        } 
+      } 
+    }); 
+    setTimeout(function() {
+      aplicarZoom();
+      otimizarFocoCamera();
+    }, 800); 
+  }, 150); 
+}
+
 function limparUltimaLeitura(){ ultimoCodigoLido=null; if(ge('manual-bc')) ge('manual-bc').value=''; limparResultadoScanner(); setSS('ok','Scanner limpo'); setTimeout(()=>{ if(ge('stxt').textContent==='Scanner limpo') setSS('ok','Conectado'); },1500); }
 function limparResultadoScanner(){ var sr=ge('scan-result'); if(sr) sr.innerHTML=''; }
 function clearScan(){ desligarCameraScanner(); limparUltimaLeitura(); showSec('painel'); }
@@ -496,13 +629,13 @@ function abrirSeletorVendaDireta(){
   var html='<div class="sheet"><div class="sheet-handle"></div><div class="sheet-header"><span class="sheet-title"> 🛍️  Selecione o Item</span><button class="btn btn-sm btn-ghost" onclick="closeM(\'modal-venda-direta-seletor\')"> ✕ </button></div><div class="sheet-body">';
   
   produtos.forEach(function(p){ 
-    // Modificado para rodar o iniciarFluxoProd e depois abrir as opções com quantidade
     html+='<div class="bag-item" style="cursor:pointer" onclick="closeM(\'modal-venda-direta-seletor\'); iniciarFluxoProd('+p.id+')"><div><b>'+escapeHtml(p.nome)+'</b><br>'+money(p.preco)+'</div><div> 📦  Est: '+p.estoque+'</div></div>'; 
   }); 
   
   modal.innerHTML=html+'</div></div>'; 
   openM('modal-venda-direta-seletor'); 
 }
+
 window.ge=ge; window.gv=gv; window.openM=openM; window.closeM=closeM; window.showSec=showSec; window.syncDrive=syncDrive;
 window.salvarProduto=salvarProduto; window.previewFoto=previewFoto; window.selOpcaoProd=selOpcaoProd; window.continuarFluxoProd=continuarFluxoProd;
 window.confirmarEntrada=confirmarEntrada; window.selSaida=selSaida; window.nextSaida=nextSaida; window.selPag=selPag; window.nextPag=nextPag;
