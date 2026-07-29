@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pamp's Eletrônicos">
-<title>Pamp's Eletrônicos</title>
+<title>Pamp's Eletrônicos V 2.8</title>
 <style>
 :root{
 --bg:#0a0f1e;--bg2:#111827;--bg3:#1f2937;--bg4:#374151;
@@ -263,7 +263,7 @@ button:active,
 </head>
 <body>
 <div class="topbar">
-<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.7</span></div>
+<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.8</span></div>
 <div class="sync-row"><div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div></div>
 </div>
 <div class="content">
@@ -472,9 +472,62 @@ function abrirVendaDetail(id, isVenda){ if(isVenda){ var v=findVenda(id); if(!v)
 function excluirVenda(id){ if(!confirm('Excluir esta venda?')) return; for(var i=0;i<vendas.length;i++) if(vendas[i].id===id){ vendas.splice(i,1); break; } saveBoth('Venda excluída'); closeM('modal-venda-detail'); }
 function compartilharProduto(id){ var p=findProduto(id); if(!p) return; var texto=p.nome+'\n'+money(p.preco)+'\n'+escapeHtml(p.desc||''); if(navigator.share) navigator.share({title:p.nome, text:texto}); else if(navigator.clipboard) navigator.clipboard.writeText(texto).then(()=>alert('Copiado!')); else alert(texto); }
 function saveBoth(msg){ saveData('vendas.json', vendas, function(){ saveData('produtos.json', produtos, function(){ saveData('config.json', configApp, function(){ refreshLocalViews(); setSS('ok',msg); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }, function(e){ alert(e); }); }
-function abrirCategorias(){ var cats=categoriasAtuais(), container=ge('categorias-editor'); if(!container) return; var html=''; for(var i=0;i<cats.length;i++){ html+='<div class="cat-editor-row"><input class="fi cat-input" value="'+escapeHtml(cats[i])+'"><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">🗑️</button></div>'; } container.innerHTML=html; openM('modal-categorias'); }
-function adicionarCategoriaLinha(){ var container=ge('categorias-editor'); if(container) container.insertAdjacentHTML('beforeend','<div class="cat-editor-row"><input class="fi cat-input" value=""><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">🗑️</button></div>'); }
-function salvarCategorias(){ var inputs=document.querySelectorAll('.cat-input'), cats=[]; for(var i=0;i<inputs.length;i++){ var v=inputs[i].value.trim().toUpperCase(); if(v && cats.indexOf(v)===-1) cats.push(v); } if(!cats.length) cats=CATEGORIAS_PADRAO.slice(); configApp.categorias=cats; saveData('config.json', configApp, function(){ closeM('modal-categorias'); atualizarSelectCategorias(); refreshLocalViews(); setSS('ok','Categorias salvas'); }, function(e){ alert(e.message||e); }); }
+
+// ---- GESTÃO E EDIÇÃO DE CATEGORIAS ----
+function abrirCategorias(){ 
+  var cats=categoriasAtuais(), container=ge('categorias-editor'); 
+  if(!container) return; 
+  var html=''; 
+  for(var i=0;i<cats.length;i++){ 
+    html+='<div class="cat-editor-row"><input class="fi cat-input" data-orig="'+escapeHtml(cats[i])+'" value="'+escapeHtml(cats[i])+'"><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">🗑️</button></div>'; 
+  } 
+  container.innerHTML=html; 
+  openM('modal-categorias'); 
+}
+
+function adicionarCategoriaLinha(){ 
+  var container=ge('categorias-editor'); 
+  if(container) container.insertAdjacentHTML('beforeend','<div class="cat-editor-row"><input class="fi cat-input" data-orig="" value=""><button class="btn btn-red btn-sm" onclick="this.parentNode.remove()">🗑️</button></div>'); 
+}
+
+function salvarCategorias(){ 
+  var inputs=document.querySelectorAll('.cat-input'), cats=[], renMap={}; 
+  for(var i=0;i<inputs.length;i++){ 
+    var orig=(inputs[i].getAttribute('data-orig')||'').trim().toUpperCase();
+    var val=inputs[i].value.trim().toUpperCase(); 
+    if(val && cats.indexOf(val)===-1) {
+      cats.push(val); 
+      if(orig && orig !== val) renMap[orig] = val; // Mapeia categorias renomeadas
+    }
+  } 
+  if(!cats.length) cats=CATEGORIAS_PADRAO.slice(); 
+  configApp.categorias=cats; 
+
+  // Atualiza a categoria nos produtos cadastrados caso tenha sido renomeada
+  var mudouProdutos = false;
+  produtos.forEach(function(p){
+    if(p.cat && renMap[p.cat.toUpperCase()]){
+      p.cat = renMap[p.cat.toUpperCase()];
+      mudouProdutos = true;
+    }
+  });
+
+  saveData('config.json', configApp, function(){ 
+    if(mudouProdutos){
+      saveData('produtos.json', produtos, function(){
+        closeM('modal-categorias'); 
+        atualizarSelectCategorias(); 
+        refreshLocalViews(); 
+        setSS('ok','Categorias e produtos atualizados'); 
+      }, function(e){ alert(e.message||e); });
+    } else {
+      closeM('modal-categorias'); 
+      atualizarSelectCategorias(); 
+      refreshLocalViews(); 
+      setSS('ok','Categorias salvas'); 
+    }
+  }, function(e){ alert(e.message||e); }); 
+}
 
 // ---- SCANNER OTIMIZADO COM FOCO MACRO CONTINUO ----
 function ligarCameraScannerRealtime(){ 
