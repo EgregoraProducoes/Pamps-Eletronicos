@@ -60,7 +60,7 @@ input,select,textarea{font-family:var(--font)}
 .card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:8px}
 .card-body{padding:10px 12px}
 
-/* Botões compactos com texto ou ícone - layout responsivo */
+/* Botões compactos com texto ou ícone */
 .btn, .icon-btn {
   display:inline-flex;
   align-items:center;
@@ -78,26 +78,36 @@ input,select,textarea{font-family:var(--font)}
   white-space:nowrap;
   box-shadow:0 1px 2px rgba(0,0,0,.2);
 }
-/* Feedback Geral de Clique para TODOS os botões - Mudança de cor imediata */
-.btn:active, .icon-btn:active, .opcao-card:active, .cat-tag:active {
+
+/* FEEDBACK VISUAL DE CLIQUE (CINZA CLARO IMEDIATO PARA TODOS OS BOTÕES) */
+button:active, 
+.btn:active, 
+.icon-btn:active, 
+.opcao-card:active, 
+.cat-tag:active, 
+.ni:active {
   transform: translateY(2px) scale(0.97) !important;
-  background-color: var(--purple) !important; /* Cor de indicação de clique geral */
-  color: #fff !important;
-  border-color: var(--purple) !important;
+  background-color: #d1d5db !important; /* Cinza claro */
+  color: #111827 !important; /* Texto escuro para alto contraste */
+  border-color: #9ca3af !important;
   box-shadow: 0 0 2px rgba(0,0,0,.4) !important;
-  transition: none !important; /* Resposta imediata ao toque */
+  transition: none !important; /* Resposta instantânea ao toque */
 }
 
-/* Garante cor de feedback específica para o botão Salvar/OK ao clicar */
-.icon-btn.ok:active {
-  background-color: var(--green2) !important;
-  border-color: var(--green) !important;
-}
+.btn-primary { background: var(--accent); border-color: var(--accent2); color: #fff; }
+.btn-success { background: var(--green2); border-color: var(--green); color: #fff; }
+.btn-outline { background: transparent; border-color: var(--border2); color: var(--text); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text2); }
+.btn-full { width: 100%; display: flex; justify-content: center; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn-xs { padding: 2px 6px; font-size: 10px; }
+.btn-red { background: var(--red); border-color: var(--red); color: #fff; }
 
-/* Modificações específicas de estados selecionados existentes */
+/* Modificações específicas de estados selecionados */
 .opcao-card.sel-entrada { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
 .opcao-card.sel-saida { background: var(--green-bg); border-color: var(--green); color: var(--green); }
-/* Grupo de botões inferiores com espaçamento e legenda */
+
+/* Grupo de botões inferiores */
 .bottom-action-group {
   display: flex;
   justify-content: center;
@@ -149,7 +159,7 @@ input,select,textarea{font-family:var(--font)}
 .icon-btn.ok{background:var(--accent);border-color:var(--accent2);color:#fff}
 .icon-btn.add{background:var(--purple);border-color:var(--purple);color:#fff}
 
-/* Categorias - botões inline com tamanho justo */
+/* Categorias */
 .categoria-row {
   display: flex;
   flex-wrap: wrap;
@@ -171,7 +181,6 @@ input,select,textarea{font-family:var(--font)}
   gap: 6px;
   white-space: nowrap;
 }
-.cat-tag:active { transform: scale(0.96); background: var(--accent); color: #fff; border-color: var(--accent); }
 .cat-tag-remove {
   background: none;
   border: none;
@@ -205,9 +214,6 @@ input,select,textarea{font-family:var(--font)}
   transition: all 0.1s;
   min-width: 90px;
 }
-.opcao-card:active { transform: scale(0.96);}
-.opcao-card.sel-entrada { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
-.opcao-card.sel-saida { background: var(--green-bg); border-color: var(--green); color: var(--green); }
 .opcao-label { font-size: 13px; font-weight: 700; }
 
 /* outros elementos */
@@ -257,7 +263,7 @@ input,select,textarea{font-family:var(--font)}
 </head>
 <body>
 <div class="topbar">
-<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.6</span></div>
+<div class="logo"><div class="logo-chip">📱</div><span class="app-name">Pamp's Eletrônicos</span><span class="app-version" id="app-version-label">V 2.7</span></div>
 <div class="sync-row"><div class="sync-pill"><div class="dot spin" id="sdot"></div><span id="stxt">Conectando...</span></div></div>
 </div>
 <div class="content">
@@ -319,7 +325,7 @@ var ultimoCodigoLido = null, fotoBase64 = null, editingProdId = null, opcaoProd 
 var zxingCodeReader = null, currentDeviceIndex = 0, renderedSections = { painel:false, estoque:false, vendas:false, alertas:false };
 var CATEGORIAS_PADRAO = ['CABOS','CARREGADORES','FONES','CAPAS','PELICULAS','VARIADOS','ADAPTADORES','HEADPHONES','OUTROS'];
 var configApp = { categorias: CATEGORIAS_PADRAO.slice() };
-var APP_VERSION = 'V 2.6';
+var APP_VERSION = 'V 2.7';
 var API_BASE = 'https://script.google.com/macros/s/AKfycbyrh_eZXMn_dWGuln0S1myqelaGw6aLGcFh63VHPICIISET7_Ebp8XXyo_RptgPxy8V/exec';
 var FOTO_MAX_DIM = 160, FOTO_JPEG_QUALITY = 0.28, TAXA_CARTAO_CREDITO = 0.03, zoomLevel = 1;
 var PIX_CHAVE = "+5521976943868", PIX_NOME = "PAMPS ELETRONICOS", PIX_CIDADE = "RIO DE JANEIRO";
@@ -498,7 +504,6 @@ function otimizarFocoCamera() {
     var track = tracks[0];
     var constraints = { advanced: [] };
     
-    // Verifica capacidade e força foco automático e contínuo
     if (typeof track.getCapabilities === 'function') {
       var capabilities = track.getCapabilities();
       if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
@@ -508,7 +513,6 @@ function otimizarFocoCamera() {
       constraints.advanced.push({ focusMode: 'continuous' });
     }
     
-    // Aplica a restrição de foco avançada na lente da câmera
     if (constraints.advanced.length > 0 && typeof track.applyConstraints === 'function') {
       track.applyConstraints(constraints).catch(function(e) {
         console.log('Foco avançado não suportado no hardware:', e);
@@ -523,7 +527,6 @@ function iniciarScanner(){
   window.scannerAtivo=true; 
   zxingCodeReader=new ZXing.BrowserMultiFormatReader(); 
   
-  // Solicitando preferências de vídeo com resolução otimizada e foco contínuo
   var constraintsVideo = {
     video: {
       facingMode: 'environment',
@@ -573,7 +576,7 @@ function aplicarZoom(){
 function zoomCamera(inc){ 
   zoomLevel=Math.max(1,Math.min(3,zoomLevel+inc)); 
   aplicarZoom(); 
-  otimizarFocoCamera(); // Força ajuste do foco ao mudar zoom
+  otimizarFocoCamera(); 
   setSS('ok','Zoom: '+zoomLevel.toFixed(1)+'x'); 
   setTimeout(()=>{ 
     if(ge('stxt').textContent==='Zoom: '+zoomLevel.toFixed(1)+'x') setSS('ok','Conectado'); 
